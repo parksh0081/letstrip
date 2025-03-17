@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>블로그 게시글</title>
+<style>
+/* 전체 컨테이너 */
+.blog-container {
+	width: 100%;
+	margin: auto;
+	padding: 20px;
+	border: 1px solid #ddd;
+	background: #fff;
+}
+
+/* a태그 버튼 css */
+.btn {
+    display: inline-block;
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    margin-bottom: 10px;
+}
+
+.btn:hover {
+    background-color: #0056b3;
+    text-decoration: underline;
+}
+
+/* 제목 */
+.blog-title {
+	font-size: 20px;
+	font-weight: bold;
+	margin-bottom: 15px;
+	border-bottom: 2px solid #ddd;
+	padding-bottom: 10px;
+}
+
+/* 작성자, 날짜 */
+.blog-meta {
+	font-size: 14px;
+	color: gray;
+	margin-bottom: 20px;
+}
+
+/* 대표 이미지 */
+.blog-image {
+	width: 100%;
+	max-height: 400px;
+	object-fit: cover;
+	margin-bottom: 20px;
+}
+
+/* 내용 */
+.blog-content {
+	font-size: 18px;
+	line-height: 1.6;
+	white-space: pre-wrap; /* 줄바꿈 유지 */
+}
+</style>
+<script type="text/javascript">
+	function confirm_del() {
+		if (confirm("정말 삭제하시겠습니까?")) {
+			location.href = "blogboardDelete?seq=[[${seq}]]&pg=[[${pg}]]";
+		}
+	}
+</script>
+</head>
+<body>
+    <div th:replace="~{layouts/header}"></div>
+	<div class="container" style="width: 800px;">
+		
+		<div align="right">
+			<a th:href="@{/blogboardList?(pg=${pg})}" class="btn">목록열기</a>
+	  		<a th:if="${session.personId == blogboard.blogid}" th:href="@{/blogboardModifyForm(seq=${seq}, pg=${pg})}" class="btn">수정하기</a>
+	  		<a th:if="${session.personId == blogboard.blogid}" onclick="confirm_del()" class="btn">삭제하기</a>
+	  	</div>
+	
+		<div class="blog-container">
+	        <!-- 제목 -->
+	        <div class="blog-title" th:text="${blogboard.blogsubject}"></div>
+	
+	        <!-- 작성자 & 날짜 -->
+	        <div class="blog-meta">
+	        	<img alt="프로필" src="/image/blogperson.png" width="20px;">
+	            작성자: <span th:text="${blogboard.blogid}"></span> | 
+	            작성일: <span th:text="${#dates.format(blogboard.logtime, 'yyyy-MM-dd')}"></span>
+	        </div>
+	
+	        <!-- 대표 이미지 (있을 경우) -->
+	        <img th:if="${blogboard.blogimage1}" th:src="@{'/storage/' + ${blogboard.blogimage1}}" class="blog-image" alt="대표 이미지">
+	
+	        <!-- 본문 내용 -->
+	        <div class="blog-content" th:utext="${blogboard.blogcontent}"></div>
+    	</div>
+	</div>
+
+
+    <div th:replace="~{layouts/footer}"></div>
+</body>
+</html>
