@@ -24,46 +24,26 @@
       text-decoration: underline;
     }
     
-    .btn {
-        display: inline-block;
-        padding: 12px 24px;
-        margin: 10px;
-        font-size: 16px;
-        font-weight: bold;
-        text-align: center;
-        text-decoration: none;
-        border-radius: 5px; /* 완전 둥근 거 말고, 약간만 */
-        border: 2px solid transparent; /* 테두리를 기본적으로 투명하게 */
-        cursor: pointer;
-        transition: 0.2s ease-in-out;
-        width: 120px; /* 버튼 크기 일정하게 */
-        text-align: center;
-        display: inline-block;
+    #pagination {
+    	margin-top: 20px;
+    	display: flex;              /* flex 사용 */
+  		justify-content: center;    /* 중앙 정렬 */
     }
+    
+    /* a태그 버튼 css */
+	.btn {
+	    display: inline-block;
+	    background-color: #007bff;
+	    color: white;
+	    text-decoration: none;
+	    margin-bottom: 10px;
+	}
+	
+	.btn:hover {
+	    background-color: #0056b3;
+	    text-decoration: underline;
+	}
 
-    /* 로그인 버튼 (파란색) */
-    .btn-login {
-        background-color: #007bff;
-        color: white;
-        border-color: #007bff;
-    }
-
-    .btn-login:hover {
-        background-color: #0056b3;
-        border-color: #0056b3;
-    }
-
-    /* 글쓰기 버튼 (초록색) */
-    .btn-write {
-        background-color: #28a745;
-        color: white;
-        border-color: #28a745;
-    }
-
-    .btn-write:hover {
-        background-color: #1e7e34;
-        border-color: #1e7e34;
-    }
 
     /* 카드 스타일 */
     .blog-list {
@@ -98,6 +78,7 @@
 	  justify-content: flex-start;
 	  align-items: flex-start;
 	  width: 60%;
+	  overflow: hidden;
 	}
 	
 	.blog-right {
@@ -127,6 +108,7 @@
 	  color: #555;
 	  margin-bottom: 8px;
 	  white-space: nowrap; /* 텍스트가 줄바꿈 없이 한 줄로 표시되도록 설정 */
+	  overflow: hidden;    /* 내용이 넘칠 경우 숨기기 */
 	  text-overflow: ellipsis; /* 글이 넘치면 '...'으로 표시 */
 	}
 	
@@ -149,8 +131,8 @@
 
   <div class="container" style="width: 800px;">
   	<div align="right">
-  		<a th:if="${session.personId == null}" href="/personLoginForm" class="btn btn-login">로그인</a>
-    	<a th:if="${session.personId != null}" href="blogboardWriteForm" class="btn btn-write">글쓰기</a>
+  		<a th:if="${session.personId == null}" href="/personLoginForm" class="btn">로그인</a>
+    	<a th:if="${session.personId != null}" href="blogboardWriteForm" class="btn">글쓰기</a>
   	</div>
 
     <div id="blogList" class="blog-list">
@@ -241,10 +223,11 @@
       if (data.startPage > 1) {
         const prevLink = document.createElement("a");
         prevLink.href = "#";
-        prevLink.textContent = "이전";
+        prevLink.textContent = "< 이전";
         prevLink.onclick = () => fetchBoardData(data.startPage - 1);
         prevLink.className = "paging";
         paginationWrapper.appendChild(prevLink);
+        paginationWrapper.appendChild(document.createTextNode(" "));
       }
 
       // 페이지 번호들
@@ -262,7 +245,7 @@
       if (data.endPage < data.totalP) {
         const nextLink = document.createElement("a");
         nextLink.href = "#";
-        nextLink.textContent = "다음";
+        nextLink.textContent = "다음 >";
         nextLink.onclick = () => fetchBoardData(data.endPage + 1);
         nextLink.className = "paging";
         paginationWrapper.appendChild(nextLink);
