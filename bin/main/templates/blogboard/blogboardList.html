@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>블로그 목록</title>
+  <style type="text/css">
+    .paging {
+      color: blue;
+      text-decoration: none;
+    }
+
+    .currentPaging {
+      color: red;
+      text-decoration: underline;
+    }
+
+    .subjectA {
+      color: black;
+      text-decoration: none;
+    }
+
+    .subjectA:hover {
+      color: green;
+      text-decoration: underline;
+    }
+    
+    .btn {
+        display: inline-block;
+        padding: 12px 24px;
+        margin: 10px;
+        font-size: 16px;
+        font-weight: bold;
+        text-align: center;
+        text-decoration: none;
+        border-radius: 5px; /* 완전 둥근 거 말고, 약간만 */
+        border: 2px solid transparent; /* 테두리를 기본적으로 투명하게 */
+        cursor: pointer;
+        transition: 0.2s ease-in-out;
+        width: 120px; /* 버튼 크기 일정하게 */
+        text-align: center;
+        display: inline-block;
+    }
+
+    /* 로그인 버튼 (파란색) */
+    .btn-login {
+        background-color: #007bff;
+        color: white;
+        border-color: #007bff;
+    }
+
+    .btn-login:hover {
+        background-color: #0056b3;
+        border-color: #0056b3;
+    }
+
+    /* 글쓰기 버튼 (초록색) */
+    .btn-write {
+        background-color: #28a745;
+        color: white;
+        border-color: #28a745;
+    }
+
+    .btn-write:hover {
+        background-color: #1e7e34;
+        border-color: #1e7e34;
+    }
+
+    /* 카드 스타일 */
+    .blog-list {
+      display: flex;
+      flex-direction: column;
+      /*gap: 20px;*/
+    }
+	
+	.blog-item {
+	  display: flex;
+	  flex-direction: row;
+	  justify-content: space-between; 
+	  align-items: flex-start; /* 세로 정렬을 가운데로 */
+	  height: 180px;
+	  border: 1px solid #ccc;
+	  border-radius: 5px;
+	  padding: 16px;
+	  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	  background-color: #fff;
+	  margin-bottom: 20px;
+	  position: relative; /* 추가: 이미지 위치가 정확히 맞춰지도록 */
+	}
+	
+	.blog-item:hover {
+	  transform: translateY(-5px);
+	  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+	}
+	
+	.blog-left {
+	  display: flex;
+	  flex-direction: column;
+	  justify-content: flex-start;
+	  align-items: flex-start;
+	  width: 60%;
+	}
+	
+	.blog-right {
+	  display: flex;
+	  justify-content: flex-end; /* 이미 오른쪽 정렬 */
+	  align-items: flex-start; /* 세로 정렬을 가운데로 */
+	  width: 40%;
+	}
+
+	
+	.user-id {
+	  font-size: 14px;
+	  color: #777;
+	  margin-bottom: 8px;
+	}
+	
+	.blog-title {
+	  font-size: 18px;
+	  font-weight: bold;
+	  color: #333;
+	}
+	
+	
+	.blog-content {
+	  /* flex: 1;   왼쪽 내용이 1차로 차지할 공간 */
+	  font-size: 16px;
+	  color: #555;
+	  margin-bottom: 8px;
+	  white-space: nowrap; /* 텍스트가 줄바꿈 없이 한 줄로 표시되도록 설정 */
+	  text-overflow: ellipsis; /* 글이 넘치면 '...'으로 표시 */
+	}
+	
+	
+	.blog-image {
+	  height: 150px;  /* 고정된 배너 높이를 150px로 줄임 */
+	  display: flex;
+	  justify-content: flex-end;
+	}
+
+	.blog-image img {
+	  width: 100%;
+	  height: auto;
+	  object-fit: cover; /* 이미지 비율을 유지하면서 크기 맞추기 */
+	}
+  </style>
+</head>
+<body>
+  <div th:replace="~{layouts/header}"></div>
+
+  <div class="container" style="width: 800px;">
+  	<div align="right">
+  		<a th:if="${session.personId == null}" href="/personLoginForm" class="btn btn-login">로그인</a>
+    	<a th:if="${session.personId != null}" href="blogboardWriteForm" class="btn btn-write">글쓰기</a>
+  	</div>
+
+    <div id="blogList" class="blog-list">
+      <!-- 블로그 카드 목록은 여기에 동적으로 채워집니다. -->
+    </div>
+
+    <div id="pagination" class="pagination" align="center">
+      <!-- 페이지 번호 링크는 여기에 동적으로 채워집니다. -->
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    // 현재 페이지 번호
+    let pg = /*[[${pg}]]*/ 1;
+
+    // 페이지 데이터 가져오기 함수
+    function fetchBoardData(page) {
+      fetch(`/blogboard/blogboardListJson?pg=${page}`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error("네트워크 응답이 좋지 않습니다.");
+          }
+          return response.json();
+        })
+        .then(data => {
+            console.log(data);  // 데이터 구조 확인
+            renderTable(data);  // 목록 생성
+            renderPagination(data);
+        })
+        .catch(err => {
+          alert(err.message);
+        });
+    }
+
+    // 블로그 카드 목록 생성 함수
+	function renderTable(data) {
+	  const blogList = document.getElementById("blogList");
+	  blogList.innerHTML = "";  // 기존 항목 지우기
+	    
+	    
+	    data.blogboard.forEach(blogboard => {
+	        const blogItem = document.createElement("div");
+	        blogItem.classList.add("blog-item");
+	        
+	    	// 날짜 포맷 설정
+	        const formattedDate = formatDate(blogboard.logtime);
+
+	        // 작성자와 사진을 각각 왼쪽, 오른쪽으로 배치
+	        blogItem.innerHTML = `
+		      <div class="blog-left">
+		        <div class="user-id">${blogboard.blogid} | ${formattedDate}</div>
+		        <div class="blog-title">
+		          <a href="blogboardView?seq=${blogboard.seq}&pg=${data.pg}" class="subjectA">
+		            ${blogboard.blogsubject}
+		          </a>
+		        </div>
+		        <div class="blog-content">
+		          <p>${blogboard.blogcontent.slice(0, 100).replace(/\n/g, " ")}...</p> <!-- 글의 윗부분 2줄만 표시 -->
+		        </div>
+		      </div>
+		      <div class="blog-right">
+		        <div class="blog-image">
+		          <img src="/storage/${blogboard.blogimage1}" alt="대표사진" width="150px" align="right">
+		        </div>
+		      </div>
+	        `;
+	        blogList.appendChild(blogItem);
+	  });
+	}
+
+    
+	// 날짜 형식 변환 함수
+	function formatDate(dateString) {
+	  const date = new Date(dateString);  // ISO 8601 형식을 Date 객체로 변환
+	  const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+	  return date.toLocaleDateString('ko-KR', options);  // 2025/03/17 형식으로 출력
+	}
+
+    // 페이지네이션 생성 함수
+    function renderPagination(data) {
+      pg = data.pg;
+      const pagination = document.getElementById("pagination");
+      pagination.innerHTML = "";  // 기존 태그 제거
+
+      const paginationWrapper = document.createElement("div");
+
+      // 이전 버튼
+      if (data.startPage > 1) {
+        const prevLink = document.createElement("a");
+        prevLink.href = "#";
+        prevLink.textContent = "이전";
+        prevLink.onclick = () => fetchBoardData(data.startPage - 1);
+        prevLink.className = "paging";
+        paginationWrapper.appendChild(prevLink);
+      }
+
+      // 페이지 번호들
+      for (let i = data.startPage; i <= data.endPage; i++) {
+        const pageLink = document.createElement("a");
+        pageLink.href = "#";
+        pageLink.textContent = i;
+        pageLink.onclick = () => fetchBoardData(i);
+        pageLink.className = (data.pg === i) ? "currentPaging" : "paging";
+        paginationWrapper.appendChild(pageLink);
+        paginationWrapper.appendChild(document.createTextNode(" "));
+      }
+
+      // 다음 버튼
+      if (data.endPage < data.totalP) {
+        const nextLink = document.createElement("a");
+        nextLink.href = "#";
+        nextLink.textContent = "다음";
+        nextLink.onclick = () => fetchBoardData(data.endPage + 1);
+        nextLink.className = "paging";
+        paginationWrapper.appendChild(nextLink);
+      }
+
+      pagination.appendChild(paginationWrapper);
+    }
+
+    // 로그인 체크 함수 (미구현)
+    function isLogin(seq) {
+      var id = /*[[${memId}]]*/ "에러 방지용 글자";  // 자바스크립트 내추럴 템플릿
+      if (id == null) {
+        alert("먼저 로그인 하세요.");
+      } else {
+        location.href = "boardView?seq=" + seq + "&pg=" + pg;
+      }
+    }
+
+    // 페이지 로드 시 데이터 호출
+    document.addEventListener("DOMContentLoaded", function() {
+      fetchBoardData(pg);
+    });
+  </script>
+
+  <div th:replace="~{layouts/footer}"></div>
+</body>
+</html>
