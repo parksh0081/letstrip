@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<link rel="stylesheet" href="../css/bootstrap.min.css">
+</head>
+<body>
+
+<style type="text/css">
+.container {
+   width: 1200px;
+   margin: auto;
+}
+table {
+   margin: auto;
+   table-layout: fixed;
+   height: 550px;
+}
+#tableBody tr:hover td {
+     background: rgba(128, 128, 128, 0.1);   /* 색상은 바꿔주세요.. */
+}
+input[type='button'] {
+   background-color: #ff9000;
+   color: white;
+   width: 100px;
+}
+td {
+   vertical-align: middle;
+}
+table .mateboard_principle td, .principle {
+   background: rgba(240, 240, 240, 0.6); 
+   font-size: 14px;
+   color: gray;
+   text-decoration: none;
+}
+.subjectA {
+   text-decoration: none;
+   color: black;
+}
+.principle:hover, .subjectA:hover {
+   color: #FF7700;
+}
+p#TRIPMATE {
+	color: #ff9000; 
+	margin-top: 30px; 
+	margin-left: 10px; 
+	margin-bottom: 0px; 
+	font-weight: bold; 
+	font-size: 30px;
+}
+
+
+</style>
+
+<script type="text/javascript" th:inline="javascript">
+let pg = /*[[${pg}]]*/ 1;
+
+function fetchMateboardData(page){
+   fetch(`/mateboardListJson?pg=${page}`)
+   .then(response => {
+      if(!response.ok) {
+      throw new Error("네트워크 응답이 좋지 않습니다.");
+      }
+      return response.json();
+   })
+   .then(data => {
+      //alert(JSON.stringify(data));
+      renderTable(data);  		// 목록 태그
+      renderPagination(data);   // 페이징 태그
+   })
+   .catch(err => {
+      alert(err.message);
+   })
+}
+
+// 목록 태그
+function renderTable(data) {
+   // 태그 선택
+   const tableBody = document.getElementById("tableBody");
+   // 기존 태그 제거 : 비어 있지 않으면
+   if(tableBody != null) {
+      tableBody.innerHTML = "";
+   }
+   
+   data.list.forEach(matetable => {
+      // 1) 새로운 글이 추가될 <tr> 태그
+      const tr = document.createElement("tr");
+      tr.align = "center";
+
+      // 2) <td> 태그
+      tr.innerHTML = `
+         <td style="height: 55px;">${matetable.seq}</td>
+         <td style="height: 55px;"><a class="subjectA" href="mateboardView?seq=${matetable.seq}&pg=${data.pg}">${matetable.subject}</a></td>
+         <td style="height: 55px;">${matetable.id}</td>
+         <td style="height: 55px;">${matetable.logtime}</td>
+         <td style="height: 55px;">${matetable.good}</td>
+         <td style="height: 55px;">${matetable.hit}</td>
+      `;
+      tableBody.appendChild(tr)      
+   })   
+   
+   // 남은 칸
+   const remainingRows = 10 - data.list.length; // 10개의 행이 항상 보이도록
+   for (let i = 0; i < remainingRows; i++) {
+       const tr = document.createElement("tr");
+       tr.innerHTML = `
+           <td style="height: 55px;"></td>
+           <td style="height: 55px;"></td>
+           <td style="height: 55px;"></td>
+           <td style="height: 55px;"></td>
+           <td style="height: 55px;"></td>
+           <td style="height: 55px;"></td>
+       `;  // 빈 행 추가
+       tableBody.appendChild(tr);
+   }   
+   
+}
+// 페이징 태그
+function renderPagination(data) {
+   pg = data.pg;
+   
+   const pagination = document.getElementById("pagination");
+   pagination.innerHTML = "";
+   
+   const nav = document.createElement("p");
+   const p = document.createElement("p");
+   p.setAttribute("colspan", 5);
+   p.align = "center";
+   p.style.fontSize = "18px";
+   p.style.foneWeight = "bold";
+
+   // 이전
+   if(data.startPage > 3) {
+   const prevLink = document.createElement("a");
+   prevLink.href = "#";
+   prevLink.textContent = "<<";
+   prevLink.setAttribute("onclick", `fetchMateboardData(${data.startPage - 1})`);
+   prevLink.className = "paging_click";
+   p.appendChild(prevLink);
+   p.appendChild(document.createTextNode(" "));    // 공백 추가
+   }
+   
+   // 숫자
+   for(let i=data.startPage; i<=data.endPage; i++) {
+      const pageLink = document.createElement("a");
+      pageLink.href = "#";
+      pageLink.textContent = i;
+      pageLink.setAttribute("onclick", `fetchMateboardData(${i})`);
+      if(data.pg == i) {
+         pageLink.className = "currentPaging";
+      } else {
+         pageLink.className = "paging";
+      }
+      pageLink.style.display = "inline-block";
+      pageLink.style.width = "35px";
+      p.appendChild(pageLink);               
+      p.appendChild(document.createTextNode("  "));               
+   }
+   
+   // 다음
+   if(data.endPage < data.totalP) {
+   const nextLink = document.createElement("a");
+   nextLink.href = "#";
+   nextLink.textContent = ">>";
+   nextLink.setAttribute("onclick", `fetchMateboardData(${data.endPage + 1})`);
+   nextLink.className = "paging_click";
+   p.appendChild(nextLink);   
+
+   }
+   nav.appendChild(p);
+   pagination.appendChild(nav);
+   
+   document.querySelectorAll(".paging").forEach(element => {
+       element.style.textDecoration = "none";
+       element.style.color = "black";
+   });
+   document.querySelectorAll(".currentPaging").forEach(element => {
+      element.style.textDecoration = "none";
+       element.style.color = "#ff9000";
+   });   
+   document.querySelectorAll(".paging_click").forEach(element => {
+      element.style.textDecoration = "none";
+       element.style.color = "#ff9000";
+   });      
+}
+
+// 검색 기능
+function fetchMateboardListSearch(){
+	const search = document.getElementById("search").value;
+	fetch(`/mateboardListSearchJson?search=${search}`)
+		.then(response => {
+			if(!response.ok) {
+				throw new Error("네트워크 응답이 좋지 않습니다.");
+			}
+			return response.json();
+			})
+		.then(data => {
+			//alert(JSON.stringify(data));
+			renderTable(data);  		// 목록 태그
+			renderPagination(data);   	// 페이징 태그
+		})
+		.catch(err => {
+			alert(err.message);
+		})
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+   fetchMateboardData(pg);
+});
+
+</script>
+
+<div th:replace="~{layouts/header}"></div>   
+<div class="container">
+   <p id="TRIPMATE">TRIP MATE</p>
+   <hr style="border-width:2px; margin-bottom: 0px; margin-top: 5px;">
+   <table class="table">
+      <tr align="center" style="pointer-events: none; " height="3">
+         <td width="100">No</td>
+         <td width="350">제목</td>
+         <td width="80">글쓴이</td>
+         <td width="100">작성일</td>
+         <td width="80">추천수</td>
+         <td width="80">조회수</td>
+      </tr>
+      <tr align="center" class="mateboard_principle" height="3">
+         <td width="100"> 
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="19" fill="currentColor" class="bi bi-exclamation-diamond" viewBox="0 0 16 16">
+               <path d="M6.95.435c.58-.58 1.52-.58 2.1 0l6.515 6.516c.58.58.58 1.519 0 2.098L9.05 15.565c-.58.58-1.519.58-2.098 0L.435 9.05a1.48 1.48 0 0 1 0-2.098zm1.4.7a.495.495 0 0 0-.7 0L1.134 7.65a.495.495 0 0 0 0 .7l6.516 6.516a.495.495 0 0 0 .7 0l6.516-6.516a.495.495 0 0 0 0-.7L8.35 1.134z"/>
+               <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0M7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z"/>
+            </svg>
+         </td>
+         <td width="300"><a href="#" class="principle">* 반갑습니다. MATE게시판입니다.</a></td>
+         <td width="100">관리자</td>
+         <td width="150">yyyy-mm-dd</td>
+         <td width="100">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="19" fill="currentColor" class="bi bi-balloon-heart" viewBox="0 0 14 14">
+               <path fill-rule="evenodd" d="m8 2.42-.717-.737c-1.13-1.161-3.243-.777-4.01.72-.35.685-.451 1.707.236 3.062C4.16 6.753 5.52 8.32 8 10.042c2.479-1.723 3.839-3.29 4.491-4.577.687-1.355.587-2.377.236-3.061-.767-1.498-2.88-1.882-4.01-.721zm-.49 8.5c-10.78-7.44-3-13.155.359-10.063q.068.062.132.129.065-.067.132-.129c3.36-3.092 11.137 2.624.357 10.063l.235.468a.25.25 0 1 1-.448.224l-.008-.017c.008.11.02.202.037.29.054.27.161.488.419 1.003.288.578.235 1.15.076 1.629-.157.469-.422.867-.588 1.115l-.004.007a.25.25 0 1 1-.416-.278c.168-.252.4-.6.533-1.003.133-.396.163-.824-.049-1.246l-.013-.028c-.24-.48-.38-.758-.448-1.102a3 3 0 0 1-.052-.45l-.04.08a.25.25 0 1 1-.447-.224l.235-.468ZM6.013 2.06c-.649-.18-1.483.083-1.85.798-.131.258-.245.689-.08 1.335.063.244.414.198.487-.043.21-.697.627-1.447 1.359-1.692.217-.073.304-.337.084-.398"/>
+            </svg>
+         </td>
+         <td width="100">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="19" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
+               <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z"/>
+               <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0"/>
+            </svg>         
+         </td>
+      </tr>   
+      <tbody id="tableBody">
+         <!-- 동적으로 추가 / 검색기능 -->
+      </tbody>
+   </table>
+      <div style="display: flex; justify-content: space-between;">
+         <input type="button" value="새글쓰기" class="btn" onclick="location.href='mateboardWriteForm'" style="margin-left: 10px; height: 30px; font-size: 11px; margin-right: 100px;">
+         <nav id="pagination">
+            <!-- 동적으로 추가 / 검색된 페이징 동적으로 추가-->
+         </nav>
+         <span class="search_box" style="display: flex;">
+            <input type="text" class="form-control" id="search" maxlength="20" style="width: 250px; height: 30px; vertical-align: middle; font-size: 13px; color: gray;" onkeydown="javascript:if(event.keyCode==13){fetchMateboardListSearch();}">
+            <input type="button" value="검색" class="btn" style="width: 50px; height: 30px; font-size: 11px; vertical-align: middle; margin-right: 10px; margin-left: -50px; 
+            		border-radius: 0 10px 10px 0;" onclick="fetchMateboardListSearch()">
+         </span>
+      </div>      
+
+</div>
+
+<div th:replace="~{layouts/footer}"></div>   
+</body>
+</html>
