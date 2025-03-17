@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<link rel="stylesheet" href="../css/bootstrap.min.css">
+</head>
+<body>
+
+<style type="text/css">
+form {
+	margin: auto;
+	width: 350px;
+}
+input[type='radio']:checked {
+	background-color: #ff9000;
+	border-color: #ff9000;
+}
+input[type='button'] {
+	background-color: #ff9000;
+	color: white;
+}
+input[type='reset'] {
+	background-color: #ff9000;
+	color: white;
+}
+input::placeholder {
+	color: gray;
+	font-size: 0.8em;
+	font-style: italic;
+}
+#idTag {
+    font-size: 0.8em;
+    margin-top: 5px;
+    color: gray;
+    min-height: 20px;  
+    padding: 0;
+}
+</style>
+
+<script type="text/javascript">
+function checkIdOk() {
+    const personId = document.getElementById('personId').value;
+    const idTag = document.getElementById("idTag");
+
+    // 아이디가 비어 있으면 중복 검사 하지 않음
+    if(personId.trim() == "") {
+        idTag.innerHTML = '<small style="color: gray;">*id는 닉네임으로 사용되며, 변경할 수 없습니다.</small>';
+        return false;
+    } else {    // 비어 있지 않으면
+        // 서버로 아이디 중복 여부 요청 POST 방식
+        fetch(`/person/checkIdJson`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',  // JSON 형식으로 요청
+            },
+            body: JSON.stringify({id: personId })  // 바디에 JSON 형식으로 아이디를 전달
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("네트워크 응답이 좋지 않습니다.");
+                }
+                return response.json();
+            })
+            .then(data => {
+                // 메시지 동적으로 생성
+                const idMessage = document.createElement("small");
+
+                // 기존 메시지 지우기
+                idTag.innerHTML = ""; 
+
+                if (!data.result) {
+                    idMessage.textContent = "*사용 가능한 아이디입니다.";
+                    idMessage.style.color = "blue";  // 성공 메시지
+                } else {
+                    idMessage.textContent = "*사용할 수 없는 아이디입니다.";
+                    idMessage.style.color = "red";  // 오류 메시지
+                }
+
+                // 메시지 컨테이너에 추가
+                idTag.appendChild(idMessage);
+            })
+            .catch(err => {
+                alert(err.message);
+            });
+    }
+}
+
+function pwdOk() {
+    const personPwd = document.getElementById('pwd').value;
+    const personPwdCheck = document.getElementById('pwd_check').value;
+    const pwdTag = document.getElementById("pwdTag");
+
+    // 비밀번호가 비어 있으면 중복 검사 하지 않음
+    if(personPwdCheck.trim() == "") {
+    	pwdTag.innerHTML = '<small style="color: gray;">*비밀번호를 다시 입력해주세요.</small>';
+        return false;
+    } else {	// 비어 있지 않으면
+        // 비밀번호와 비밀번호 확인 값이 일치하는지 체크
+        if(personPwd !== personPwdCheck) {
+        	// 일치하지 않으면
+            pwdTag.innerHTML = '<small style="color: red;">*비밀번호가 일치하지 않습니다.</small>';
+            return false;
+        } else {
+            // 비밀번호가 일치하면
+            pwdTag.innerHTML = '<small style="color: blue;">*비밀번호가 일치합니다.</small>';
+        }
+    }
+}	
+	//페이지 로드시 비밀번호 확인 상태도 체크하도록 함
+	window.onload = function() {
+	    pwdOk();
+	}
+
+</script>
+
+<script type="text/javascript" src="/js/personScript.js"></script>
+<div th:replace="~{layouts/header}"></div>	
+<div class="container">
+	<form action="personWrite" name="form1" method="post">
+		<h4 align="left" style="margin-top: 100px">&nbsp;Sign up</h4>
+			<table class="table">
+				<tr>
+					<td>
+						<input type="text" class="form-control" name="name" placeholder="*Name">
+					</td>
+				</tr>
+				<tr>
+					<td>
+					    <input type="text" class="form-control" name="id" placeholder="*ID" style="flex: 1;" oninput="checkIdOk()" id="personId">
+					    <div id="idTag" style="font-size: 0.8em; margin-top: 5px; color: gray;">
+					    	<small style="color: gray;">*id는 닉네임으로 사용되며, 변경할 수 없습니다.</small>
+					    	<!-- 이 부분을 동적 설정 -->
+					    </div>
+					</td>
+				</tr>	
+				<tr>
+					<td><input type="password" class="form-control" name="pwd" placeholder="*Password" id="pwd"></td>
+				</tr>		
+				<tr>
+					<td>
+						<input type="password" class="form-control" name="pwd_check" oninput="pwdOk()"  id="pwd_check">
+						<div id="pwdTag" style="font-size: 0.8em; margin-top: 5px; color: gray;">
+							<small style="color: gray;">*비밀번호를 다시 입력해주세요.</small>
+							<!-- 이 부분을 동적 설정 -->
+						</div>
+					</td>
+				</tr>		
+				<tr>
+					<td colspan="2">
+						<input class="form-check-input" type="radio" name="gender" value="m" checked><label id="genderChoice">남</label>
+						<input class="form-check-input" type="radio" name="gender" value="f"><label id="genderChoice">여</label>
+					</td>
+				</tr>		
+				<tr>
+					<td colspan="2" style="display: flex;">
+						<input type="text" name="email1" class="form-control" style="flex: 1;" placeholder="*Email">@<select name="email2" class="form-select" style="width: 150px;">
+							<option value="naver.com">naver.com</option>
+							<option value="daum.net">daum.net</option>
+							<option value="gmail.com">gmail.com</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="3" style="display: flex; gap: 2px;">
+						<select name="tel1" class="form-select" style="flex: 1;">
+							<option value="010">010</option>
+							<option value="02">02</option>
+							<option value="055">055</option>
+						</select> - <input type="text" name="tel2" class="form-control" style="width: 110px;"> - <input type="text" name="tel3" class="form-control" style="width: 110px;">
+					</td>
+				</tr>	
+				<tr>
+					<td align="center" colspan="2">
+						<input type="button" value="입력 완료" onclick="checkWrite()" class="btn">
+						<input type="reset" value="다시 작성" class="btn">
+					</td>
+				</tr>										 
+			</table>		
+		</form>
+	</div>
+<div th:replace="~{layouts/footer}"></div>
+</body>
+</html>

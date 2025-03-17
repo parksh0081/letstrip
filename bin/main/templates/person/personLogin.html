@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript" th:inline="javascript" >
+window.onload = function() {
+	setTimeout(function(){
+		var result = /*[[${result}]]*/false;
+		if(result) {
+			alert("로그인 성공");
+		} else {
+			alert("로그인 실패");
+			history.back();
+		}
+		location.href = "index";
+	}, 100);
+}
+
+</script>
+</head>
+<body>
+
+</body>
+</html>
