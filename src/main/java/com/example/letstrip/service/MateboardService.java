@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.letstrip.dao.MateboardDAO;
+import com.example.letstrip.dto.MateboardDTO;
 import com.example.letstrip.entity.Mateboard;
 
 @Service
@@ -28,5 +29,10 @@ public class MateboardService {
 	public List<Mateboard> mateboardListSearch(int startNum, int endNum, String search){
 		return dao.mateboardListSearch(startNum, endNum, search);
 	}	
+	
+	// 게시판 글 쓰기
+	public Mateboard mateboardWrite(MateboardDTO dto) {
+		return dao.mateboardWrite(dto);
+	}
 
 }

@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.example.letstrip.dto.MateboardDTO;
 import com.example.letstrip.entity.Mateboard;
 import com.example.letstrip.repository.MateboardRepository;
 
@@ -27,6 +28,12 @@ public class MateboardDAO {
 	// 게시판 검색 목록
 	public List<Mateboard> mateboardListSearch(int startNum, int endNum, String search){
 		return mateboardRepository.findByStartnumAndEndnumAndSearch(startNum, endNum, search);
-	}	
+	}
+	
+	// 게시판 글 쓰기
+	public Mateboard mateboardWrite(MateboardDTO dto) {
+		Mateboard mateboard = dto.toEntity();
+		return mateboardRepository.save(mateboard);
+	}
 
 }
