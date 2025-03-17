@@ -30,10 +30,17 @@ public class MateboardDAO {
 		return mateboardRepository.findByStartnumAndEndnumAndSearch(startNum, endNum, search);
 	}
 	
+	// 검색 글 수 구하기
+	public int totalMateSearchA(String search) {
+		return (int) mateboardRepository.countBySearch(search);
+	}
+	
 	// 게시판 글 쓰기
 	public Mateboard mateboardWrite(MateboardDTO dto) {
 		Mateboard mateboard = dto.toEntity();
 		return mateboardRepository.save(mateboard);
 	}
+	
+	
 
 }

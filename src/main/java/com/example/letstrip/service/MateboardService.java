@@ -30,9 +30,16 @@ public class MateboardService {
 		return dao.mateboardListSearch(startNum, endNum, search);
 	}	
 	
+	// 검색 글 수
+	public int totalMateSearchA(String search) {
+		return dao.totalMateSearchA(search);
+	}
+	
 	// 게시판 글 쓰기
 	public Mateboard mateboardWrite(MateboardDTO dto) {
 		return dao.mateboardWrite(dto);
 	}
+
+
 
 }

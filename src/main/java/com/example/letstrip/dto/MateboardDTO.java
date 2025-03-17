@@ -13,12 +13,11 @@ public class MateboardDTO {
     private String name;
     private String subject;
     private String content;
-    private String matefile;
     private int good;
     private int hit;
     private Date logtime;
     
     public Mateboard toEntity() {
-    	return new Mateboard(seq, id, name, subject, content, matefile, good, hit, logtime);
+    	return new Mateboard(seq, id, name, subject, content, good, hit, logtime);
     }
 }

@@ -30,10 +30,23 @@ public class MateboardController {
 	}
 	
 	// 글쓰기
-	@PostMapping("/mateboard/mateboardWriteForm")
+	@GetMapping("/mateboard/mateboardWriteForm")
 	public String mateboardWriteForm(Model model, MateboardDTO dto, HttpSession session) {
+		String id = (String)session.getAttribute("personId");
+		String name = (String)session.getAttribute("personName");
+
+		model.addAttribute("id", id);
+		model.addAttribute("name", name);
+		// 3. view 파일명 리턴
+		return "/mateboard/mateboardWriteForm";
+	}
+	
+	// 글쓰기 확인
+	@PostMapping("/mateboard/mateboardWrite")
+	public String mateboardWrite(Model model, MateboardDTO dto, HttpSession session) {
 		dto.setId((String)session.getAttribute("personId"));
 		dto.setName((String)session.getAttribute("personName"));
+		
 		dto.setLogtime(new Date());
 		
 		// db
@@ -46,7 +59,8 @@ public class MateboardController {
 		// 2. 데이터 공유
 		model.addAttribute("result", result);
 		// 3. view 파일명 리턴
-		return "/mateboard/mateboardWriteForm";
-	}
-
+		return "/mateboard/mateboardWrite";
+	}	
+	
+	
 }

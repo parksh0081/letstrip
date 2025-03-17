@@ -188,6 +188,7 @@ function renderPagination(data) {
 // 검색 기능
 function fetchMateboardListSearch(){
 	const search = document.getElementById("search").value;
+	const currentPage = 1; // 페이징도 검색에 맞춰야
 	fetch(`/mateboardListSearchJson?search=${search}`)
 		.then(response => {
 			if(!response.ok) {

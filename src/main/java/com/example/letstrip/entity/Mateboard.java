@@ -26,7 +26,6 @@ public class Mateboard {
     private String name;
     private String subject;
     private String content;
-    private String matefile;
     private int good;
     private int hit;
     @Temporal(TemporalType.DATE)

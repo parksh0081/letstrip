@@ -66,7 +66,7 @@ public class MateboardRestController {
       List<Mateboard> list = service.mateboardListSearch(startNum, endNum, search);
       
       // 페이징 처리 (7개씩)
-      int totalA = service.totalMateA();
+      int totalA = service.totalMateSearchA(search);
       int totalP = (totalA + 9) / 10;
       
       int startPage = (pg - 1) / 7 * 7 + 1;

@@ -22,4 +22,9 @@ public interface MateboardRepository extends JpaRepository<Mateboard, Integer>{
 	        + "(select * from mateboard where subject like %:search% order by seq desc) tt) "
 	        + "where rn>=:startNum and rn<=:endNum", nativeQuery = true)    
 	List<Mateboard> findByStartnumAndEndnumAndSearch(@Param("startNum") int startNum, @Param("endNum") int endNum, @Param("search") String search);
+	
+	// 검색 글 수
+	@Query(value = "select count(*) as cnt from mateboard where subject like %:search%", nativeQuery = true)
+	long countBySearch(@Param("search") String search);
+
 }

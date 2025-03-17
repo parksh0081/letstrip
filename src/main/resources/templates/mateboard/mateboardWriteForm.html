@@ -174,25 +174,27 @@ $(document).ready(function() {
 <div th:replace="~{layouts/header}"></div>	
 
 <div class="container">
-    <p style="color: #ff9000; margin-top: 30px; margin-left: 10px; margin-bottom: 0px; font-weight: bold; font-size: 30px;"><a id="title_List" href="mateboardList">TRIP MATE</a></p>
-    <hr style="border-width:2px; margin-bottom: 10px; margin-top: 5px;">
-    <table>
-		<tr>
-		    <td colspan="2">
-		    	<input type="button" id="title" value="제 목" disabled>
-		    	<input type="text" class="form-control" name="subject">
-		    </td>
-		</tr>
-    	<tr>
-    		<td>
-				<textarea id="summernote" style="margin: auto;"></textarea>
-			</td>
-	    </tr>   
-    </table>
-	<div align="center">
-		<input type="button" id="submit" class="btn" value="등록">
-		<input type="button" id="list" class="btn" value="목록" onclick="location.href='mateboardList'">
-	</div>
+	<form action="mateboardWrite" method="post" name="form1">
+	    <p style="color: #ff9000; margin-top: 30px; margin-left: 10px; margin-bottom: 0px; font-weight: bold; font-size: 30px;"><a id="title_List" href="mateboardList">TRIP MATE</a></p>
+	    <hr style="border-width:2px; margin-bottom: 10px; margin-top: 5px;">
+	    <table>
+			<tr>
+			    <td colspan="2">
+			    	<input type="button" id="title" value="제 목" disabled>
+			    	<input type="text" class="form-control" name="subject">
+			    </td>
+			</tr>
+	    	<tr>
+	    		<td>
+					<textarea id="summernote" style="margin: auto;"></textarea>
+				</td>
+		    </tr>   
+	    </table>
+		<div align="center">
+			<input type="button" id="submit" class="btn" value="등록">
+			<input type="button" id="list" class="btn" value="목록" onclick="location.href='mateboardList'">
+		</div>
+	</form>
 </div>
 
 <div th:replace="~{layouts/footer}"></div>	
