@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+<div th:replace="~{layouts/header}"></div>	
+
+<script type="text/javascript">
+	window.onload = function() {
+		setTimeout(function() {
+			alert("로그아웃");
+			location.href="/index";
+		}, 100);
+	}
+</script>
+
+<div th:replace="~{layouts/footer}"></div>	
+</body>
+</html>
