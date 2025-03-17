@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>My Planner</title>
+
+<style type="text/css">
+#tlContainer{
+	width: 500px;
+    height: 100%;
+    border-color: gray;
+    float: left;
+}
+</style>
+</head>
+<body>
+<div th:replace="~{layouts/header}"></div>
+	<div class="container">
+		<!-- 타임라인 구역 -->
+		<div id="tlContainer">
+			<h3>타임라인</h3> 
+			<div th:replace="~{planner/travelplan}"></div>
+		</div>	
+		<!-- 찜 목록 구역 -->
+		<div id="wishlistContainer"></div>
+	
+		<!-- 찜 장소 상세 정보 -->
+		<div id="wishDetailContainer"></div>
+		
+		<!-- 달력 버튼 -->
+		<div id="calendarContainer"></div>
+	</div>	
+<div th:replace="~{layouts/footer}"></div>
+</body>
+</html>
