@@ -27,6 +27,7 @@
     text-decoration: underline;
 }
 
+
 /* 제목 */
 .blog-title {
 	font-size: 20px;
@@ -34,6 +35,9 @@
 	margin-bottom: 15px;
 	border-bottom: 2px solid #ddd;
 	padding-bottom: 10px;
+	display: flex;              /* 제목과 아이콘을 한 줄로 배치 */
+    justify-content: space-between; /* 양 끝으로 배치 */
+    align-items: center;        /* 수직 가운데 정렬 */
 }
 
 /* 작성자, 날짜 */
@@ -64,6 +68,48 @@
 			location.href = "blogboardDelete?seq=[[${seq}]]&pg=[[${pg}]]";
 		}
 	}
+	
+	function toggleListSection() {
+        //const section = document.getElementById("comment_section");
+        //section.style.display = section.style.display === "none" ? "block" : "none";
+    }
+	
+    function toggleCommentSection() {
+        const section = document.getElementById("comment_section");
+        section.style.display = section.style.display === "none" ? "block" : "none";
+    }
+    
+    function addComment() {
+        const commentList = document.getElementById("comment_list");
+        const userName = document.getElementById("comment_user").value.trim();
+        const commentText = document.getElementById("comment_text").value.trim();
+
+        if (!userName) {
+            alert("작성자를 입력하세요.");
+            return;
+        }
+        if (!commentText) {
+            alert("댓글 내용을 입력하세요.");
+            return;
+        }
+
+        const date = new Date();
+        const formattedDate = date.toLocaleString();
+
+        const li = document.createElement("li");
+        li.className = "comment-item";
+        li.innerHTML = `
+            <span class="comment-writer">${userName}</span> 
+            <span class="comment-time">(${formattedDate})</span>
+            <p>${commentText}</p>
+            <span class="delete-comment" onclick="this.parentElement.remove()">삭제</span>
+        `;
+
+        commentList.appendChild(li);
+        document.getElementById("comment_user").value = "";
+        document.getElementById("comment_text").value = "";
+    }
+
 </script>
 </head>
 <body>
@@ -78,7 +124,15 @@
 	
 		<div class="blog-container">
 	        <!-- 제목 -->
-	        <div class="blog-title" th:text="${blogboard.blogsubject}"></div>
+	        <div class="blog-title">
+	        	<div th:text="${blogboard.blogsubject}"></div>
+	        
+		        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" 
+		        	class="bi bi-three-dots-vertical" viewBox="0 0 16 16" style="cursor: pointer; " onclick="toggleListSection()">
+				  <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"/>
+				</svg>
+	        </div>
+	        
 	
 	        <!-- 작성자 & 날짜 -->
 	        <div class="blog-meta">
@@ -87,12 +141,27 @@
 	            작성일: <span th:text="${#dates.format(blogboard.logtime, 'yyyy-MM-dd')}"></span>
 	        </div>
 	
-	        <!-- 대표 이미지 (있을 경우) -->
-	        <img th:if="${blogboard.blogimage1}" th:src="@{'/storage/' + ${blogboard.blogimage1}}" class="blog-image" alt="대표 이미지">
-	
 	        <!-- 본문 내용 -->
 	        <div class="blog-content" th:utext="${blogboard.blogcontent}"></div>
     	</div>
+    	
+    	<div align="left">
+    		<input type="button" value="댓글 " onclick="toggleCommentSection()">
+    	</div>
+    	
+    	<!-- 댓글 입력 폼 -->
+   		<div id="comment_section">
+	        <h4>댓글 달기</h4>
+	        <input type="text" id="comment_user" placeholder="작성자" style="width: 150px;">
+	        <textarea id="comment_text" placeholder="댓글 내용" style="width: 400px; height: 60px;"></textarea>
+	        <button onclick="addComment()">등록</button>
+	    </div>
+	
+	    <!-- 댓글 목록 -->
+	    <h4>댓글 목록</h4>
+	    <ul id="comment_list" style="border-top: 1px solid #ddd; padding-top: 10px;">
+	        <!-- 동적으로 댓글 추가됨 -->
+	    </ul>
 	</div>
 
 
