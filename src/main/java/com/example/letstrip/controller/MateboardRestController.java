@@ -15,10 +15,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.letstrip.entity.Mateboard;
@@ -85,12 +83,9 @@ public class MateboardRestController {
       return map;     
    }
    
-   @Autowired
-   private final WebApplicationContext context;   
-   
    // 파일 저장 폴더 경로
-   @Value("${project.upload.path}")
-   private String uploadpath;   
+	@Value("${project.upload.path}")
+	private String uploadpath;  
    
    @PostMapping(value = "/mateboardImageUpload")
    public ResponseEntity<?> mateboardImageUpload(@RequestParam("file") MultipartFile file) throws IllegalStateException, IOException {
