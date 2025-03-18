@@ -39,6 +39,11 @@ public class MateboardService {
 	public Mateboard mateboardWrite(MateboardDTO dto) {
 		return dao.mateboardWrite(dto);
 	}
+	
+	// 게시판 상세보기
+	public Mateboard mateboardView(int seq) {
+		return dao.mateboardView(seq);
+	}
 
 
 

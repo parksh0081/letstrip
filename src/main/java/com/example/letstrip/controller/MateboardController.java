@@ -57,7 +57,13 @@ public class MateboardController {
 	
 	// 글 상세보기
 	@GetMapping("/mateboard/mateboardView")
-	public String mateboardView() {
+	public String mateboardView(@RequestParam("pg") int pg, @RequestParam("seq") int seq, Model model) {
+		Mateboard mateboard = service.mateboardView(seq);
+		
+		model.addAttribute("pg", pg);
+		model.addAttribute("seq", seq);
+		model.addAttribute("mateboard", mateboard);
+		
 		return "/mateboard/mateboardView";
 	}	
 	

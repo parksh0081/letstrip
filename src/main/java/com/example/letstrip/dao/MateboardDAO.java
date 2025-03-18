@@ -41,6 +41,10 @@ public class MateboardDAO {
 		return mateboardRepository.save(mateboard);
 	}
 	
+	// 게시판 상세보기
+	public Mateboard mateboardView(int seq) {
+		return mateboardRepository.findById(seq).orElse(null);
+	}
 	
 
 }

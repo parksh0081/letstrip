@@ -22,10 +22,11 @@ import org.springframework.web.multipart.MultipartFile;
 import com.example.letstrip.entity.Mateboard;
 import com.example.letstrip.service.MateboardService;
 
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequiredArgsConstructor
+@RequiredArgsConstructor 
 public class MateboardRestController {
    
    @Autowired
@@ -131,7 +132,7 @@ public class MateboardRestController {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		}   
+	}  
 
 }
 

@@ -7,11 +7,236 @@
 <body>
 <div th:replace="~{layouts/header}"></div>	
 
+<style type="text/css">
+.container {
+   width: 1400px;
+   margin: auto;
+}
+table {
+   margin: auto;
+   width: 100%;
+}
+#title_List {
+   color: #ff9000;
+   text-decoration: none;	
+}
+input[id="title"] {
+	width: 100px; 
+	background: #ff9000; 
+	height: 40px; 
+	margin-bottom: -3px; 
+	display: inline-block;
+	border-radius: 10px 0 0 0;
+	border-color: #808080;
+	text-align: center;
+	font-weight: bold;
+	color: white;
+}
+input[id="writer"] {
+	width: 100px; 
+	background: #ff9000; 
+	height: 40px; 
+	margin-bottom: -3px; 
+	margin-left: -3px; 
+	display: inline-block;
+	border-color: #808080;
+	text-align: center;
+	font-weight: bold;
+	color: white;
+}
+input[name="subject"] {
+	width: 900px;
+	height: 40px; 
+	border-radius: 0 0 0 0;
+	margin-bottom: -3px; 
+	display: inline-block;
+}
+input[name="id"] {
+	width: 198px;
+	height: 40px; 
+	border-radius: 0 10px 0 0;
+	margin-bottom: -3px; 
+	display: inline-block;
+}
+input[id="submit_btn"] {
+	width: 80px; 
+	background: #ff9000; 
+	height: 30px; 
+	text-align: center;
+	color: white;
+	vertical-align: middle;	
+	font-size: 13px; 
+	margin-top: 13px;
+	margin-left: 10px;
+	margin-right: 10px;
+}
+input[id="delete_btn"] {
+	width: 80px; 
+	background: #ff9000; 
+	height: 30px; 
+	text-align: center;
+	color: white;
+	vertical-align: middle;	
+	font-size: 13px; 
+	margin-top: 13px;
+	margin-left: 10px;
+	margin-right: 10px;
+
+}
+input[id="list_btn"] {
+	width: 80px; 
+	background: #ff9000; 
+	height: 30px; 
+	text-align: center;
+	color: white;
+	vertical-align: middle;	
+	font-size: 13px; 
+	margin-top: 13px;
+	margin-left: 10px;
+	margin-right: 10px;
+}
+input[id="good_btn"] {
+	width: 80px; 
+	background: #ff9000; 
+	height: 30px; 
+	text-align: center;
+	color: white;
+	vertical-align: middle;	
+	font-size: 13px; 
+	margin-top: 13px;
+	margin-left: 10px;
+	margin-right: 10px;
+}
+#summernote {
+	width: 100%;
+	min-height: 550px;
+	margin-top: 20px;
+	vertical-align: middle;
+}
+#comment_form {
+
+}
+#comment {
+	width: 100%;
+	height: 75px;
+	overflow-y: scroll;
+	resize: none;
+	margin-left: 2px;
+}
+input[id="commentSubmit_btn"]  {
+	width: 80px; 
+	height: 30px; 
+	border: 2px solid #ff9000; 
+	text-align: center;
+	color: black;
+	vertical-align: middle;	
+	font-size: 13px; 
+	margin-top: 13px;
+	margin-left: auto;
+	margin-right: 10px;	
+}
+</style>
+
+<script type="text/javascript" th:inline="javascript">
+
+// json 형식으로 전송
+function mateboardComment() {
+	var frm = document.form1;
+	if(!frm.comment.value) {
+		alert("내용을 입력하세요.");
+		frm.comment.focus();
+		return false;
+	} else {	
+		// 태그 선택
+	   	const commentContent = document.getElementById("comment").value;
+		
+	   	const requestData = {
+	   		    mateboardseq: /*[[${mateboard.seq}]]*/ 1,  		// 게시글 seq (서버에서 전달된 값)
+	   		 	commentseq: 1,                           	// 댓글 번호는 DB에서 자동 증가
+	   		    mateboardid: /*[[${mateboard.id}]]*/ null,    	// 게시글 id (서버에서 전달된 값)
+	   		    commentid: /*[[${session.personId}]]*/ null, 	// 댓글 작성자 아이디 (세션에서 가져온 값)
+	   		    commentcontent: commentContent,      			// 사용자 입력값
+	   		    comment_re_ref: null,       					// 관련글번호 DB에서 자동 증가
+	   		    comment_re_lev: null,   			 			// 답글레벨 DB에서 자동 증가
+	   		    comment_re_seq: null,        					// 관련글중 출력순서 DB에서 자동 증가  
+	   		    logtime : null        							// controller에서 작업
+	   		};
+	   	
+	    fetch(`/mateboardComment`, {
+	        method: 'POST',
+	        headers: {
+	            'Content-Type': 'application/json',
+	        },
+	        body: JSON.stringify(requestData),
+	    })
+	    .then(response => {
+	    	alert(response.ok);
+			if(!response.ok) {
+				throw new Error("네트워크 응답이 좋지 않습니다.");
+			}
+			return response.json();
+		})
+	    .then(data => {
+	    	alert(data);
+	        renderCommentList(data);
+	    })
+	    .catch(error => {
+	    	alert("에러가 발생했습니다.");
+	    })
+	}
+}
+
+// // html에 추가
+// function renderCommentList(data) {
+//     const commentList = document.getElementById('commentList');
+//     const newComment = document.createElement('li');
+//     newComment.textContent = `${data.commentid}: ${data.commentcontent}`;
+//     commentList.appendChild(newComment);
+// }
+
+</script>
+
 <div class="container">
-
-
-
-
+	<p style="color: #ff9000; margin-top: 30px; margin-left: 10px; margin-bottom: 0px; font-weight: bold; font-size: 30px;"><a id="title_List" href="mateboardList">TRIP MATE</a></p>
+	<hr style="border-width:2px; margin-bottom: 10px; margin-top: 5px;">
+	    <table>
+			<tr>
+			    <td colspan="2" style="display: flex">
+			    	<input type="button" id="title" value="제 목" disabled>
+			    	<input type="text" class="form-control" name="subject" th:value="${mateboard.subject}">
+			    	<input type="button" id="writer" value="글쓴이" disabled>
+			    	<input type="text" class="form-control" name="id" th:value="${mateboard.id}">
+			    </td>
+			</tr>
+	    	<tr>
+	    		<td>
+					<div id="summernote" name="content" th:utext="${mateboard.content}"></div>
+				</td>
+		    </tr>   
+	    </table>
+	<hr style="border-width:2px; margin-bottom: 10px; margin-top: 5px;">   
+	
+	<!-- 답글 -->
+	<ul id="comment_list">
+		<!-- 여기에 동적 생성 요소가 들어가게 된다. -->
+	</ul>
+	<div id="comment_write">
+		<form id="comment_form" name="form1">
+			<textarea name="comment" class="form-control" id="comment" placeholder="답글을 입력하세요."></textarea>
+		</form>
+	</div>	    
+	    
+		<div align="center">
+			<th:block th:if="${session.personId == mateboard.id}">	
+				<input type="button" id="submit_btn" class="btn" value="수정">
+				<input type="button" id="delete_btn" class="btn" value="삭제">
+			</th:block>
+			<th:block th:if="${session.personId != mateboard.id}">				
+				<input type="button" id="good_btn" class="btn" th:value="추천">
+			</th:block>	
+				<input type="button" id="list_btn" class="btn" value="목록" th:onclick="|location.href='mateboardList?pg=${pg}'|">
+				<input type="button" class="btn btn-outline" id="commentSubmit_btn" value="답글 저장" onclick="mateboardComment()">
+		</div>
 </div>
 
 
