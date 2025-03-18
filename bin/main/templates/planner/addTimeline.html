@@ -5,13 +5,28 @@
 <title>addTimeline</title>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" />
 <script type="text/javascript">
+	//Thymeleaf에서 값 가져오기
+	let start_date = `[[${startDate}]]`;
+	let end_date = `[[${endDate}]]`;
+	
+	// 값이 없으면 기본값 설정 (오늘 날짜)
+	if (!startDate || startDate === "null") {
+	    startDate = moment().format("YYYY-MM-DD");
+	}
+	if (!endDate || endDate === "null") {
+	    endDate = moment().add(1, "days").format("YYYY-MM-DD");
+	}
+	
 	window.onload = function() {
 	    if (window.opener) {
 	        let addButton = window.opener.document.getElementById("addbtn");
 	        if (addButton) {
 	            addButton.readOnly = true; // 부모 창의 버튼을 읽기 전용으로 설정
+	         	
 	        }
 	    }
+	    console.log(window.opener.location.href);
+	    
 	};
 	function addTL(){
 		var frm = document.form1;
@@ -28,12 +43,13 @@
 	}
 	
 	function sendData() {
+		
 		let id = document.getElementById("personId").value;
         let datetime = document.getElementById("datepicker").value;
         let title = document.getElementById("title-input").value;
         let memo = document.getElementById("memo-input").value;
 
-     	let values = {id, title, memo, datetime};
+     	let values = {id, title, memo, datetime, start_date, end_date};
 
         // 부모 창에 데이터 전달 (POST 방식)
         if (values) {
@@ -59,7 +75,7 @@
 </head>
 <body>
 <div class="container">
-	<form action="/planner/timeline" name="form1">
+	<form action="#" name="form1">
 		<input id="personId" type="hidden" th:value="${personId}" name="personId">
 		<!-- 시간 -->
 		<div class="container well">
@@ -69,7 +85,8 @@
 				</div>
 				<div class="col-md-6">
 					<div class="form-control-wrapper">
-						<input id="datepicker" type="datetime-local" step="120" name="datetime" class="form-control floating-label"/>						
+						<input id="datepicker" type="datetime-local" step="120" name="datetime"
+						 class="form-control floating-label" th:attr="min=${startDate}, max=${endDate}"/>						
 					</div>
 				</div>
 			</div>

@@ -41,6 +41,7 @@ public class TimelineController {
 	public String myPlanner(Model model, HttpServletRequest request, HttpSession session) {
 		String personId = (String) session.getAttribute("personId");
 		model.addAttribute("personId", personId);
+		model.addAttribute("req", "none");
 		return "/planner/myPlanner";
 	}
 	
@@ -64,7 +65,8 @@ public class TimelineController {
         model.addAttribute("startDate", startDateTime);
         model.addAttribute("endDate", endDateTime);
 
-        return "/planner/timeline";
+        model.addAttribute("req", "/planner/timeline");
+        return "/planner/myPlanner";
     }
 
     /**
@@ -81,24 +83,22 @@ public class TimelineController {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDateTime startDateTime = LocalDate.parse(startDate, formatter).atStartOfDay();
-        LocalDateTime endDateTime = LocalDate.parse(endDate, formatter).atStartOfDay();
+        LocalDateTime endDateTime = LocalDate.parse(endDate, formatter).atTime(23, 59); // 마지막 날은 하루 끝까지
 
         model.addAttribute("personId", personId);
         model.addAttribute("startDate", startDateTime);
         model.addAttribute("endDate", endDateTime);
 
-        return "/planner/addTimeline";
+        model.addAttribute("req", "/planner/addTimeline");
+        return "/planner/myPlanner";
     }
 
     /**
      * 타임라인 저장 (POST) - addTimeline.html에서 입력된 정보를 저장 후 timeline.html로 리다이렉트
      */
     @PostMapping("/planner/timeline")
-    public String saveTimeline(
-        Model model,
-        @ModelAttribute TimelineDTO dto,
-        HttpSession session
-    ) {
+    @ResponseBody
+    public String saveTimeline(Model model, TimelineDTO dto, HttpSession session) {
         String personId = (String) session.getAttribute("personId");
 
         // Travelplan 객체 생성 및 연결
@@ -109,8 +109,14 @@ public class TimelineController {
         // Timeline 저장
         timelineService.addTimeline(dto);
 
-        model.addAttribute("personId", personId);
-        return "redirect:/planner/timeline?startDate=" + dto.getStart_date() + "&endDate=" + dto.getEnd_date();
+        // 타임라인을 다시 로드해서 반환
+        LocalDateTime startDate = dto.getStart_date();
+        LocalDateTime endDate = dto.getEnd_date();
+
+        model.addAttribute("startDate", startDate);
+        model.addAttribute("endDate", endDate);
+        model.addAttribute("req", "/planner/timeline");
+        return "/planner/myPlanner";
     }
 
     /**
@@ -128,7 +134,9 @@ public class TimelineController {
 
         model.addAttribute("personId", personId);
         model.addAttribute("result", result);
-        return "/planner/deleteTimeline";
+        
+        model.addAttribute("req", "/planner/deleteTimeline");
+        return "/planner/myPlanner";
     }
 	
 }

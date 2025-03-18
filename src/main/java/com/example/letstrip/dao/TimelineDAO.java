@@ -17,15 +17,14 @@ import com.example.letstrip.repository.TimelineRepository;
 public class TimelineDAO {
 	@Autowired
 	TimelineRepository timelineRepository;
+	
 	// 타임라인 추가
 	public boolean addTimeline(TimelineDTO dto) {
 		boolean result = false;
-		if(!timelineRepository.existsById(dto.getTimelineSeq())) {
-			Timeline timeline = dto.toEntity();
-			Timeline timeline_result = timelineRepository.save(timeline);
-			if(timeline_result != null) {
-				result = true;
-			}
+		Timeline timeline = dto.toEntity();
+		Timeline timeline_result = timelineRepository.save(timeline);
+		if(timeline_result != null) {
+			result = true;
 		}
 		return result;
 	}

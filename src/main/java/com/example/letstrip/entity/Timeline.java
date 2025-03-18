@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -31,6 +33,7 @@ public class Timeline {
     
 	@ManyToOne
     @JoinColumn(name = "id", nullable = false)
+	@JsonBackReference  // 무한참조 방지
     private Travelplan travelplan;  // 연관된 travel_plan 객체
 	
 	@Column(name = "start_date", nullable = false)

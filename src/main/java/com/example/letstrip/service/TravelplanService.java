@@ -17,16 +17,8 @@ public class TravelplanService {
 		return dao.findTPById(id);
 	}
 	
-	public Travelplan createTravelPlan(String id, List<Timeline> timelines) {
-		return dao.createTravelPlan(id, timelines);
-	}
-	
-	public List<Timeline> getTravelplanByUserId(String id) {
-		return dao.getTravelplanByUserId(id);
-	}
-	
-	public void deleteTravelPlan(String id) {
-		dao.deleteTravelPlan(id);
+	public Travelplan createTravelPlan(String id) {
+		return dao.createTravelPlan(id);
 	}
 	
 }

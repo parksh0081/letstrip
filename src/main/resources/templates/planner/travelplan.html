@@ -1,77 +1,66 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
+
 <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
-</head>
-<body>
-	<div class="container">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" />
+
+<!-- javascript -->
 <script type="text/javascript">
-	$(document).ready(function() {
-	    $('input[name="daterange"]').daterangepicker({
-	        locale: {
-	            format: 'YYYY-MM-DD'
-	        }
-	    });
-	});
+    $(document).ready(function() {
+        // daterangepicker 초기화
+        $('input[name="daterange"]').daterangepicker({
+            locale: {
+                format: 'YYYY-MM-DD'
+            }
+        });
+    });
 
-	function inputTLspan() {
-	    const dateRangeInput = document.querySelector('input[name="daterange"]');
-	    const dateRange = dateRangeInput.value.split(" - ");
-	    
-	    if (dateRange.length !== 2) {
-	        alert("올바른 날짜 범위를 선택하세요.");
-	        return false;
-	    } 
-	    const startDate = new Date(dateRange[0]);
-	    const endDate = new Date(dateRange[1]);
-	    
-	    if (isNaN(startDate.getTime()) || isNaN(endDate.getTime()) || startDate > endDate) {
-	        alert("올바른 날짜 범위를 선택하세요.");
-	        return false;
-	    }
-	    
-	 	// moment.js를 사용하여 날짜 변환
-	    const start_date = moment(dateRange[0], "YYYY-MM-DD").format("YYYY-MM-DD");
-	    const end_date = moment(dateRange[1], "YYYY-MM-DD").format("YYYY-MM-DD");
-	    
-	    console.log(`start_date = ${start_date}, end_date = ${end_date}`);
+    function inputTLspan() {
+        const dateRangeInput = document.querySelector('input[name="daterange"]');
+        const dateRange = dateRangeInput.value.split(" - ");
+        
+        if (dateRange.length !== 2) {
+            alert("올바른 날짜 범위를 선택하세요.");
+            return false;
+        } 
+        const startDate = new Date(dateRange[0]);
+        const endDate = new Date(dateRange[1]);
+        
+        if (isNaN(startDate.getTime()) || isNaN(endDate.getTime()) || startDate > endDate) {
+            alert("올바른 날짜 범위를 선택하세요.");
+            return false;
+        }
+        
+        // moment.js를 사용하여 날짜 변환
+        const start_date = moment(dateRange[0], "YYYY-MM-DD").format("YYYY-MM-DD");
+        const end_date = moment(dateRange[1], "YYYY-MM-DD").format("YYYY-MM-DD");
 
-	    // hidden input에 값 설정
-	    document.querySelector('input[name="startDate"]').value = start_date;
-	    document.querySelector('input[name="endDate"]').value = end_date;
-
-	    document.form1.submit();
-/*	   	
-	    $.ajax({
+        // Ajax 요청으로 서버에 날짜 전달하고 타임라인 갱신
+        $.ajax({
             url: '/planner/timeline',  // 서버의 URL (컨트롤러의 매핑된 URL)
             type: 'GET',
             contentType: 'application/json', // JSON 형식으로 보낼 것을 명시
-            data: JSON.stringify({
+            data: {
                 startDate: start_date,
                 endDate: end_date
-            }),
+            },
             success: function(response) {
-            	alert("여행 일정이 등록되었습니다!");
+                // 타임라인 영역만 갱신
+                alert("여행 일정이 등록되었습니다");
+                window.location.href = '/planner/timeline?startDate=' + start_date + '&endDate=' + end_date;
             },
             error: function() {
                 alert('서버와의 통신에 실패했습니다.');
             }
         });
-*/
-	}
+    }
 </script>
-			<label for="daterange">여행 기간:</label>
-	        <input type="text" name="daterange" id="daterange">
-			<input type="button" class="btn" onclick="inputTLspan()" value="여행 기간 등록">
-		<form action="/planner/timeline" name="form1">
-			<input type="hidden" name="startDate" th:value="${start_date}">
-			<input type="hidden" name="endDate" th:value="${end_date}">
-		</form>
-	</div>
-</body>
-</html>
+
+<!-- html -->
+<div class="container">
+	<label for="daterange">여행 기간:</label>
+	<input type="text" name="daterange" id="daterange">
+	<input type="button" class="btn" onclick="inputTLspan()" value="여행 기간 등록">
+</div>
+

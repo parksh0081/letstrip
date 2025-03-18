@@ -1,13 +1,10 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
+
 <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" />
+
 <style type="text/css">
 body {
 	line-height: 1.3em;
@@ -58,19 +55,7 @@ body {
 	transform: translateX(-50%); /* X축 가운데 정렬 */
 }
 
-.tl-days::before {
-	background: #FF9000 none repeat scroll 0 0;
-	border: 3px solid #DF7600;
-	border-radius: 50%;
-	content: " ";
-	height: 30px;
-	left: 0px;
-	position: absolute;
-	top: -5px;
-	transition: all 500ms ease-in-out 0s;
-	width: 30px;
-	transform: translateX(-50%); /* X축 가운데 정렬 */
-}
+
 .tl-days {
 	color: orange;
 	font-weight: bold;
@@ -109,9 +94,78 @@ body {
 	font-family: "Roboto",sans-serif;
 }
 .btn:hover { background-color: #DF7600; color: white; }
+
+/* tab */
+/* 탭 컨테이너 */
+.nav-tabs {
+  border-bottom: none;
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+/* 탭 아이템 */
+.nav-tabs > li {
+  margin: 0 5px;
+  transition: all 0.3s ease;
+}
+
+/* 탭 링크 */
+.nav-tabs > li > a {
+  display: block;
+  padding: 10px 20px;
+  border-radius: 12px;
+  background-color: #f9f9f9;
+  color: #555;
+
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  font-weight: 500;
+}
+
+/* 호버 시 */
+.nav-tabs > li > a:hover {
+  background-color: #ffe8cc;
+  color: #d35400;
+  border-color: #f0ad4e;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* 활성 탭 */
+.nav-tabs > li.active > a,
+.nav-tabs > li.active > a:focus,
+.nav-tabs > li.active > a:hover {
+  color: white;
+  background-color: #ff9000;
+  border: 1px solid #ff9000;
+  border-bottom-color: transparent;
+  box-shadow: 0 4px 10px rgba(255, 144, 0, 0.4);
+  transform: translateY(-2px);
+}
+
+/* 부드러운 애니메이션 */
+.nav-tabs > li > a, 
+.nav-tabs > li.active > a {
+  transition: all 0.3s ease;
+}
 </style>
+
+
 <script type="text/javascript">
+	//Thymeleaf에서 값 가져오기
+	let startDate = `[[${startDate}]]`;
+	let endDate = `[[${endDate}]]`;
 	
+	// 값이 없으면 기본값 설정 (오늘 날짜)
+	if (!startDate || startDate === "null") {
+	    startDate = moment().format("YYYY-MM-DD");
+	}
+	if (!endDate || endDate === "null") {
+	    endDate = moment().add(1, "days").format("YYYY-MM-DD");
+	}
+	
+	// 한국날짜 형식으로 변환해서 출력
 	function convertToKoreanDateTime(utcDateString) {
         const date = new Date(utcDateString); // UTC 시간 변환
        
@@ -170,11 +224,11 @@ body {
 	    tl.appendChild(tlItems);
 	}
 	
-	function onDelete(datetime) {
+	function onDelete(timelineSeq) {
 		// alert(typeof datetime);
 		if(confirm("삭제하시겠습니까?")) {
 			// 서버에 삭제 요청 보내기 (GET 요청 또는 POST 요청으로 수정)
-	        fetch(`/planner/deleteTimeline?timelineSeq=${dto.timelineSeq}`, {
+	        fetch(`/planner/deleteTimeline?timelineSeq=${timelineSeq}`, {
 	            method: 'GET',
 	            redirect: 'follow'  // 리다이렉트 따르기
 	        })
@@ -182,7 +236,7 @@ body {
 	            if (response.ok) {
 	                alert("삭제되었습니다.");
 	             	// 삭제 후 UI에서 항목 제거
-	                const itemToRemove = document.querySelector(`[data-timeline-seq="${dto.timelineSeq}"]`);
+	                const itemToRemove = document.querySelector(`[data-timeline-seq="${timelineSeq}"]`);
 	                if (itemToRemove) {
 	                    itemToRemove.remove();
 	                }
@@ -201,12 +255,18 @@ body {
 	
 	let openWin;
 	function getMemo() {
-		// form 요소에서 값을 가져오기
-	    let startDate = encodeURIComponent(document.form1.startDate.value);
-	    let endDate = encodeURIComponent(document.form1.endDate.value);
+		inputNewTP();
+		
+	 	// moment.js를 사용하여 날짜 변환
+	    const start_date = moment(startDate, "YYYY-MM-DD").format("YYYY-MM-DD");
+	    const end_date = moment(endDate, "YYYY-MM-DD").format("YYYY-MM-DD");
 	    
+	    // hidden input에 값 설정
+	    document.querySelector('input[name="startDate"]').value = start_date;
+	    document.querySelector('input[name="endDate"]').value = end_date;
+
 	    // GET 방식으로 데이터 전달
-	    let url = `addTimeline?startDate=${startDate}&endDate=${endDate}`;
+	    let url = "/planner/addTimeline?startDate=" + start_date + "&endDate=" + end_date;
 		// window.open(url, "창이름", "브라우저 설정")
 		openWin = window.open(url, "타임라인 추가", "width=500 height=700 left=500 top=200");
 	}
@@ -215,9 +275,8 @@ body {
     window.addEventListener("message", function(event) {
         if (event.origin !== window.location.origin) return; // 보안 체크
 
-        const receivedData = event.data;  // {"id': "aa", "place": "ㅁㄴㅇㄹ", "memo": "ㅁㄴㅇㄹ", "logtime": "2025-03-12T11:21"}
+        const receivedData = event.data;  // {"id': "aa", "title": "ㅁㄴㅇㄹ", "memo": "ㅁㄴㅇㄹ", "datetime": "2025-03-12T11:21"}
       	console.log("Rdata =", receivedData);
-      	window.location.reload(true);
      	// 데이터를 서버로 전송
         fetch('/api/save-data', {
             method: 'POST',
@@ -233,27 +292,46 @@ body {
         })
         .catch(error => {
             console.error('Error saving data:', error);
+            alert("저장 실패");
         });
      }, false);
 	 
 	 
      document.addEventListener("DOMContentLoaded", function() {
     	fetchTLData();
-        // Thymeleaf에서 값 가져오기
-        let startDate = `[[${startDate}]]`;
-        let endDate = `[[${endDate}]]`;
-        
-        // 값이 없으면 기본값 설정 (오늘 날짜)
-        if (!startDate || startDate === "null") {
-            startDate = moment().format("YYYY-MM-DD");
-        }
-        if (!endDate || endDate === "null") {
-            endDate = moment().add(1, "days").format("YYYY-MM-DD");
-        }
-        
-        // input value 설정
-        document.querySelector('input[name="daterange"]').value = `${startDate} - ${endDate}`;
-
+    });
+	
+	function inputNewTP() {
+		
+		
+	    const tlTabContainer = document.querySelector(".nav-tabs");
+	    tlTabContainer.innerHTML = ""; // 탭 초기화
+	    
+	    const ul = document.createElement("ul");
+	    ul.className = "nav nav-tabs"
+	    ul.style.listStyle = "none";
+	    ul.style.padding = "0";
+	    
+	    const totalDays = Math.round((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
+	    
+	    for (let i = 0; i < totalDays; i++) {
+	        const li = document.createElement("li");
+	        li.className= "nav-item"
+	        li.style.display = "inline-block";
+	        li.style.padding = "10px";
+	        li.style.marginRight = "5px";
+	        li.style.cursor = "pointer";
+	        li.innerHTML = `<a class="nav-link active" aria-current="true">${i + 1}일차</a>`;
+	        
+	        ul.appendChild(li);
+	    }
+	    
+	    tlTabContainer.appendChild(ul);
+    }
+	
+	// 날짜 선택 범위 제한
+	$(document).ready(function() {	
+		
         // daterangepicker 초기화
         $('input[name="daterange"]').daterangepicker({
             locale: {
@@ -262,96 +340,22 @@ body {
             startDate: startDate,
             endDate: endDate
         });
-        
-        inputNewTP();
-    });
-	
-	function inputNewTP() {
-		const dateRangeInput = document.querySelector('input[name="daterange"]');
-	    const dateRange = dateRangeInput.value.split(" - ");
-	    
-	    if (dateRange.length !== 2) {
-	        alert("올바른 날짜 범위를 선택하세요.");
-	        return;
-	    }
-	    
-	    const startDate = new Date(dateRange[0]);
-	    const endDate = new Date(dateRange[1]);
-	    
-	    if (isNaN(startDate.getTime()) || isNaN(endDate.getTime()) || startDate > endDate) {
-	        alert("올바른 날짜 범위를 선택하세요.");
-	        return;
-	    }
-	    
-	    const container = document.getElementById("tl");
-	    container.innerHTML = ""; // 기존 내용 초기화
-	    
-	    const totalDays = Math.round((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
-	    
-	    for (let i = 0; i < totalDays; i++) {
-	        let currentDate = new Date(startDate);
-	        currentDate.setDate(startDate.getDate() + i);
-	        let formattedDate = currentDate.toISOString().split("T")[0];
-	        
-	        let tl_days = document.createElement("li");
-	        tl_days.innerHTML = `<div class="days">${i + 1}일차</div>`;
-	        tl_days.className = "tl-item tl-days";
-	        container.appendChild(tl_days);
-	    }
-	}
-	// 여행 기간 입력
-	$(document).ready(function() {	
-	    $('input[name="daterange"]').daterangepicker({
-	        locale: {
-	            format: 'YYYY-MM-DD'
-	        }
-	    });
 	});
-	function confirmNewTP() {
-		if(confirm("새로운 여행 타임라인을 생성할까요?")) {
-			const dateInput = $('input[name="daterange"]');
-
-	        // daterangepicker가 이미 적용되어 있다면 제거 후 다시 설정
-	        if (dateInput.data('daterangepicker')) {
-	            dateInput.data('daterangepicker').remove();
-	        }
-
-	        // daterangepicker 초기화
-	        dateInput.daterangepicker({
-	            locale: {
-	                format: 'YYYY-MM-DD'
-	            }
-	        });
-
-	        // setTimeout을 사용하여 강제로 focus한 후 show() 실행
-	        setTimeout(() => {
-	            dateInput.data('daterangepicker').show();
-	        }, 100);
-		} else {
-			return false;
-		}
-	}
 
 </script>
-</head>
-<body>
+
+<div id="container">
 	<form action="/planner/addTimeline" name="form1">
-		<label for="daterange">여행 기간:</label>
-		<input type="text" name="daterange" id="daterange" onclick="confirmNewTP()">
-		<input type="button" class="btn" onclick="inputNewTP()" value="여행 기간 등록">
+		<input type="hidden" name="startDate">
+		<input type="hidden" name="endDate">
 		
-		<input type="hidden" name="startDate" th:value="${startDate}">
-		<input type="hidden" name="endDate" th:value="${endDate}">
-		
+		<div class="nav nav-tabs"></div>
 		<div class="history-tl-container">
 			<ul id="tl">
-				<li class="tl-item tl-days"></li>
 				
 			</ul>
 			<br>
 			<input id="addbtn" class="btn" type="button" value="추가" onclick="getMemo()">
 		</div>
-		
 	</form>
-</body>
-</html>
+</div>
