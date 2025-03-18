@@ -37,7 +37,7 @@ input[name="subject"] {
 	border-radius: 0 10px 0 0; 
 	display: inline-block;
 }
-input[id="submit"] {
+input[id="submit_btn"] {
 	width: 80px; 
 	background: #ff9000; 
 	height: 30px; 
@@ -47,7 +47,7 @@ input[id="submit"] {
 	font-size: 13px; 
 	margin-top: 13px;
 }
-input[id="list"] {
+input[id="list_btn"] {
 	width: 80px; 
 	background: #ff9000; 
 	height: 30px; 
@@ -168,13 +168,14 @@ $(document).ready(function() {
     });
 });
 
-
 </script> 
+
+<script type="text/javascript" src="/js/mateboardScript.js"></script>
 
 <div th:replace="~{layouts/header}"></div>	
 
 <div class="container">
-	<form action="mateboardWrite" method="post" name="form1">
+	<form action="mateboardWrite" name="form1" method="post">
 	    <p style="color: #ff9000; margin-top: 30px; margin-left: 10px; margin-bottom: 0px; font-weight: bold; font-size: 30px;"><a id="title_List" href="mateboardList">TRIP MATE</a></p>
 	    <hr style="border-width:2px; margin-bottom: 10px; margin-top: 5px;">
 	    <table>
@@ -186,13 +187,13 @@ $(document).ready(function() {
 			</tr>
 	    	<tr>
 	    		<td>
-					<textarea id="summernote" style="margin: auto;"></textarea>
+					<textarea id="summernote" style="margin: auto;" name="content"></textarea>
 				</td>
 		    </tr>   
 	    </table>
 		<div align="center">
-			<input type="button" id="submit" class="btn" value="등록">
-			<input type="button" id="list" class="btn" value="목록" onclick="location.href='mateboardList'">
+			<input type="button" id="submit_btn" class="btn" value="등록" onclick="mateboardCheckWrite()">
+			<input type="button" id="list_btn" class="btn" value="목록" onclick="location.href='mateboardList'">
 		</div>
 	</form>
 </div>
