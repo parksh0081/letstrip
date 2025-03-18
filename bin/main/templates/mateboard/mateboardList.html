@@ -49,8 +49,10 @@ p#TRIPMATE {
 	font-weight: bold; 
 	font-size: 30px;
 }
-
-
+#title_List {
+   color: #ff9000;
+   text-decoration: none;	
+}
 </style>
 
 <script type="text/javascript" th:inline="javascript">
@@ -186,24 +188,92 @@ function renderPagination(data) {
 }
 
 // 검색 기능
-function fetchMateboardListSearch(){
+function fetchMateboardListSearch(page = 1){
 	const search = document.getElementById("search").value;
-	const currentPage = 1; // 페이징도 검색에 맞춰야
-	fetch(`/mateboardListSearchJson?search=${search}`)
+	fetch(`/mateboardListSearchJson?search=${search}&pg=${page}`)
 		.then(response => {
 			if(!response.ok) {
 				throw new Error("네트워크 응답이 좋지 않습니다.");
 			}
 			return response.json();
 			})
-		.then(data => {
+		.then(data => {	
 			//alert(JSON.stringify(data));
 			renderTable(data);  		// 목록 태그
-			renderPagination(data);   	// 페이징 태그
+			renderSearchPagination(data);   	// 페이징 태그
 		})
 		.catch(err => {
 			alert(err.message);
 		})
+}
+
+// 검색 페이징 태그
+function renderSearchPagination(data) {
+   pg = data.pg;
+   
+   const pagination = document.getElementById("pagination");
+   pagination.innerHTML = "";
+   
+   const nav = document.createElement("p");
+   const p = document.createElement("p");
+   p.setAttribute("colspan", 5);
+   p.align = "center";
+   p.style.fontSize = "18px";
+   p.style.foneWeight = "bold";
+
+   // 이전
+   if(data.startPage > 3) {
+   const prevLink = document.createElement("a");
+   prevLink.href = "#";
+   prevLink.textContent = "<<";
+   prevLink.setAttribute("onclick", `fetchMateboardListSearch(${data.startPage - 1})`);
+   prevLink.className = "paging_click";
+   p.appendChild(prevLink);
+   p.appendChild(document.createTextNode(" "));    // 공백 추가
+   }
+   
+   // 숫자
+   for(let i=data.startPage; i<=data.endPage; i++) {
+      const pageLink = document.createElement("a");
+      pageLink.href = "#";
+      pageLink.textContent = i;
+      pageLink.setAttribute("onclick", `fetchMateboardListSearch(${i})`);
+      if(data.pg == i) {
+         pageLink.className = "currentPaging";
+      } else {
+         pageLink.className = "paging";
+      }
+      pageLink.style.display = "inline-block";
+      pageLink.style.width = "35px";
+      p.appendChild(pageLink);               
+      p.appendChild(document.createTextNode("  "));               
+   }
+   
+   // 다음
+   if(data.endPage < data.totalP) {
+   const nextLink = document.createElement("a");
+   nextLink.href = "#";
+   nextLink.textContent = ">>";
+   nextLink.setAttribute("onclick", `fetchMateboardListSearch(${data.endPage + 1})`);
+   nextLink.className = "paging_click";
+   p.appendChild(nextLink);   
+
+   }
+   nav.appendChild(p);
+   pagination.appendChild(nav);
+   
+   document.querySelectorAll(".paging").forEach(element => {
+       element.style.textDecoration = "none";
+       element.style.color = "black";
+   });
+   document.querySelectorAll(".currentPaging").forEach(element => {
+      element.style.textDecoration = "none";
+       element.style.color = "#ff9000";
+   });   
+   document.querySelectorAll(".paging_click").forEach(element => {
+      element.style.textDecoration = "none";
+       element.style.color = "#ff9000";
+   });      
 }
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -214,7 +284,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 <div th:replace="~{layouts/header}"></div>   
 <div class="container">
-   <p id="TRIPMATE">TRIP MATE</p>
+   <p id="TRIPMATE"><a href="mateboardList" id="title_List">TRIP MATE</a></p>
    <hr style="border-width:2px; margin-bottom: 0px; margin-top: 5px;">
    <table class="table">
       <tr align="center" style="pointer-events: none; " height="3">
