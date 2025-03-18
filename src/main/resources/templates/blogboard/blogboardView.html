@@ -6,11 +6,11 @@
 <style>
 /* 전체 컨테이너 */
 .blog-container {
-	width: 100%;
-	margin: auto;
-	padding: 20px;
-	border: 1px solid #ddd;
-	background: #fff;
+   width: 100%;
+   margin: auto;
+   padding: 20px;
+   border: 1px solid #ddd;
+   background: #fff;
 }
 
 /* a태그 버튼 css */
@@ -30,50 +30,100 @@
 
 /* 제목 */
 .blog-title {
-	font-size: 20px;
-	font-weight: bold;
-	margin-bottom: 15px;
-	border-bottom: 2px solid #ddd;
-	padding-bottom: 10px;
-	display: flex;              /* 제목과 아이콘을 한 줄로 배치 */
+   font-size: 20px;
+   font-weight: bold;
+   margin-bottom: 15px;
+   border-bottom: 2px solid #ddd;
+   padding-bottom: 10px;
+   display: flex;              /* 제목과 아이콘을 한 줄로 배치 */
     justify-content: space-between; /* 양 끝으로 배치 */
     align-items: center;        /* 수직 가운데 정렬 */
 }
 
+
+#selectBox {
+   display: none;
+   position: absolute;
+   background: white;
+   border: 1px solid #ddd;
+   padding: 5px;
+   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+   top: 30px; /* SVG 아래로 위치 */
+    left: 0;
+    flex-direction: column; /* 세로 정렬 */
+}
+
+#selectBox button {
+    background: none;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 14px;
+    text-align: left; /* 글씨 가로 정렬 */
+    white-space: nowrap; /* 줄바꿈 방지 */
+}
+
+#selectBox button:hover {
+    background: #f0f0f0;
+}
+
 /* 작성자, 날짜 */
 .blog-meta {
-	font-size: 14px;
-	color: gray;
-	margin-bottom: 20px;
+   font-size: 14px;
+   color: gray;
+   margin-bottom: 20px;
 }
 
 /* 대표 이미지 */
 .blog-image {
-	width: 100%;
-	max-height: 400px;
-	object-fit: cover;
-	margin-bottom: 20px;
+   width: 100%;
+   max-height: 400px;
+   object-fit: cover;
+   margin-bottom: 20px;
 }
 
 /* 내용 */
 .blog-content {
-	font-size: 18px;
-	line-height: 1.6;
-	white-space: pre-wrap; /* 줄바꿈 유지 */
+   font-size: 18px;
+   line-height: 1.6;
+   white-space: pre-wrap; /* 줄바꿈 유지 */
+}
+
+/* 댓글 */
+#comment_write {
+   padding: 20px 15px;
+   border-bottom: 1px solid #7baeb5;
+}
+#comment_write label {
+   width: 80px;
+   font-size: 14px;
+   font-weight: bold;
+   margin-bottom: 10px;
+}
+#comment_write textarea {
+   border: 1px solid #ccc;
+   vertical-align: middle;
+   padding: 3px 10px;
+   font-size: 12px;
+   line-height: 150%;
+}
+#comment_write textarea {
+   width: 500px;
+   height: 90px;
 }
 </style>
 <script type="text/javascript">
-	function confirm_del() {
-		if (confirm("정말 삭제하시겠습니까?")) {
-			location.href = "blogboardDelete?seq=[[${seq}]]&pg=[[${pg}]]";
-		}
-	}
-	
-	function toggleListSection() {
-        //const section = document.getElementById("comment_section");
-        //section.style.display = section.style.display === "none" ? "block" : "none";
+   function confirm_del() {
+      if (confirm("정말 삭제하시겠습니까?")) {
+         location.href = "blogboardDelete?seq=[[${seq}]]&pg=[[${pg}]]";
+      }
+   }
+   
+   function toggleListSection() {
+        let selectBox = document.getElementById("selectBox");
+        selectBox.style.display = section.style.display === "none" ? "block" : "none";
     }
-	
+   
     function toggleCommentSection() {
         const section = document.getElementById("comment_section");
         section.style.display = section.style.display === "none" ? "block" : "none";
@@ -114,55 +164,66 @@
 </head>
 <body>
     <div th:replace="~{layouts/header}"></div>
-	<div class="container" style="width: 800px;">
-		
-		<div align="right">
-			<a th:href="@{/blogboardList?(pg=${pg})}" class="btn">목록열기</a>
-	  		<a th:if="${session.personId == blogboard.blogid}" th:href="@{/blogboardModifyForm(seq=${seq}, pg=${pg})}" class="btn">수정하기</a>
-	  		<a th:if="${session.personId == blogboard.blogid}" onclick="confirm_del()" class="btn">삭제하기</a>
-	  	</div>
-	
-		<div class="blog-container">
-	        <!-- 제목 -->
-	        <div class="blog-title">
-	        	<div th:text="${blogboard.blogsubject}"></div>
-	        
-		        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" 
-		        	class="bi bi-three-dots-vertical" viewBox="0 0 16 16" style="cursor: pointer; " onclick="toggleListSection()">
-				  <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"/>
-				</svg>
-	        </div>
-	        
-	
-	        <!-- 작성자 & 날짜 -->
-	        <div class="blog-meta">
-	        	<img alt="프로필" src="/image/blogperson.png" width="20px;">
-	            작성자: <span th:text="${blogboard.blogid}"></span> | 
-	            작성일: <span th:text="${#dates.format(blogboard.logtime, 'yyyy-MM-dd')}"></span>
-	        </div>
-	
-	        <!-- 본문 내용 -->
-	        <div class="blog-content" th:utext="${blogboard.blogcontent}"></div>
-    	</div>
-    	
-    	<div align="left">
-    		<input type="button" value="댓글 " onclick="toggleCommentSection()">
-    	</div>
-    	
-    	<!-- 댓글 입력 폼 -->
-   		<div id="comment_section">
-	        <h4>댓글 달기</h4>
-	        <input type="text" id="comment_user" placeholder="작성자" style="width: 150px;">
-	        <textarea id="comment_text" placeholder="댓글 내용" style="width: 400px; height: 60px;"></textarea>
-	        <button onclick="addComment()">등록</button>
-	    </div>
-	
-	    <!-- 댓글 목록 -->
-	    <h4>댓글 목록</h4>
-	    <ul id="comment_list" style="border-top: 1px solid #ddd; padding-top: 10px;">
-	        <!-- 동적으로 댓글 추가됨 -->
-	    </ul>
-	</div>
+   <div class="container" style="width: 800px;">
+      
+      <div align="right">
+         <a th:href="@{/blogboardList?(pg=${pg})}" class="btn">목록열기</a>
+        </div>
+   
+      <div class="blog-container">
+           <!-- 제목 -->
+           <div class="blog-title">
+              <div th:text="${blogboard.blogsubject}"></div>
+           
+              <div th:if="${session.personId == blogboard.blogid}" 
+                 style="position: relative; display: inline-block;">
+                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" 
+                    class="bi bi-three-dots-vertical" viewBox="0 0 16 16" style="cursor: pointer; " onclick="toggleListSection()">
+                 <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"/>
+               </svg>
+               
+               
+               <div id="selectBox">
+                    <button onclick="location.href='blogboardModifyForm?seq=[[${seq}]]&pg=[[${pg}]]'">수정하기</button>
+                    <button onclick="confirm_del()">삭제하기</button>
+                </div>
+            </div>
+           </div>
+           
+   
+           <!-- 작성자 & 날짜 -->
+           <div class="blog-meta">
+              <img alt="프로필" src="/image/blogperson.png" width="20px;">
+               작성자: <span th:text="${blogboard.blogid}"></span> | 
+               작성일: <span th:text="${#dates.format(blogboard.logtime, 'yyyy-MM-dd')}"></span>
+           </div>
+   
+           <!-- 본문 내용 -->
+           <div class="blog-content" th:utext="${blogboard.blogcontent}"></div>
+       </div>
+       
+       <div th:if="${session.personId == blogboard.blogid}" align="left">
+          <input type="button" value="댓글 " onclick="toggleCommentSection()">
+       </div>
+
+      <!-- 댓글 입력 폼 -->
+      <div id="comment_write">
+         <div id="comment_form">
+         	 <div th:if="${session.personId == blogboard.blogid}">
+		         <label>[[${blogboard.blogid}]]</label> <br>
+		         <textarea id="comment_text" name="comment" placeholder="댓글을 작성해주세요"></textarea>
+		         <button onclick="addComment()">등록</button>
+		     </div>
+         </div>
+      </div>
+      
+
+      <!-- 댓글 목록 -->
+       <h5 th:if="${session.personId == blogboard.blogid}">댓글 목록</h5>
+       <ul id="comment_list" style="border-top: 1px solid #ddd; padding-top: 10px;">
+           <!-- 동적으로 댓글 추가됨 -->
+       </ul>
+   </div>
 
 
     <div th:replace="~{layouts/footer}"></div>
