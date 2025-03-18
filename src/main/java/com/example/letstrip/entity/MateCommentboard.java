@@ -7,6 +7,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import lombok.AllArgsConstructor;
@@ -17,11 +18,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 @Entity
+@Table(name = "matecommentboard")
 public class MateCommentboard {
     private int mateboardseq;
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "MATEBOARD_SEQUENCE_GENERATOR")
-	@SequenceGenerator(name = "MATEBOARD_SEQUENCE_GENERATOR", sequenceName = "seq_mateboard", initialValue = 1, allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "MATECOMMENTBOARD_SEQUENCE_GENERATOR")
+	@SequenceGenerator(name = "MATECOMMENTBOARD_SEQUENCE_GENERATOR", sequenceName = "seq_matecommentboard", initialValue = 1, allocationSize = 1)
     private int commentseq;            
     private String mateboardid; 
     private String commentid;

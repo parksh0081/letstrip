@@ -132,7 +132,7 @@ input[id="commentSubmit_btn"]  {
 	vertical-align: middle;	
 	font-size: 13px; 
 	margin-top: 13px;
-	margin-left: auto;
+	margin-left: 10px;
 	margin-right: 10px;	
 }
 </style>
@@ -152,7 +152,7 @@ function mateboardComment() {
 		
 	   	const requestData = {
 	   		    mateboardseq: /*[[${mateboard.seq}]]*/ 1,  		// 게시글 seq (서버에서 전달된 값)
-	   		 	commentseq: 1,                           	// 댓글 번호는 DB에서 자동 증가
+	   		 	commentseq: null,                           	// 댓글 번호는 DB에서 자동 증가
 	   		    mateboardid: /*[[${mateboard.id}]]*/ null,    	// 게시글 id (서버에서 전달된 값)
 	   		    commentid: /*[[${session.personId}]]*/ null, 	// 댓글 작성자 아이디 (세션에서 가져온 값)
 	   		    commentcontent: commentContent,      			// 사용자 입력값
@@ -170,14 +170,14 @@ function mateboardComment() {
 	        body: JSON.stringify(requestData),
 	    })
 	    .then(response => {
-	    	alert(response.ok);
+	    	//alert(response.ok);
 			if(!response.ok) {
 				throw new Error("네트워크 응답이 좋지 않습니다.");
 			}
 			return response.json();
 		})
 	    .then(data => {
-	    	alert(data);
+	    	console.log(data)
 	        renderCommentList(data);
 	    })
 	    .catch(error => {
