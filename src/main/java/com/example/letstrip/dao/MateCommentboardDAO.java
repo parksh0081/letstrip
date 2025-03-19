@@ -18,8 +18,8 @@ public class MateCommentboardDAO {
 	
 	// 답글 저장
 	public MateCommentboard MateCommentWrite(MateCommentboardDTO dto) {
-		//System.out.println("Saving comment: " + dto);
 		MateCommentboard mateCommentboard = dto.toEntity();
+		dto.setComment_re_ref(dto.getCommentseq());
 		return mateCommentboardRepository.save(mateCommentboard);
 	}
 	
@@ -44,5 +44,14 @@ public class MateCommentboardDAO {
 	public List<MateCommentboard> mateCommentboardList(int mateboardseq){
 		return mateCommentboardRepository.findByCommentList(mateboardseq);
 	}	
+	
+	// 최신 댓글
+	public int getNextCommentReSeq(int comment_re_ref, int comment_re_lev) {
+	    MateCommentboard matecommentboard = mateCommentboardRepository.findMaxCommentByRefAndLev(comment_re_ref, comment_re_lev);
+	    System.out.println(matecommentboard);
+	    // 최대값이 없으면 1을 반환하고, 있으면 그 값에 1을 더해 반환
+	    return (matecommentboard == null ? 1 : matecommentboard.getComment_re_seq() + 1);  // getCommentReSeq() 메서드를 통해 comment_re_seq 값에 접근
+	}
+
 
 }

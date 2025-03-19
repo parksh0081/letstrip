@@ -30,5 +30,10 @@ public class MateCommentboardService {
 		System.out.println("mateboardseq: " + mateboardseq);  // 값 확인
 		return dao.mateCommentboardList(mateboardseq);
 	}
+	
+	// 최신 댓글
+	public int getNextCommentReSeq(int comment_re_ref, int comment_re_lev) {
+		return dao.getNextCommentReSeq(comment_re_ref, comment_re_lev);
+	}
 
 }
