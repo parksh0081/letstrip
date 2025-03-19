@@ -113,9 +113,6 @@ input[id="good_btn"] {
 	margin-top: 20px;
 	vertical-align: middle;
 }
-#comment_form {
-
-}
 #comment {
 	width: 100%;
 	height: 75px;
@@ -134,6 +131,54 @@ input[id="commentSubmit_btn"]  {
 	margin-top: 13px;
 	margin-left: 10px;
 	margin-right: 10px;	
+}
+.newComment {
+	list-style: none;
+}
+.upper {
+	display: flex;
+	justify-content: space-between;
+}
+.commentWriter {
+	display: inline-block;
+	font-weight: bold;
+}
+.commentDate {
+	display: inline-block;
+	color: gray;
+	margin-left: 5px;
+}
+#delete_btn {
+	display: inline-block;
+	width: 50px; 
+	background: #ff9000; 
+	text-align: center;
+	color: white;
+	vertical-align: middle;	
+	font-size: 12px; 
+	margin-left: auto;
+	margin-top: 0px;
+}
+.lower {
+	display: flex;
+	justify-content: space-between;
+	width: 1254px;
+}
+.commentContent {
+	display: inline-block;
+	width: 1200px;
+	border-bottom: 2px dotted lightgray; 
+    padding-bottom: 10px; 
+}
+#recomment_btn {
+	display: inline-block;
+	width: 50px;  
+	height: 30px;
+	text-align: center;
+	border: 2px solid #ff9000; 
+	color: black;
+	vertical-align: middle;	
+	font-size: 12px; 
 }
 </style>
 
@@ -162,7 +207,7 @@ function mateboardComment() {
 	   		    logtime : null        							// controller에서 작업
 	   		};
 	   	
-	    fetch(`/mateboardComment`, {
+	    fetch(`/mateboardCommentWrite`, {
 	        method: 'POST',
 	        headers: {
 	            'Content-Type': 'application/json',
@@ -172,6 +217,7 @@ function mateboardComment() {
 	    .then(response => {
 	    	//alert(response.ok);
 			if(!response.ok) {
+				//console.error('HTTP error status:', response.status);
 				throw new Error("네트워크 응답이 좋지 않습니다.");
 			}
 			return response.json();
@@ -179,20 +225,112 @@ function mateboardComment() {
 	    .then(data => {
 	    	console.log(data)
 	        renderCommentList(data);
+	    	// 그 후 삭제
+	    	document.getElementById("comment").value = "";
 	    })
 	    .catch(error => {
 	    	alert("에러가 발생했습니다.");
+	    	console.error(error);
 	    })
 	}
 }
 
-// // html에 추가
-// function renderCommentList(data) {
-//     const commentList = document.getElementById('commentList');
-//     const newComment = document.createElement('li');
-//     newComment.textContent = `${data.commentid}: ${data.commentcontent}`;
-//     commentList.appendChild(newComment);
-// }
+// html에 추가
+function renderCommentList(data) {
+	// 태그 선택
+    const commentList = document.getElementById('comment_list');
+	// 댓글이 들어갈 div 태그
+    const newComment = document.createElement('li');
+    newComment.className = "newComment";
+    // 작성자 정보, 날짜 한 줄
+    const upper = document.createElement('div');
+    upper.className = "upper";
+	// 작성자 정보가 들어갈 p 태그
+	const commentWriter = document.createElement('p');
+	commentWriter.className = "commentWriter";
+	commentWriter.textContent = data.commentid + " 님";
+	// 작성일시가 들어갈 p 태그
+	const commentDate = document.createElement('p');
+	commentDate.className = "commentDate";
+	commentDate.textContent = data.logtime;
+	// 삭제하기 버튼
+	const delInput = document.createElement("input");
+	delInput.type = "button";
+	delInput.value = "삭제";
+	delInput.className = "btn";
+	delInput.id = "delete_btn";
+	// 댓글, 답글 버튼 한 줄
+    const lower = document.createElement('div');
+    lower.className = "lower";	
+	// 댓글이 들어갈 p 태그
+	const commentContent = document.createElement('p');
+	commentContent.className = "commentContent";
+	commentContent.textContent = data.commentcontent;
+	// 답글 버튼
+	const recommentInput = document.createElement("input");
+	recommentInput.type = "button";
+	recommentInput.value = "답글";
+	recommentInput.className = "btn";
+	recommentInput.id = "recomment_btn";
+	
+	// 삭제하기 버튼 이벤트 (db에서도 삭제해야함)
+	delInput.addEventListener("click", function() {
+		if(confirm("정말 댓글을 삭제하시겠습니까?")) {
+			fetch(`/mateboardCommentDelete?commentseq=${data.commentseq}`, {
+		        method: 'DELETE',
+		    })
+		    .then(response => response.json()) // boolean 응답 받아오기
+		    .then(result => {	// 성공하면 
+				if(result) {
+					// 화면에서 동적으로 제거
+					newComment.remove();
+				} else {
+					throw new Error("댓글 삭제를 실패하였습니다.");
+				}
+			})
+		    .catch(error => {
+		    	alert("에러가 발생했습니다.");
+		    	console.error(error);
+		    })
+		}
+	});	
+	// 조립하기
+	upper.appendChild(commentWriter);
+	upper.appendChild(commentDate);
+	upper.appendChild(delInput);
+	lower.appendChild(commentContent);
+	lower.appendChild(recommentInput);
+	newComment.appendChild(upper);
+	newComment.appendChild(lower);
+	commentList.appendChild(newComment);
+}
+
+// 댓글 목록 불러오기
+function mateboardCommentList(mateboardseq) {
+    fetch(`/mateboardCommentList?mateboardseq=${mateboardseq}`)
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('댓글을 불러오는 데 실패했습니다.');
+        }
+        return response.json();
+    })
+    .then(data => {
+        // 불러온 댓글을 화면에 추가
+        data.forEach(comment => {
+            renderCommentList(comment);
+        });
+    })
+    .catch(error => {
+        alert("에러가 발생했습니다.");
+        console.error(error);
+    });	
+}
+
+// 페이지가 로드되면 댓글 목록을 불러옴
+document.addEventListener("DOMContentLoaded", function() {
+    const mateboardseq = /*[[${mateboard.seq}]]*/ 1; // 서버에서 전달받은 게시글 seq
+    mateboardCommentList(mateboardseq);  // 댓글을 불러오는 함수
+});
 
 </script>
 
@@ -222,7 +360,7 @@ function mateboardComment() {
 	</ul>
 	<div id="comment_write">
 		<form id="comment_form" name="form1">
-			<textarea name="comment" class="form-control" id="comment" placeholder="답글을 입력하세요."></textarea>
+			<textarea name="comment" class="form-control" id="comment" placeholder="답글을 입력하세요." onkeydown="javascript:if(event.keyCode==13){mateboardComment();}"></textarea>
 		</form>
 	</div>	    
 	    

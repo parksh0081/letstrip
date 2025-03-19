@@ -1,5 +1,7 @@
 package com.example.letstrip.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,8 +15,20 @@ public class MateCommentboardService {
 	@Autowired
 	MateCommentboardDAO dao;
 	
+	// 댓글 쓰기
 	public MateCommentboard MateCommentWrite(MateCommentboardDTO dto) {
 		return dao.MateCommentWrite(dto);
+	}
+	
+	// 댓글 삭제
+	public boolean MateCommentDelete(int commentseq) {
+		return dao.MateCommentDelete(commentseq);
+	}	
+	
+	// 댓글 목록
+	public List<MateCommentboard> mateCommentboardList(int mateboardseq){
+		System.out.println("mateboardseq: " + mateboardseq);  // 값 확인
+		return dao.mateCommentboardList(mateboardseq);
 	}
 
 }
