@@ -3,6 +3,7 @@ package com.example.letstrip.controller;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.regex.Matcher;
@@ -21,6 +22,8 @@ import org.springframework.web.multipart.MultipartFile;
 import com.example.letstrip.dto.BlogboardDTO;
 import com.example.letstrip.entity.Blogboard;
 import com.example.letstrip.service.BlogboardService;
+import com.example.letstrip.dto.BlogcommentDTO;
+import com.example.letstrip.service.BlogcommentService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -29,6 +32,9 @@ import jakarta.servlet.http.HttpSession;
 public class BlogboardController {
 	@Autowired
 	BlogboardService service;
+	
+	@Autowired
+	BlogcommentService blogcommentService;
 	
 	@Value("${project.upload.path}")
 	private String uploadpath;
@@ -126,6 +132,8 @@ public class BlogboardController {
 		service.updateHit(seq);		// 조회수 증가
 		Blogboard blogboard = service.blogboardView(seq); // 1줄 데이터 가져오기
 		
+		// 댓글 목록도 함께 가져오기
+		List<BlogcommentDTO> comments = blogcommentService.getCommentsByBlogSeq(seq);
 
 		System.out.println("logtime: " + blogboard.getLogtime());
 		
@@ -133,7 +141,7 @@ public class BlogboardController {
 		model.addAttribute("seq", seq);
 		model.addAttribute("pg", pg);
 		model.addAttribute("blogboard", blogboard);
-		
+		model.addAttribute("comments", comments);
 		
 		// 세션 데이터 공유
 		HttpSession session = request.getSession();
