@@ -183,7 +183,7 @@
 	        // 작성자와 사진을 각각 왼쪽, 오른쪽으로 배치
 	        blogItem.innerHTML = `
 		      <div class="blog-left">
-		        <div class="user-id">${blogboard.blogid} | ${formattedDate}</div>
+		        <div class="user-id">${blogboard.blogid} | ${formattedDate} | 조회수 : ${blogboard.hit}</div>
 		        <div class="blog-title">
 		          <a href="blogboardView?seq=${blogboard.seq}&pg=${data.pg}" class="subjectA">
 		            ${blogboard.blogsubject}
