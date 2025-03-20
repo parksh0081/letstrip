@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.letstrip.dto.MateCommentboardDTO;
 import com.example.letstrip.entity.MateCommentboard;
-import com.example.letstrip.entity.Mateboard;
 import com.example.letstrip.repository.MateCommentboardRepository;
 
 @Repository
@@ -71,6 +70,11 @@ public class MateCommentboardDAO {
 	// 최대 ref
 	public Integer lastRef() {
 		return mateCommentboardRepository.lastRef();
+	}
+	
+	// 동일한 ref, 최대 seq
+	public Integer lastSeq(int comment_re_ref) {
+		return mateCommentboardRepository.lastSeq(comment_re_ref);
 	}
 
 

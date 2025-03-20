@@ -68,6 +68,12 @@ public class MateCommentboardRestController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }   
+    
+    // 가장 큰 seq 구하기
+    @GetMapping("/lastSeq")
+    public Integer lastSeq(@RequestParam("comment_re_ref")int comment_re_ref) {
+    	return service.lastSeq(comment_re_ref);
+    }
     	
 }
 

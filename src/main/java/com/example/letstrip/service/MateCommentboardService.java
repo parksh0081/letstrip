@@ -41,4 +41,9 @@ public class MateCommentboardService {
 		return dao.lastRef();
 	}
 
+	// 동일한 ref, 최대 seq
+	public Integer lastSeq(int comment_re_ref) {
+		return dao.lastSeq(comment_re_ref);
+	}	
+	
 }
