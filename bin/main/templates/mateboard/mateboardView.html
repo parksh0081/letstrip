@@ -201,14 +201,14 @@ function mateboardComment() {
       
          const requestData = {
                 mateboardseq: /*[[${mateboard.seq}]]*/ 1,        // 게시글 seq (서버에서 전달된 값)
-                commentseq: null,                              // 댓글 번호 
+                commentseq: null,                              	 // 댓글 번호 
                 mateboardid: /*[[${mateboard.id}]]*/ null,       // 게시글 id (서버에서 전달된 값)
-                commentid: /*[[${session.personId}]]*/ null,    // 댓글 작성자 아이디 (세션에서 가져온 값)
-                commentcontent: commentContent,               // 사용자 입력값
-                comment_re_ref: null,                      // 관련글번호 
-                comment_re_lev: 0,                         // 답글레벨
-                comment_re_seq: null,                       // 관련글중 출력순서
-                logtime : null                             // controller에서 작업
+                commentid: /*[[${session.personId}]]*/ null,     // 댓글 작성자 아이디 (세션에서 가져온 값)
+                commentcontent: commentContent,               	 // 사용자 입력값
+                comment_re_ref: 1,                      		 // 관련글번호 (초기값 1)
+                comment_re_lev: 0,                         		 // 답글레벨
+                comment_re_seq: null,                            // 관련글중 출력순서
+                logtime : null                             		 // controller에서 작업
             };
          
        fetch(`/mateboardCommentWrite`, {
@@ -219,7 +219,7 @@ function mateboardComment() {
            body: JSON.stringify(requestData),
        })
        .then(response => {
-          //alert(response.ok);
+         //alert(response.ok);
          if(!response.ok) {
             //console.error('HTTP error status:', response.status);
             throw new Error("네트워크 응답이 좋지 않습니다.");
@@ -227,7 +227,7 @@ function mateboardComment() {
          return response.json();
       })
        .then(data => {
-          console.log(data)
+           console.log(data)
            renderCommentList(data);
           // 그 후 삭제
           document.getElementById("comment").value = "";
@@ -241,44 +241,45 @@ function mateboardComment() {
 
 // html에 추가
 function renderCommentList(data) {
-   // 태그 선택
-    const commentList = document.getElementById('comment_list');
-   // 댓글이 들어갈 div 태그
-    const newComment = document.createElement('li');
-    newComment.className = "newComment";
-    newComment.id = `comment_${data.commentseq}`; // 각 댓글에 고유 id 부여
-    newComment.dataset.level = data.comment_re_lev;  // 레벨 정보 추가
+  	// 태그 선택
+   	const commentList = document.getElementById('comment_list');
+	// 댓글이 들어갈 div 태그
+   	const newComment = document.createElement('li');
+	newComment.className = "newComment";
+	newComment.id = `comment_${data.commentseq}`; // 각 댓글에 고유 id 부여
+	newComment.dataset.ref = data.comment_re_ref;  // ref 정보 추가
+	newComment.dataset.lev = data.comment_re_lev;  // 레벨 정보 추가
     
-    // 작성자 정보, 날짜 한 줄
-    const upper = document.createElement('div');
-    upper.className = "upper";
-   // 작성자 정보가 들어갈 p 태그
-   const commentWriter = document.createElement('p');
-   commentWriter.className = "commentWriter";
-   commentWriter.textContent = data.commentid + " 님";
-   // 작성일시가 들어갈 p 태그
-   const commentDate = document.createElement('p');
-   commentDate.className = "commentDate";
-   commentDate.textContent = data.logtime;
-   // 삭제하기 버튼
-   const delInput = document.createElement("input");
-   delInput.type = "button";
-   delInput.value = "삭제";
-   delInput.className = "btn";
-   delInput.id = "delete_btn";
-   // 댓글, 답글 버튼 한 줄
+	// 작성자 정보, 날짜 한 줄
+	const upper = document.createElement('div');
+	upper.className = "upper";
+	// 작성자 정보가 들어갈 p 태그
+	const commentWriter = document.createElement('p');
+	commentWriter.className = "commentWriter";
+	commentWriter.textContent = data.commentid + " 님";
+	// 작성일시가 들어갈 p 태그
+	const commentDate = document.createElement('p');
+	commentDate.className = "commentDate";
+	commentDate.textContent = data.logtime;
+	// 삭제하기 버튼
+	const delInput = document.createElement("input");
+	delInput.type = "button";
+	delInput.value = "삭제";
+	delInput.className = "btn";
+	delInput.id = "delete_btn";
+	// 댓글, 답글 버튼 한 줄
     const lower = document.createElement('div');
     lower.className = "lower";   
-   // 댓글이 들어갈 p 태그
-   const commentContent = document.createElement('p');
-   commentContent.className = "commentContent";
-   commentContent.textContent = data.commentcontent;
-   // 답글 버튼
-   const recommentInput = document.createElement("input");
-   recommentInput.type = "button";
-   recommentInput.value = "답글";
-   recommentInput.className = "btn";
-   recommentInput.id = "recomment_btn";
+	// 댓글이 들어갈 p 태그
+	const commentContent = document.createElement('p');
+	commentContent.className = "commentContent";
+	commentContent.textContent = data.commentcontent;
+	// 답글 버튼
+	const recommentInput = document.createElement("input");
+	recommentInput.type = "button";
+	recommentInput.value = "답글";
+	recommentInput.className = "btn";
+	recommentInput.id = "recomment_btn";
    
    // 답글 달기 누르면 입력 창 생겨야함
     recommentInput.addEventListener("click", function() {
@@ -317,7 +318,7 @@ function renderCommentList(data) {
    commentList.appendChild(newComment);
    
    // 레벨에 따라 들여쓰기
-    newComment.style.marginLeft = `${data.comment_re_lev * 20}px`;
+   newComment.style.marginLeft = `${data.comment_re_lev * 20}px`;
 }
 
 function renderRecomment(commentSeq) {
@@ -363,25 +364,26 @@ function recomment(commentSeq, content) {
 
     // 부모 댓글의 정보 가져오기
     const parentComment = document.getElementById(`comment_${commentSeq}`);
-    const commentReRef = commentSeq;  // 부모 댓글의 seq를 ref로 사용
-    const commentReLev = parseInt(parentComment.dataset.level) + 1;  // 부모 댓글의 레벨 + 1
+    const commentReRef = parseInt(parentComment.dataset.ref);  // 부모 댓글의 ref를 ref로 사용
+    const commentReLev = parseInt(parentComment.dataset.lev);  // 부모 댓글의 레벨
+    console.log(parentComment);
 
     // getNextSequence가 끝난 후
-    getNextSequence(commentReRef, commentReLev).then(commentReSeq => {
+    getNextSequence(parentComment.dataset.ref, commentReLev).then(commentReSeq => {
         const requestData = {
             mateboardseq: /*[[${mateboard.seq}]]*/ 1,
             commentseq: null, // 새로 seq 시작해야 함
             mateboardid: /*[[${mateboard.id}]]*/ null,
             commentid: /*[[${session.personId}]]*/ null,
             commentcontent: content,
-            comment_re_ref: commentReRef,  // 부모 댓글의 seq를 ref로 설정
-            comment_re_lev: commentReLev,  // 부모 댓글의 레벨 + 1
+            comment_re_ref: commentReRef,  // 부모 댓글의 ref를 ref로 설정
+            comment_re_lev: commentReLev + 1,  // 부모 댓글의 레벨 + 1
             comment_re_seq: commentReSeq,  // 출력 순서
             logtime: null
         };
 
         // 서버에 데이터 전송
-        fetch(`/mateboardCommentWrite`, {
+        fetch(`/mateboardReCommentWrite`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -393,7 +395,7 @@ function recomment(commentSeq, content) {
             return response.json();
         })
         .then(data => {
-            console.log(data);
+            //console.log(data);
             renderCommentList(data);
             const recommentField = document.getElementById(`recommentField_${commentSeq}`);
             if (recommentField) {
@@ -410,19 +412,21 @@ function recomment(commentSeq, content) {
     });
 }
 
-//comment_re_ref 값을 서버에서 요청하여 최신 seq 가져오기
-function getNextSequence(commentReRef, commentReLev) {
-    return fetch(`/getNextCommentReSeq?comment_re_ref=${commentReRef}&comment_re_lev=${commentReLev}`)
+// 답글 달고자 하는 댓글의 seq값 + 1 가져오기
+function getNextSequence(comment_re_ref, comment_re_lev) {
+    return fetch(`/getNextCommentReSeq?comment_re_ref=${comment_re_ref}&comment_re_lev=${comment_re_lev}`)
         .then(response => {
            //alert(response.ok);
             if (!response.ok) {
+            	alert(response.ok);
                 throw new Error("서버에서 최신 댓글 순서를 가져오지 못했습니다.");
             }
             return response.json();  // 최신 seq 값 반환
+            console.log(response.json());
         })
         .then(data => {
-           //console.log(data);
-            return data;  // 최신 seq를 반환
+           console.log(data);
+           return data;  // 댓글을 달고자 하는 댓글의 seq 값에 + 1을 반환
         })
         .catch(error => {
             console.error(error);

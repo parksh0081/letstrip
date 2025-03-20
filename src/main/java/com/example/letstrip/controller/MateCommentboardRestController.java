@@ -27,9 +27,20 @@ public class MateCommentboardRestController {
     @PostMapping(value = "/mateboardCommentWrite")
     public ResponseEntity<MateCommentboard> mateboardCommentWrite(@RequestBody MateCommentboardDTO dto) {
     	dto.setLogtime(new Date());
+    	// lastRef()가 null이면 0을 반환, null이 아닐 시 lastRef + 1을 반환하도록 처리
+    	Integer lastRef = service.lastRef();
+    	dto.setComment_re_ref((lastRef != null) ? lastRef + 1 : 1);
     	MateCommentboard savedComment = service.MateCommentWrite(dto);
         return ResponseEntity.ok(savedComment);
     }
+    
+	// 대댓글 추가
+    @PostMapping(value = "/mateboardReCommentWrite")
+    public ResponseEntity<MateCommentboard> mateboardReCommentWrite(@RequestBody MateCommentboardDTO dto) {
+    	dto.setLogtime(new Date());
+    	MateCommentboard savedComment = service.MateCommentWrite(dto);
+        return ResponseEntity.ok(savedComment);
+    }    
     
     // 댓글 삭제
     @DeleteMapping(value = "/mateboardCommentDelete")
@@ -50,8 +61,8 @@ public class MateCommentboardRestController {
     public ResponseEntity<Integer> getNextCommentReSeq(@RequestParam("comment_re_ref")int comment_re_ref, @RequestParam("comment_re_lev")int comment_re_lev) {
         try {
             // comment_re_ref에 해당하는 최신 comment_re_seq 값 가져오기
-            int nextSeq = service.getNextCommentReSeq(comment_re_ref, comment_re_lev);
-            return ResponseEntity.ok(nextSeq);  // 최신 seq 값을 클라이언트에 반환
+            int getCommentreseq = service.getNextCommentReSeq(comment_re_ref, comment_re_lev);
+            return ResponseEntity.ok(getCommentreseq);  // 최신 seq 값을 클라이언트에 반환
         } catch (Exception e) {
             // 예외 처리
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

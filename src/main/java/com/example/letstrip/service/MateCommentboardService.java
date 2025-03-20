@@ -35,5 +35,10 @@ public class MateCommentboardService {
 	public int getNextCommentReSeq(int comment_re_ref, int comment_re_lev) {
 		return dao.getNextCommentReSeq(comment_re_ref, comment_re_lev);
 	}
+	
+	// 최대 ref
+	public Integer lastRef() {
+		return dao.lastRef();
+	}
 
 }
