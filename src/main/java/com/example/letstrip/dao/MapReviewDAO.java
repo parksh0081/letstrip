@@ -1,5 +1,7 @@
 package com.example.letstrip.dao;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -19,4 +21,8 @@ public class MapReviewDAO {
 		return repository.save(dto.toEntity());
 	}
 	
+	// 장소 id별로 리뷰 목록 select
+	public List<Review> selectList(String placeid){
+		return repository.findByPlaceid(placeid);
+	}
 }

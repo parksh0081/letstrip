@@ -1,5 +1,7 @@
 package com.example.letstrip.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,5 +18,10 @@ public class MapReviewService {
 	// 리뷰 insert 
 	public Review insert(ReviewDTO dto) {
 		return dao.insert(dto);
+	}
+	
+	// 장소 id별로 리뷰 목록 select
+	public List<Review> selectList(String place_id){
+		return dao.selectList(place_id);
 	}
 }

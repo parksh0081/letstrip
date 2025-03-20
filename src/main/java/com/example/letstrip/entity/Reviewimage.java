@@ -1,9 +1,12 @@
 package com.example.letstrip.entity;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.SequenceGenerator;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,6 +17,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Reviewimage {
 	@Id
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "REVIEWIMAGE_SEQUENCE_GENERATOR")
+	@SequenceGenerator(name="REVIEWIMAGE_SEQUENCE_GENERATOR", sequenceName = "seq_reviewimage", initialValue = 1, allocationSize = 1)
     private int seq; 	// 순서
 	
     private String place_image;	// 파일 이름, 경로   

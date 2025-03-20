@@ -18,6 +18,11 @@
 }
 </style>
 
+<script type="text/javascript">
+
+
+</script>
+
 </head>
 <body>
 
@@ -154,10 +159,23 @@
 						
 				
 	        		<hr>
+	<!-- 리뷰 목록-->
 	
-	        	<p class="card-text">*** 리뷰 목록 ***</p>
-	      			</div>
-	      			<!--탭3-정보 -->
+	<p class="card-text">*** 리뷰 목록 ***</p>
+	<div th:fragment="reviewListContainer"  id="reviewListContainer">
+		<th:block th:if="${reviewList.size()==0}">
+			<p class="card-text">리뷰가 없습니다.</p>
+		</th:block>
+					
+		<th:block th:if="${reviewList.size()!=0}">
+			<ul>
+				<th:block th:each="review:${reviewList}">
+					<li th:text="${review.content}">content</li>
+				</th:block>
+			</ul>
+		</th:block>
+	</div>
+	      			<!-- 탭3-정보 -->
 			      <div class="tab-pane fade" id="third" role="tabpanel" aria-labelledby="third_tab">
 			        <h5 class="card-title">Disabled Tab</h5>
 			        <p class="card-text">This tab is disabled and won't be accessible.</p>
@@ -167,7 +185,7 @@
 		</div>
 		</div>
 	</div>
-	
+	</div>
 
 </body>
 </html>

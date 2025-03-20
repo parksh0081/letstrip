@@ -1,0 +1,23 @@
+<!-- <!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body> -->
+<!-- 리뷰 목록 -->
+<div th:fragment="reviewList">
+    <th:block th:if="${reviewList.size() == 0}">
+        <p class="card-text">리뷰가 없습니다.</p>
+    </th:block>
+
+    <th:block th:if="${reviewList.size() != 0}">
+        <ul>
+            <th:block th:each="review : ${reviewList}">
+                <li th:text="${review.content}">content</li>
+            </th:block>
+        </ul>
+    </th:block>
+</div>
+<!-- </body>
+</html> -->

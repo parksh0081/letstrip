@@ -59,7 +59,7 @@
 			 
 	<form action="mapReviewWrite" method="post" name="form1" enctype="multipart/form-data">
 	<input type="hidden" name="id" th:value="${session.personId}">
-	<input type="hidden" name="place_id" th:value="${place.id}">
+	<input type="hidden" name="placeid" th:value="${place.id}">
 	<div class="star-rating">
 		<input type="radio" id="5-stars" name="star" value="5" />
 		<label for="5-stars" class="star">&#9733;</label>
