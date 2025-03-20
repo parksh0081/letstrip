@@ -46,5 +46,18 @@ public class MateboardDAO {
 		return mateboardRepository.findById(seq).orElse(null);
 	}
 	
+	// 게시판 삭제하기
+	public boolean mateboardDelete(int seq) {
+		Mateboard mateboard = mateboardRepository.findById(seq).orElse(null);
+		boolean result = false;
+		if(mateboard != null) {
+			mateboardRepository.delete(mateboard);
+			if(!mateboardRepository.existsById(seq)) {
+				result = true;
+			}
+		}
+		return result;
+	}
+	
 
 }

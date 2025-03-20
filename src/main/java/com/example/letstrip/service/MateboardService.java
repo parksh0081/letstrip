@@ -44,6 +44,11 @@ public class MateboardService {
 	public Mateboard mateboardView(int seq) {
 		return dao.mateboardView(seq);
 	}
+	
+	// 게시판 삭제하기
+	public boolean mateboardDelete(int seq) {
+		return dao.mateboardDelete(seq);
+	}
 
 
 

@@ -67,4 +67,16 @@ public class MateboardController {
 		return "/mateboard/mateboardView";
 	}	
 	
+	// 글 삭제하기
+	@GetMapping("/mateboard/mateboardDelete")
+	public String mateboardDelete(@RequestParam("pg") int pg, @RequestParam("seq") int seq, Model model) {
+		boolean result = service.mateboardDelete(seq);
+		
+		model.addAttribute("pg", pg);
+		model.addAttribute("seq", seq);
+		model.addAttribute("result", result);
+		
+		return "/mateboard/mateboardDelete";
+	}
+	
 }

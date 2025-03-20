@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>	
+</head>
+<body>
+<div th:replace="~{layouts/header}"></div>	
+<script type="text/javascript" th:inline="javascript">
+	window.onload = function() {
+		setTimeout(function() {		
+			var result = /*[[${result}]]*/ false;
+			if(result) {
+				alert("글을 삭제하였습니다.");
+				location.href="/mateboard/mateboardList";
+			} else {
+				alert("글 삭제에 실패하였습니다.");
+				history.back();
+			} 	
+		}, 100);
+	}
+</script>	
+
+<div th:replace="~{layouts/footer}"></div>	
+</body>
+</html>

@@ -70,7 +70,7 @@ input[id="submit_btn"] {
    margin-left: 10px;
    margin-right: 10px;
 }
-input[id="delete_btn"] {
+input[id="del_btn"] {
    width: 80px; 
    background: #ff9000; 
    height: 30px; 
@@ -81,7 +81,6 @@ input[id="delete_btn"] {
    margin-top: 13px;
    margin-left: 10px;
    margin-right: 10px;
-
 }
 input[id="list_btn"] {
    width: 80px; 
@@ -144,22 +143,25 @@ input[id="commentSubmit_btn"]  {
 .commentWriter {
    display: inline-block;
    font-weight: bold;
+	min-width: 100px;
 }
 .commentDate {
    display: inline-block;
    color: gray;
-   margin-left: 5px;
+   margin-right: auto;
 }
 #delete_btn {
    display: inline-block;
    width: 50px; 
+   height: 30px;
    background: #ff9000; 
    text-align: center;
    color: white;
    vertical-align: middle;   
    font-size: 12px; 
-   margin-left: auto;
    margin-top: 0px;
+   margin-left: 10px;
+   margin-right: 10px;   
 }
 .lower {
    display: flex;
@@ -543,7 +545,7 @@ document.addEventListener("DOMContentLoaded", function() {
       <div align="center">
          <th:block th:if="${session.personId == mateboard.id}">   
             <input type="button" id="submit_btn" class="btn" value="수정">
-            <input type="button" id="delete_btn" class="btn" value="삭제">
+            <input type="button" id="del_btn" class="btn" value="삭제" th:onclick="|location.href='mateboardDelete?pg=${pg}&seq=${seq}'|">
          </th:block>
          <th:block th:if="${session.personId != mateboard.id}">            
             <input type="button" id="good_btn" class="btn" th:value="추천">
