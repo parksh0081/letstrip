@@ -148,12 +148,12 @@ input[id="commentSubmit_btn"] {
 .newComment {
 	list-style: none;
 	margin-left: -10px;
+	width: 1254px;
 }
 
 .upper {
 	display: flex;
 	justify-content: space-between;
-	width: 1254px;
 }
 
 .commentWriter {
@@ -185,7 +185,6 @@ input[id="commentSubmit_btn"] {
 .lower {
 	display: flex;
 	justify-content: space-between;
-	width: 1244px;
 }
 
 .commentContent {
@@ -218,6 +217,26 @@ input[id="commentSubmit_btn"] {
 [id^="secretRecomment_btn_"]:checked {
 	background-color: #ff9000;
 	border-color: #ff9000;
+	box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+}
+[id^="secretRecomment_btn_"] {
+	border-color: #ff9000;
+}
+[id^="secretRecomment_btn_"]:focus {
+	border-color: #ff9000;
+	box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+}
+#reRecomment_btn {
+	width: 80px;
+	height: 30px;
+	text-align: center;
+	border: 2px solid #ff9000;
+	color: black;
+	vertical-align: middle;
+	font-size: 12px;
+	margin-top: 10px;
+	margin-left: 10px;
+	margin-right: 10px;
 }
 </style>
 
@@ -344,35 +363,15 @@ function renderCommentList(data) {
 	recommentInput.className = "btn";
 	recommentInput.id = "recomment_btn";	
 	recommentInput.onclick = "isLogin()";
-	// 비밀 댓글 체크박스
-	const secretRecommentdiv = document.createElement("div");
-	secretRecommentdiv.className = "form-check form-switch";
-	secretRecommentdiv.id = `secretRecommentdiv_${data.commentseq}`;
-	const secretRecommentInput = document.createElement("input");
-	secretRecommentInput.type = "checkbox";
-	secretRecommentInput.role = "switch"
-	secretRecommentInput.className = "form-check-input";
-	secretRecommentInput.id = `secretRecomment_btn_${data.commentseq}`; 
-	secretRecommentdiv.appendChild(secretRecommentInput);
 	
 	// 댓글 한 줄
     const lower = document.createElement('div');
     lower.className = "lower";   
- 	// 댓글 내용이 비밀일 경우, 로그인된 사용자와 작성자가 동일하지 않으면 내용을 숨김
+    // 댓글 내용
     const commentContent = document.createElement('p');
     commentContent.className = "commentContent";
     commentContent.textContent = data.commentcontent;
-    
-//     // 비밀댓글 처리: 로그인한 사용자와 작성자가 다르면 내용 숨김
-//     if (data.issecret === 'y') {
-//         if (/*[[${session.personId}]]*/ null != data.commentid) {
-//             commentContent.textContent = "비밀 댓글입니다."; // 비밀 댓글일 경우
-//         } else {
-//             commentContent.textContent = data.commentcontent; // 로그인한 사용자가 작성자와 동일할 때만 내용 표시
-//         }
-//     } else {
-//         commentContent.textContent = data.commentcontent; // 비밀 댓글이 아닐 경우
-//     }	
+	
 		
     // 최대 seq를 가져와서 조건에 맞게 답글 버튼을 보여줄지 말지 결정
     getMaxSeqForRef(data.comment_re_ref).then(maxSeq => {
@@ -424,14 +423,14 @@ function renderCommentList(data) {
    upper.appendChild(commentDate);
    upper.appendChild(delInput);
    upper.appendChild(recommentInput);
-   upper.appendChild(secretRecommentdiv);
    lower.appendChild(commentContent);
    newComment.appendChild(upper);
    newComment.appendChild(lower);
    commentList.appendChild(newComment);
    
    // 레벨에 따라 들여쓰기
-   newComment.style.marginLeft = `${data.comment_re_lev * 20}px`;
+   upper.style.marginLeft = `${data.comment_re_lev * 20}px`;
+   lower.style.marginLeft = `${data.comment_re_lev * 20}px`;
 }
 
 function renderRecomment(commentSeq) {
@@ -451,21 +450,40 @@ function renderRecomment(commentSeq) {
     recommentText.id = `recommentText_${commentSeq}`;
     recommentText.type = 'text';
     recommentText.className = 'form-control';
+    recommentText.width = '80%';
+    
+    // 답글 저장 버튼과 비밀 댓글 스위치가 들어갈 줄
+    const buttonAndSwitch = document.createElement('div');
+    buttonAndSwitch.style.display = 'flex';  
+    buttonAndSwitch.style.alignItems = 'center'; 
     
     // 답글 저장 버튼
     const recommentButton = document.createElement('input');
     recommentButton.type = 'button';
     recommentButton.value = '답글 저장';
     recommentButton.className = 'btn';
-    recommentButton.id = 'btn';
+    recommentButton.id = 'reRecomment_btn';
     recommentButton.onclick = function() { 
         if (isLogin()) {  
             recomment(commentSeq, recommentText.value);
         }
     };
-   
+	// 비밀 댓글 스위치
+	const secretRecommentdiv = document.createElement("div");
+	secretRecommentdiv.className = "form-check form-switch";
+	secretRecommentdiv.id = `secretRecommentdiv_${commentSeq}`;
+	const secretRecommentInput = document.createElement("input");
+	secretRecommentInput.type = "checkbox";
+	secretRecommentInput.role = "switch"
+	secretRecommentInput.className = "form-check-input";
+	secretRecommentInput.id = `secretRecomment_btn_${commentSeq}`; 
+	secretRecommentdiv.appendChild(secretRecommentInput);
+	
+	buttonAndSwitch.appendChild(recommentButton);
+	buttonAndSwitch.appendChild(secretRecommentdiv);
+	
     recommentField.appendChild(recommentText);
-    recommentField.appendChild(recommentButton);
+    recommentField.appendChild(buttonAndSwitch);
     
     // 댓글 리스트에 추가
     commentListItem.appendChild(recommentField);
@@ -512,7 +530,7 @@ function recomment(commentSeq, content) {
 	            body: JSON.stringify(requestData),
 	        })
 	        .then(response => { 
-	            //console.log(JSON.stringify(requestData));
+	        	//alert(JSON.stringify(requestData));
 	            return response.json();
 	        })
 	        .then(data => {
@@ -626,9 +644,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
 		<div align="center">
 			<th:block th:if="${session.personId == mateboard.id}">
-				<input type="button" id="submit_btn" class="btn" value="수정">
-				<input type="button" id="del_btn" class="btn" value="삭제"
-					th:onclick="|location.href='mateboardDelete?pg=${pg}&seq=${seq}'|">
+				<input type="button" id="submit_btn" class="btn" value="수정" th:onclick="|location.href='mateboardModifyForm?pg=${pg}&seq=${seq}'|">
+				<input type="button" id="del_btn" class="btn" value="삭제" th:onclick="|location.href='mateboardDelete?pg=${pg}&seq=${seq}'|">
 			</th:block>
 			<th:block th:if="${session.personId != mateboard.id}">
 				<input type="button" id="good_btn" class="btn" th:value="추천">

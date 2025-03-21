@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
+
+</head>
+<body>
+
+<style type="text/css">
+.container {
+   width: 1200px;
+   margin: auto;
+   margin-top: 30px;
+}
+input[id="title"] {
+	width: 100px; 
+	background: #ff9000; 
+	height: 40px; 
+	margin-bottom: -3px; 
+	display: inline-block;
+	border-radius: 10px 0 0 0;
+	border-color: #808080;
+	text-align: center;
+	font-weight: bold;
+	color: white;
+}
+input[name="subject"] {
+	width: 1196px; 
+	height: 40px; 
+	margin-bottom: -3px; 
+	margin-left: -6px;
+	display: inline-block;
+	border-radius: 0 10px 0 0; 
+	display: inline-block;
+}
+input[id="submit_btn"] {
+	width: 80px; 
+	background: #ff9000; 
+	height: 30px; 
+	text-align: center;
+	color: white;
+	vertical-align: middle;	
+	font-size: 13px; 
+	margin-top: 13px;
+}
+input[id="list_btn"] {
+	width: 80px; 
+	background: #ff9000; 
+	height: 30px; 
+	text-align: center;
+	color: white;
+	vertical-align: middle;	
+	font-size: 13px; 
+	margin-top: 13px;
+}
+#title_List {
+   color: #ff9000;
+   text-decoration: none;	
+}
+</style>
+
+<script>
+function imageUploader(file, el) {
+	var formData = new FormData();
+	formData.append("file", file);
+  
+	$.ajax({                                                              
+		data : formData,
+		type : 'POST',
+        // url은 자신의 이미지 업로드 처리 컨트롤러 경로로 설정해주세요.
+		url : '/mateboardImageUpload',  
+		contentType : false,
+		processData : false,
+		enctype : "multipart/form-data",
+		success : function(data) {   
+			var imageUrl = '/mateImage/' + data;
+			$(el).summernote('insertImage', imageUrl, function($image) {
+				popover: {
+					  image: [
+					    ['image', ['resizeFull', 'resizeHalf', 'resizeQuarter', 'resizeNone']],
+					    ['float', ['floatLeft', 'floatRight', 'floatNone']],
+					    ['remove', ['removeMedia']]
+					  ]		
+				}
+			});
+		}
+	});
+}
+
+function mateboardImageDelete(imageName) {
+    data = new FormData()
+    data.append('file', imageName)
+    $.ajax({
+        data: data,
+        type: 'POST',
+        url: '/mateboardImageDelete',
+        contentType: false,
+        enctype: 'multipart/form-data',
+        processData: false,
+    })
+}
+
+function deleteImageOnBackspace(event) {
+    if (event.keyCode === 8) {  // Backspace 키가 눌리면
+        var $target = $(event.target);  // 현재 타겟 요소 가져오기
+
+        // 타겟이 <img> 태그가 아니면
+        if (!$target.is('img')) {
+            // 만약 <p> 태그 같은 다른 요소에서 Backspace가 발생하면,
+            // 그 안에 있는 <img> 태그를 찾아서 삭제 처리
+            var $img = $target.find('img');  // 타겟 내부에서 <img> 태그 찾기
+            if ($img.length > 0) {  // 만약 이미지가 존재하면
+                var imageName = $img.attr('src').split('/').pop();  // 이미지 이름 추출
+                mateboardImageDelete(imageName);  // 이미지 삭제 함수 호출
+            }
+        }
+        // 타겟이 <img> 태그인 경우 바로 삭제 처리
+        else {
+            var imageName = $target.attr('src').split('/').pop();  // 이미지 이름 추출
+	        mateboardImageDelete(imageName);  // 이미지 삭제 함수 호출
+        }
+    }
+}
+
+
+$(document).ready(function() {
+	$('#summernote').summernote({
+		placeholder: 'Hello Bootstrap 4',
+		tabsize: 2,
+		width: 1296,
+		height: 525,
+		disableResizeEditor: true,
+		lang: 'ko-KR',
+		fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New','맑은 고딕','궁서','굴림체','굴림','돋음체','바탕체'],
+		fontSizes: ['8','9','10','11','12','14','16','18','20','22','24','28','30','36','50','72','96'],
+		// 네모 맞추기
+		callbacks: {
+			onInit: function() {
+				$('.note-editor').css({
+					'border-radius': '0 0 10px 10px'
+				});
+			},
+			onImageUpload : function(files, editor, welEditable) {   
+	            // 다중 이미지 처리를 위해 for문
+				for (var i = 0; i < files.length; i++) {
+					imageUploader(files[i], this);
+				}
+			},
+            onMediaDelete: function ($target, editor, $editable) {
+                if (confirm('이미지를 삭제 하시겠습니까?')) {
+                    var imageName = $target
+                        .attr('src')
+                        .split('/')
+                        .pop()
+
+                    // ajax 함수 호출
+                    mateboardImageDelete(imageName)
+                }
+            }, 
+			onKeydown: function(event) { 	// 함수 호출(뒤로가기 이미지 삭제)
+				deleteImageOnBackspace(event);
+			}
+		}
+    });
+});
+
+</script> 
+
+<script type="text/javascript" src="/js/mateboardScript.js"></script>
+
+<div th:replace="~{layouts/header}"></div>	
+
+<div class="container">
+	<form action="mateboardModify" name="form1" method="post">
+	<input type="hidden" name="pg" th:value="${pg}">
+	<input type="hidden" name="seq" th:value="${seq}">
+	    <p style="color: #ff9000; margin-top: 30px; margin-left: 10px; margin-bottom: 0px; font-weight: bold; font-size: 30px;"><a id="title_List" href="mateboardList">TRIP MATE</a></p>
+	    <hr style="border-width:2px; margin-bottom: 10px; margin-top: 5px;">
+	    <table>
+			<tr>
+			    <td colspan="2">
+			    	<input type="button" id="title" value="제 목" disabled>
+			    	<input type="text" class="form-control" name="subject" th:value="${mateboard.subject}">
+			    </td>
+			</tr>
+	    	<tr>
+	    		<td>
+					<textarea id="summernote" style="margin: auto;" name="content">[[${mateboard.content}]]</textarea>
+				</td>
+		    </tr>   
+	    </table>
+		<div align="center">
+			<input type="button" id="submit_btn" class="btn" value="수정" onclick="mateboardCheckWrite()">
+			<input type="button" id="list_btn" class="btn" value="목록" th:onclick="|location.href='mateboardList?pg=${pg}'|">
+		</div>
+	</form>
+</div>
+
+<div th:replace="~{layouts/footer}"></div>	
+</body>
+</html>

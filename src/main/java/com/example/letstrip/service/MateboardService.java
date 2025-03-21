@@ -50,6 +50,11 @@ public class MateboardService {
 		return dao.mateboardDelete(seq);
 	}
 
+	// 게시판 수정하기
+	public boolean mateboardModify(MateboardDTO dto) {
+		return dao.mateboardModify(dto);
+	}
+
 
 
 }

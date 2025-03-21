@@ -59,5 +59,19 @@ public class MateboardDAO {
 		return result;
 	}
 	
+	// 게시판 수정하기
+	public boolean mateboardModify(MateboardDTO dto) {
+		boolean result = false;
+		
+		// 새로 저장
+		Mateboard newMateboard = dto.toEntity();
+		mateboardRepository.save(newMateboard);
+		
+		if(newMateboard != null) {
+			result = true;
+		}
+		return result;
+	}
+	
 
 }
