@@ -17,6 +17,8 @@ import com.example.letstrip.dto.MateCommentboardDTO;
 import com.example.letstrip.entity.MateCommentboard;
 import com.example.letstrip.service.MateCommentboardService;
 
+import jakarta.servlet.http.HttpSession;
+
 @RestController
 public class MateCommentboardRestController {
 	
@@ -51,8 +53,9 @@ public class MateCommentboardRestController {
     
     // 댓글 리스트
     @GetMapping("/mateboardCommentList")
-    public ResponseEntity<List<MateCommentboard>> mateboardCommentList(@RequestParam("mateboardseq") int mateboardseq) {
-        List<MateCommentboard> commentList = service.mateCommentboardList(mateboardseq);
+    public ResponseEntity<List<MateCommentboard>> mateboardCommentList(@RequestParam("mateboardseq") int mateboardseq, HttpSession session) {
+    	String personId = (String) session.getAttribute("personId");
+        List<MateCommentboard> commentList = service.mateCommentboardList(mateboardseq, personId);
         return ResponseEntity.ok(commentList);
     }   
     

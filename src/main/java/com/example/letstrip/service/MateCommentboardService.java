@@ -26,9 +26,8 @@ public class MateCommentboardService {
 	}	
 	
 	// 댓글 목록
-	public List<MateCommentboard> mateCommentboardList(int mateboardseq){
-		System.out.println("mateboardseq: " + mateboardseq);  // 값 확인
-		return dao.mateCommentboardList(mateboardseq);
+	public List<MateCommentboard> mateCommentboardList(int mateboardseq, String personId){
+		return dao.mateCommentboardList(mateboardseq, personId);
 	}
 	
 	// 최신 댓글

@@ -53,9 +53,17 @@ public class MateCommentboardDAO {
 	}
 	
 	// 댓글 목록
-	public List<MateCommentboard> mateCommentboardList(int mateboardseq){
-		return mateCommentboardRepository.findByCommentList(mateboardseq);
-	}	
+	public List<MateCommentboard> mateCommentboardList(int mateboardseq, String personId){
+        // mateboardseq에 해당하는 댓글 목록 조회
+        List<MateCommentboard> comments = mateCommentboardRepository.findByCommentList(mateboardseq);
+        for (MateCommentboard comment : comments) {
+			// 비밀 댓글인 경우, 로그인한 사용자가 작성자와 다르면 내용을 숨깁니다.
+            if ("y".equals(comment.getIssecret()) && !comment.getCommentid().equals(personId)) {
+                comment.setCommentcontent("비밀 댓글입니다.");  // 비밀 댓글 내용 숨김
+            }
+        }
+        return comments;
+    }	
 	
 	// 최신 댓글
 	public int getNextCommentReSeq(int comment_re_ref, int comment_re_lev) {

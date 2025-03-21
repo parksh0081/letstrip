@@ -17,8 +17,9 @@ public class MateCommentboardDTO {
     private int comment_re_lev;
     private int comment_re_seq;
     private Date logtime;
+    private char issecret;
     
     public MateCommentboard toEntity() {
-    	return new MateCommentboard(mateboardseq, commentseq, mateboardid, commentid, commentcontent, comment_re_ref, comment_re_lev, comment_re_seq, logtime);
+    	return new MateCommentboard(mateboardseq, commentseq, mateboardid, commentid, commentcontent, comment_re_ref, comment_re_lev, comment_re_seq, logtime, issecret);
     }
 }
