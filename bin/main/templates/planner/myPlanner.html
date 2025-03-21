@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>My Planner</title>
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <style>
@@ -24,12 +24,13 @@ footer {
 #MyplannerBody {
 	width: 80%;
 	min-height: 100%;
-	margin: 30px;
+	margin: auto;
+	margin-top: 50px;
 }
 #tlContainer {
 	padding: 20px;
 	width: 30%;
-	height: 70%; /* 고정된 높이 */
+	height: 100%; /* 고정된 높이 */
 	border: 1px solid gray;
 	float: left;
 	text-align: center;
@@ -41,11 +42,119 @@ footer {
 	align-items: center;
 
 	/* 스크롤을 위한 수정 */
-	max-height: 600px; /* 높이 고정 */
+	max-height: 760px; /* 높이 고정 */
 	overflow-y: auto; /* 내부 스크롤 활성화 */
 }
 #tlContainer #plusTP {
-	margin: 50px;
+	margin: 80px;
+}
+
+.tag_myplanner {
+	align-self: flex-start;
+	color: purple;
+	text-decoration: none;
+}
+.tag_myplanner:hover {
+	color: #FF9000;
+}
+
+.tag_history {
+	margin: 10px;
+	text-decoration: none;
+	color: black;
+}
+.tag_history:hover {
+	color: gray;
+}
+
+#history_title {
+	width: 100%;
+	margin-bottom: 10px;
+	font-weight: bold;
+	border-top: 3px solid #ff9000;
+	border-bottom: 1px solid #fcb860;
+}
+
+#TL_list {
+	width: 100%;
+	}
+.table_tr {
+	height: 30px;
+}
+
+
+#form_search {
+	width: 50%;
+	float: left;
+	margin-left: 50px;
+}
+#wish_search{
+	width: 25px;
+	height: 25px;
+	display: inline;
+	font-size: 1.2em;
+
+}
+.input_search {
+  padding: 0.375rem 0.75rem; /* 좌우 padding 약간 추가 */
+  margin-bottom: 30px;
+  margin-top: 40px;
+  margin-right: 5px;
+  line-height: 1.5;
+  color: #212529;
+  background-color: transparent;
+  border: 1px solid #ff9000;
+  border-radius: 8px;
+  transition: border-color 0.2s ease; /* 부드러운 전환 */
+}
+
+.input_search:focus {
+  outline: 0;
+}
+
+
+#wishlistContainer {
+	padding: 20px;
+	width: 30%;
+	height: 80%; /* 고정된 높이 */
+	border: 1px solid gray;
+	float: left;
+	text-align: center;
+	margin: auto;
+	margin-left: 50px;
+	
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	align-items: center;
+	vertical-align: bottom;
+	
+	/* 스크롤을 위한 수정 */
+	max-height: 650px; /* 높이 고정 */
+	overflow-y: auto; /* 내부 스크롤 활성화 */
+}
+
+
+
+#wishDetailContainer {
+	padding: 20px;
+	width: 35%;
+	height: 80%; /* 고정된 높이 */
+	border: 1px solid gray;
+	float: left;
+	text-align: center;
+	margin: auto;
+	
+	
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	align-items: center;
+	vertical-align: bottom;
+	
+	/* 스크롤을 위한 수정 */
+	max-height: 650px; /* 높이 고정 */
+	overflow-y: auto; /* 내부 스크롤 활성화 */
 }
 </style>
 </head>
@@ -68,7 +177,7 @@ function fetchTLnameData() {
             tlList.empty();
             if(data.items && data.items.length > 0){
                 data.items.forEach(function(plan){
-                    const row = `<tr><td><a href="/planner/timelineHistory?plan_name=${plan}">${plan}</a></td></tr>`;
+                    const row = `<tr class="table_tr"><td><a class="tag_history" href="/planner/timelineHistory?plan_name=${plan}"> · ${plan}</a></td></tr>`;
                     tlList.append(row);
                 });
             } else {
@@ -88,23 +197,22 @@ function fetchTLnameData() {
 	<main id="MyplannerBody">
 		<!-- 타임라인 구역 -->
 		<div id="tlContainer">
-		<a href="/planner/myPlanner">
-			<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-calendar2-check" viewBox="0 0 16 16">
-			  <path d="M10.854 8.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L7.5 10.793l2.646-2.647a.5.5 0 0 1 .708 0"/>
-			  <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M2 2a1 1 0 0 0-1 1v11a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1z"/>
-			  <path d="M2.5 4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5H3a.5.5 0 0 1-.5-.5z"/>
-			</svg>
-			<br>myPlanner
-		</a>
-			<h3>타임라인</h3>
+			<a class="tag_myplanner" href="/planner/myPlanner">
+				<svg id="myplanner" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="purple" class="bi bi-calendar2-check" viewBox="0 0 20 20">
+				  <path d="M10.854 8.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L7.5 10.793l2.646-2.647a.5.5 0 0 1 .708 0"/>
+				  <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M2 2a1 1 0 0 0-1 1v11a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1z"/>
+				  <path d="M2.5 4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5H3a.5.5 0 0 1-.5-.5z"/>
+				</svg>My Planner	
+			</a>
+			<br>
 			<th:block th:if="${req == 'none'}">
 				<a href="/planner/travelplan">
-					<svg id="plusTP" xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-plus-circle-dotted" viewBox="0 0 16 16">
+					<svg id="plusTP" xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="#FF9000" class="bi bi-plus-circle-dotted" viewBox="0 0 16 16">
 	  				<path d="M8 0q-.264 0-.523.017l.064.998a7 7 0 0 1 .918 0l.064-.998A8 8 0 0 0 8 0M6.44.152q-.52.104-1.012.27l.321.948q.43-.147.884-.237L6.44.153zm4.132.271a8 8 0 0 0-1.011-.27l-.194.98q.453.09.884.237zm1.873.925a8 8 0 0 0-.906-.524l-.443.896q.413.205.793.459zM4.46.824q-.471.233-.905.524l.556.83a7 7 0 0 1 .793-.458zM2.725 1.985q-.394.346-.74.74l.752.66q.303-.345.648-.648zm11.29.74a8 8 0 0 0-.74-.74l-.66.752q.346.303.648.648zm1.161 1.735a8 8 0 0 0-.524-.905l-.83.556q.254.38.458.793l.896-.443zM1.348 3.555q-.292.433-.524.906l.896.443q.205-.413.459-.793zM.423 5.428a8 8 0 0 0-.27 1.011l.98.194q.09-.453.237-.884zM15.848 6.44a8 8 0 0 0-.27-1.012l-.948.321q.147.43.237.884zM.017 7.477a8 8 0 0 0 0 1.046l.998-.064a7 7 0 0 1 0-.918zM16 8a8 8 0 0 0-.017-.523l-.998.064a7 7 0 0 1 0 .918l.998.064A8 8 0 0 0 16 8M.152 9.56q.104.52.27 1.012l.948-.321a7 7 0 0 1-.237-.884l-.98.194zm15.425 1.012q.168-.493.27-1.011l-.98-.194q-.09.453-.237.884zM.824 11.54a8 8 0 0 0 .524.905l.83-.556a7 7 0 0 1-.458-.793zm13.828.905q.292-.434.524-.906l-.896-.443q-.205.413-.459.793zm-12.667.83q.346.394.74.74l.66-.752a7 7 0 0 1-.648-.648zm11.29.74q.394-.346.74-.74l-.752-.66q-.302.346-.648.648zm-1.735 1.161q.471-.233.905-.524l-.556-.83a7 7 0 0 1-.793.458zm-7.985-.524q.434.292.906.524l.443-.896a7 7 0 0 1-.793-.459zm1.873.925q.493.168 1.011.27l.194-.98a7 7 0 0 1-.884-.237zm4.132.271a8 8 0 0 0 1.012-.27l-.321-.948a7 7 0 0 1-.884.237l.194.98zm-2.083.135a8 8 0 0 0 1.046 0l-.064-.998a7 7 0 0 1-.918 0zM8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3z"/>
 					</svg>
 				</a>
-					<h5>여행 계획</h5>
-					<table id="TL_list" class="table">
+					<p id="history_title">│이전 기록│</p>
+					<table id="TL_list">
 						
 					</table>
 			</th:block>
@@ -112,14 +220,26 @@ function fetchTLnameData() {
 				<div th:replace="~{${req}}"></div>
 			</th:block>
 		</div>
+		<!-- 검색창(지역 조회) -->
+		<div id="search_plan_bar">
+			<form id="form_search" name="form_search" action="#">
+				<input type="text" size="75" placeholder="지역으로 검색  ex)경기도 화성시" class="input_search">
+				<svg id="wish_search" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#ff9000" class="bi bi-search-heart" viewBox="0 0 16 16">
+				  <path d="M6.5 4.482c1.664-1.673 5.825 1.254 0 5.018-5.825-3.764-1.664-6.69 0-5.018"></path>
+				  <path d="M13 6.5a6.47 6.47 0 0 1-1.258 3.844q.06.044.115.098l3.85 3.85a1 1 0 0 1-1.414 1.415l-3.85-3.85a1 1 0 0 1-.1-.115h.002A6.5 6.5 0 1 1 13 6.5M6.5 12a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11"></path>
+				</svg>
+			</form>
+		</div>
 		<!-- 찜 목록 구역 -->
-		<div id="wishlistContainer"></div>
+		<div id="wishlistContainer">
+			<p>wish list</p>
+		</div>
 
 		<!-- 찜 장소 상세 정보 -->
-		<div id="wishDetailContainer"></div>
+		<div id="wishDetailContainer">
+			<p>wish detail</p>
+		</div>
 
-		<!-- 달력 버튼 -->
-		<div id="calendarContainer"></div>
 	</main>
 	
 	

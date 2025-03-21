@@ -1,14 +1,14 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-<meta charset="UTF-8">
-<title>My Planner</title>
+
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
 <style type="text/css">
 
-body {
+#timelineContainer {
 	line-height: 1.3em;
+	width: 100%;
+	height: 100%;
+	font-family: "Roboto", sans-serif;
 }
 
 .history-tl-container {
@@ -151,9 +151,8 @@ body {
   transition: all 0.3s ease;
 }
 </style>
-</head>
-<body>
-<div id="timelineContainer" th:fragment="timelineContainer">
+
+<div id="timelineContainer">
 <script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
@@ -427,9 +426,5 @@ body {
 		</div>
 	</form>
 	
-	<a href="/planner/myPlanner">myPlanner</a>
 </div>
 </div>
-
-</body>
-</html>
