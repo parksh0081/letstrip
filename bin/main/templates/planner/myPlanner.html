@@ -4,41 +4,32 @@
 <meta charset="UTF-8">
 <title>My Planner</title>
 
-<!-- 공통 JS/CSS 라이브러리: 중복 제거 -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-
-
-
-<!-- 페이지 전용 JS -->
-
-
-
-
 <style>
-html, body {
-  height: 100%;
-  margin: 0;
-}
+html, body { 
+	height: 100%; 
+	margin: 0; 
+ } 
 body {
-  display: flex;
-  flex-direction: column;
+    display: flex;
+    flex-direction: column;
 }
 main {
-  flex-grow: 1;
+    flex-grow: 1;
 }
 footer {
-  margin-top: auto;
+	margin-top: auto;
 }
 #MyplannerBody {
-	width: 100%;
+	width: 80%;
 	min-height: 100%;
 	margin: 30px;
 }
 #tlContainer {
 	padding: 20px;
-	width: 500px;
-	height: 550px;
+	width: 30%;
+	height: 70%; /* 고정된 높이 */
 	border: 1px solid gray;
 	float: left;
 	text-align: center;
@@ -48,6 +39,10 @@ footer {
 	flex-direction: column;
 	justify-content: flex-start;
 	align-items: center;
+
+	/* 스크롤을 위한 수정 */
+	max-height: 600px; /* 높이 고정 */
+	overflow-y: auto; /* 내부 스크롤 활성화 */
 }
 #tlContainer #plusTP {
 	margin: 50px;
@@ -62,12 +57,6 @@ $(document).ready(function(){
     // 초기 타임라인 이름 목록 로딩
     fetchTLnameData();
 });
-
-// // plus 버튼 클릭시 travelplan fragment 불러오기
-// $(document).on('click', '#plusTP', function(e) {
-//     e.preventDefault();
-//     loadTravelplan(); // /planner/travelplan fragment Ajax 호출
-// });
 
 // 타임라인 이름 목록 불러오기 (Json)
 function fetchTLnameData() {
@@ -92,21 +81,6 @@ function fetchTLnameData() {
     });
 }
 
-// // 계획 이름 클릭시 타임라인 히스토리 불러오기
-// $(document).on('click', '.plan-name', function() {
-//     const planName = $(this).data('plan');
-//     $.ajax({
-//         url: '/planner/timelineHistory',
-//         method: 'GET',
-//         data: { plan_name: planName },
-//         success: function(response) {
-//             $('#tlContainer').html(response); // timelineHistory fragment로 바꿔치기
-//         },
-//         error: function() {
-//             alert('이전 기록 로딩 실패');
-//         }
-//     });
-// });
 </script>
 
 	<div th:replace="~{layouts/header}"></div>
@@ -114,6 +88,14 @@ function fetchTLnameData() {
 	<main id="MyplannerBody">
 		<!-- 타임라인 구역 -->
 		<div id="tlContainer">
+		<a href="/planner/myPlanner">
+			<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-calendar2-check" viewBox="0 0 16 16">
+			  <path d="M10.854 8.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L7.5 10.793l2.646-2.647a.5.5 0 0 1 .708 0"/>
+			  <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M2 2a1 1 0 0 0-1 1v11a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1z"/>
+			  <path d="M2.5 4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5H3a.5.5 0 0 1-.5-.5z"/>
+			</svg>
+			<br>myPlanner
+		</a>
 			<h3>타임라인</h3>
 			<th:block th:if="${req == 'none'}">
 				<a href="/planner/travelplan">
