@@ -6,9 +6,11 @@
 
 #timelineContainer {
 	line-height: 1.3em;
+	min-height: 500px;
 	width: 100%;
 	height: 100%;
 	font-family: "Roboto", sans-serif;
+	
 }
 
 .history-tl-container {
@@ -26,8 +28,7 @@
 
 .tl-item {
 	list-style: none;
-	margin: auto;
-	margin-left: 50px;
+	margin-left: 120px;
 	min-height: 50px;
 	border-left: 3px solid #DF7600;
 	padding: 0 0 50px 30px;
@@ -57,44 +58,43 @@
 }
 
 
-.tl-days {
-	color: orange;
-	font-weight: bold;
-	font-size: 16px;
-	font-family: "Roboto",sans-serif;
-}
-
-.item-place {
+.item-title {
 	color: black;
 	font-size: 14px;
+	text-align: left;
+	width: 100px;
 }
 
 .item-memo {
 	color: rgba(0, 0, 0, 0.5);
 	font-size: 12px;
+	text-align: left;
+	width: 100px;
 }
 
 .timestamp {
 	color: #8D8D8D;
 	position: absolute;
 	width: 100px;
-	left: -180%;
+	left: -130px;
 	text-align: right;
 	font-size: 12px;
 }
-.btn {
+.btn_orange {
 	background-color: #FF9000;
 	color: white;
 	font-family: "Roboto",sans-serif;	
 }
 #addbtn {margin: 5%;}
 .btn-xs {
+	position: absolute;
+	left: 120px;
 	background-color: white;
 	outline: 1px solid #ff9000;
 	color: #ff9000;
 	font-family: "Roboto",sans-serif;
 }
-.btn:hover { background-color: #DF7600; color: white; }
+.btn_orange:hover { background-color: #DF7600; color: white; }
 
 /* tab */
 /* 탭 컨테이너 */
@@ -336,12 +336,10 @@
 	   	tlItems.setAttribute("data-timeline-seq", dto.timelineSeq);	// 화면의 각 타임라인에 seq속성 추가해서 바로 반영
 	    
 	    tlItems.innerHTML = `
+	    	<input class="btn btn-xs" type="button" value="삭제" onclick="onDelete('${dto.timelineSeq}')">
 	        <div class="timestamp">${date}</div>
 	        <div class="item-title">${dto.title}</div>
 	        <div class="item-memo">${dto.memo}</div>
-	        <div class="button">
-	        	<input class="btn btn-xs" type="button" value="삭제" onclick="onDelete('${dto.timelineSeq}')">
-	        </div>
 	    `;
 	    tlItems.classList.add("tl-item");
 	    tl.appendChild(tlItems);
@@ -397,18 +395,6 @@
 	}
 	
 	
-	
-	// 날짜 선택 범위 제한
-	$(document).ready(function() {	
-		// daterangepicker 초기화
-	    $('input[name="daterange"]').daterangepicker({
-	        locale: {
-	            format: 'YYYY-MM-DD'
-	        },
-	        startDate: startDate,
-	        endDate: endDate
-	    });
-	});
 </script>
 <div id="container">
 	<form action="/planner/addTimeline" name="form1">
@@ -422,7 +408,7 @@
 				
 			</ul>
 			<br>
-			<input id="addbtn" class="btn" type="button" value="추가" onclick="getMemo()">
+			<input id="addbtn" class="btn btn_orange" type="button" value="추가" onclick="getMemo()">
 		</div>
 	</form>
 	

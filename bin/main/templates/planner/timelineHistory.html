@@ -4,9 +4,11 @@
 
 #timelineHistoryContainer {
 	line-height: 1.3em;
+	min-height: 500px;
 	width: 100%;
 	height: 100%;
 	font-family: "Roboto", sans-serif;
+	
 }
 
 .history-tl-container {
@@ -24,8 +26,7 @@
 
 .tl-item {
 	list-style: none;
-	margin: auto;
-	margin-left: 50px;
+	margin-left: 120px;
 	min-height: 50px;
 	border-left: 3px solid #DF7600;
 	padding: 0 0 50px 30px;
@@ -54,45 +55,38 @@
 	transform: translateX(-50%); /* X축 가운데 정렬 */
 }
 
-
-.tl-days {
-	color: orange;
-	font-weight: bold;
-	font-size: 16px;
-	font-family: "Roboto",sans-serif;
-}
-
-.item-place {
+.item-title {
 	color: black;
 	font-size: 14px;
+	text-align: left;
+	width: 100px;
 }
 
 .item-memo {
 	color: rgba(0, 0, 0, 0.5);
 	font-size: 12px;
+	text-align: left;
+	width: 100px;
 }
 
 .timestamp {
 	color: #8D8D8D;
 	position: absolute;
 	width: 100px;
-	left: -180%;
+	left: -130px;
 	text-align: right;
 	font-size: 12px;
 }
-.btn {
-	background-color: #FF9000;
-	color: white;
-	font-family: "Roboto",sans-serif;	
-}
-#addbtn {margin: 5%;}
-.btn-xs {
+.btn_outline {
 	background-color: white;
 	outline: 1px solid #ff9000;
 	color: #ff9000;
-	font-family: "Roboto",sans-serif;
+	font-family: "Roboto",sans-serif;	
+	margin: 5px;
 }
-.btn:hover { background-color: #DF7600; color: white; }
+#addbtn {margin: 5%;}
+
+.btn_outline:hover { outline-color: #DF7600; color: #DF7600; }
 
 /* tab */
 /* 탭 컨테이너 */
@@ -362,8 +356,8 @@
 				
 			</ul>
 			<br>
-			<input id="modifybtn" class="btn" type="button" value="계획 수정" onclick="onModify()">
-			<input id="delbtn" class="btn" type="button" value="계획 삭제" onclick="onDeleteAll()">
+			<input id="modifybtn" class="btn btn_outline" type="button" value="수정" onclick="onModify()">
+			<input id="delbtn" class="btn btn_outline" type="button" value="삭제" onclick="onDeleteAll()">
 		</div>
 	</form>
 	
