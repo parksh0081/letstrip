@@ -1,66 +1,98 @@
-
-<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
-<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>My Planner</title>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" />
-
-<!-- javascript -->
-<script type="text/javascript">
-    $(document).ready(function() {
-        // daterangepicker 초기화
-        $('input[name="daterange"]').daterangepicker({
-            locale: {
-                format: 'YYYY-MM-DD'
-            }
-        });
-    });
-
-    function inputTLspan() {
-        const dateRangeInput = document.querySelector('input[name="daterange"]');
-        const dateRange = dateRangeInput.value.split(" - ");
-        
-        if (dateRange.length !== 2) {
-            alert("올바른 날짜 범위를 선택하세요.");
-            return false;
-        } 
-        const startDate = new Date(dateRange[0]);
-        const endDate = new Date(dateRange[1]);
-        
-        if (isNaN(startDate.getTime()) || isNaN(endDate.getTime()) || startDate > endDate) {
-            alert("올바른 날짜 범위를 선택하세요.");
-            return false;
-        }
-        
-        // moment.js를 사용하여 날짜 변환
-        const start_date = moment(dateRange[0], "YYYY-MM-DD").format("YYYY-MM-DD");
-        const end_date = moment(dateRange[1], "YYYY-MM-DD").format("YYYY-MM-DD");
-
-        // Ajax 요청으로 서버에 날짜 전달하고 타임라인 갱신
-        $.ajax({
-            url: '/planner/timeline',  // 서버의 URL (컨트롤러의 매핑된 URL)
-            type: 'GET',
-            contentType: 'application/json', // JSON 형식으로 보낼 것을 명시
-            data: {
-                startDate: start_date,
-                endDate: end_date
-            },
-            success: function(response) {
-                // 타임라인 영역만 갱신
-                alert("여행 일정이 등록되었습니다");
-                window.location.href = '/planner/timeline?startDate=' + start_date + '&endDate=' + end_date;
-            },
-            error: function() {
-                alert('서버와의 통신에 실패했습니다.');
-            }
-        });
-    }
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+<style type="text/css">
+.btn {
+	background-color: white;
+	outline: 1px solid #ff9000;
+	color: #ff9000;
+	font-family: "Roboto",sans-serif;
+}
+</style>
+</head>
+<body>
+<div id="travelplanContainer" th:fragment="travelplanContainer">
+<script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+<script>
+	$(document).ready(function() {
+	    // daterangepicker 초기화
+	    $('#daterange').daterangepicker({
+	        locale: {
+	            format: 'YYYY-MM-DD'
+	        }
+	    });
+	});
+	
+	
+	function inputTLspan() {
+	    const dateRangeInput = document.querySelector('input[name="daterange"]');
+	    const dateRange = dateRangeInput.value.split(" - ");
+	    
+	    if (dateRange.length !== 2) {
+	        alert("올바른 날짜 범위를 선택하세요.");
+	        return false;
+	    } 
+	    const startDate = new Date(dateRange[0]);
+	    const endDate = new Date(dateRange[1]);
+	    
+	    if (isNaN(startDate.getTime()) || isNaN(endDate.getTime()) || startDate > endDate) {
+	        alert("올바른 날짜 범위를 선택하세요.");
+	        return false;
+	    }
+	    
+	    const plan_name = document.querySelector('input[name="plan_name"]').value;
+	    
+	    if (!plan_name) {
+	        alert("여행 제목을 입력하세요.");
+	        document.querySelector('input[name="plan_name"]').focus();
+	        return false;
+	    }
+	    
+	    // moment.js를 사용하여 날짜 변환
+	    const start_date = moment(dateRange[0], "YYYY-MM-DD").format("YYYY-MM-DD");
+	    const end_date = moment(dateRange[1], "YYYY-MM-DD").format("YYYY-MM-DD");
+	
+	    // Ajax 요청으로 서버에 날짜 전달하고 타임라인 갱신
+	    $.ajax({
+	        url: '/planner/timeline',  // 서버의 URL (컨트롤러의 매핑된 URL)
+	        type: 'GET',
+	        contentType: 'application/json', // JSON 형식으로 보낼 것을 명시
+	        data: {
+	            startDate: start_date,
+	            endDate: end_date,
+	            plan_name: plan_name
+	        },
+	        success: function(response) {
+	            // 타임라인 영역만 갱신
+	            alert("여행 일정이 등록되었습니다");
+				window.location.href="/planner/timeline?plan_name=" + plan_name + 
+										"&startDate=" + start_date + "&endDate=" + end_date;
+	            
+	        },
+	        error: function() {
+	            alert('서버와의 통신에 실패했습니다.');
+	        }
+	    });
+	}
 </script>
 
 <!-- html -->
-<div class="container">
+<div>
 	<label for="daterange">여행 기간:</label>
-	<input type="text" name="daterange" id="daterange">
-	<input type="button" class="btn" onclick="inputTLspan()" value="여행 기간 등록">
+	<input type="text" name="daterange" id="daterange" class="daterange">
+	<br>
+	<input type="text" name="plan_name" placeholder="제목" size="30">
+	
+	<br><br>
+	<input type="button" class="btn" onclick="inputTLspan()" value="새로 등록">
+	
 </div>
-
+</div>
+</body>
+</html>

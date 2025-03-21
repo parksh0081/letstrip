@@ -28,15 +28,29 @@ public class TimelineRestController {
 	TravelplanService travelplanService;
 	
 	@GetMapping("/planner/timelineJson")
-	public Map<String, Object> Timeline(HttpSession session){
+	public Map<String, Object> Timeline(HttpSession session, @RequestParam("plan_name") String plan_name){
 		String personId = (String) session.getAttribute("personId");
-		List<Timeline> list = service.findAllOrderByTime(personId);
+		List<Timeline> list = service.findByIdAndName(plan_name, personId);
 		
 		Map<String, Object> map = new HashMap<>();
 		map.put("rt", "OK");
 		map.put("total", list.size());
-		map.put("items", list);
 		map.put("id", personId);
+		map.put("plan_name", plan_name);
+		map.put("items", list);
+		return map;
+	}
+	
+	@GetMapping("/planner/tlnameJson")
+	public Map<String, Object> tlname(HttpSession session){
+		String personId = (String) session.getAttribute("personId");
+		List<String> list = service.findListOrderByTime(personId);
+		
+		Map<String, Object> map = new HashMap<>();
+		map.put("rt", "OK");
+		map.put("total", list.size());
+		map.put("id", personId);
+		map.put("items", list);
 		return map;
 	}
 	

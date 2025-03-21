@@ -31,6 +31,6 @@ public class TravelplanController {
 
 		model.addAttribute("personId", personId);
 		model.addAttribute("req", "/planner/travelplan");
-		return "/planner/myPlanner";
+		return "planner/myPlanner";
 	}
 }

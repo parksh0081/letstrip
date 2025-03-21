@@ -12,11 +12,13 @@ import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString(exclude = "timelines")  // timelines 필드를 제외하여 무한참조 방지
 public class Travelplan {
 	@Id
     private String id;  // 사용자 ID (PK)

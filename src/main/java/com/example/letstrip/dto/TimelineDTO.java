@@ -14,6 +14,7 @@ public class TimelineDTO {
 
 	private Long timelineSeq;  // 타임라인 시퀀스 (NUMBER)    
     private Travelplan travelplan;  // 연관된 travel_plan 객체
+    private String plan_name;	// 기록 분류용 타이틀
 	private LocalDateTime start_date;   // 여행 시작일
     private LocalDateTime end_date;   // 여행 종료일
 	private LocalDateTime datetime;	// 여행 일정(시간)
@@ -21,6 +22,6 @@ public class TimelineDTO {
     private String memo;  // 일정 메모
     
     public Timeline toEntity() {
-    	return new Timeline(timelineSeq, travelplan, start_date, end_date, datetime, title, memo);
+    	return new Timeline(timelineSeq, plan_name, travelplan, start_date, end_date, datetime, title, memo);
     }
 }

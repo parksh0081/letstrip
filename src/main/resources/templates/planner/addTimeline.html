@@ -8,6 +8,7 @@
 	//Thymeleaf에서 값 가져오기
 	let start_date = `[[${startDate}]]`;
 	let end_date = `[[${endDate}]]`;
+	let plan_name = `[[${plan_name}]]`;
 	
 	// 값이 없으면 기본값 설정 (오늘 날짜)
 	if (!startDate || startDate === "null") {
@@ -49,7 +50,7 @@
         let title = document.getElementById("title-input").value;
         let memo = document.getElementById("memo-input").value;
 
-     	let values = {id, title, memo, datetime, start_date, end_date};
+     	let values = {id, plan_name, title, memo, datetime, start_date, end_date};
 
         // 부모 창에 데이터 전달 (POST 방식)
         if (values) {
@@ -74,6 +75,8 @@
 </style>
 </head>
 <body>
+<div th:replace="~{layouts/header}"></div>
+
 <div class="container">
 	<form action="#" name="form1">
 		<input id="personId" type="hidden" th:value="${personId}" name="personId">
@@ -116,7 +119,7 @@
 			<div class="row">
 				<div class="col-md-6">
 					<div class="form-control-wrapper">
-						<textarea name="memo" id="memo-input" rows="15" class="form-control floating-label"></textarea>
+						<textarea name="memo" id="memo-input" rows="10" class="form-control floating-label"></textarea>
 					</div>
 				</div>
 			</div>
@@ -127,4 +130,6 @@
 </div>
 </body>
 
+
+<div th:replace="~{layouts/footer}"></div>
 </html>

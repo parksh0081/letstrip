@@ -38,11 +38,11 @@ public class TimelineController {
 	TravelplanService travelplanService;
 	// 메인 화면
 	@GetMapping("/planner/myPlanner")
-	public String myPlanner(Model model, HttpServletRequest request, HttpSession session) {
+	public String myPlanner(Model model, HttpSession session) {
 		String personId = (String) session.getAttribute("personId");
 		model.addAttribute("personId", personId);
 		model.addAttribute("req", "none");
-		return "/planner/myPlanner";
+		return "planner/myPlanner";
 	}
 	
 	/**
@@ -53,6 +53,7 @@ public class TimelineController {
         Model model,
         @RequestParam("startDate") String startDate,
         @RequestParam("endDate") String endDate,
+        @RequestParam("plan_name") String plan_name,
         HttpSession session
     ) {
         String personId = (String) session.getAttribute("personId");
@@ -62,11 +63,33 @@ public class TimelineController {
         LocalDateTime endDateTime = LocalDate.parse(endDate, formatter).atStartOfDay();
 
         model.addAttribute("personId", personId);
+        model.addAttribute("plan_name", plan_name);
         model.addAttribute("startDate", startDateTime);
         model.addAttribute("endDate", endDateTime);
 
         model.addAttribute("req", "/planner/timeline");
-        return "/planner/myPlanner";
+        return "planner/myPlanner";
+    }
+    
+    /**
+     * 타임라인 화면 (GET) - myPlanner에서 timelineHistory.html으로 이동해서 계획 기록 보기
+     */
+    @GetMapping("/planner/timelineHistory")
+    public String timelineHistory(
+    		Model model,
+    		@RequestParam("plan_name") String plan_name,
+    		HttpSession session
+    		) {
+    	String personId = (String) session.getAttribute("personId");
+    	System.out.println("id = " + personId);
+    	List<Timeline> list = timelineService.findByIdAndName(plan_name, personId);
+
+    	model.addAttribute("personId", personId);
+    	model.addAttribute("plan_name", plan_name);
+    	model.addAttribute("items", list);
+    	
+    	model.addAttribute("req", "/planner/timelineHistory");
+        return "planner/myPlanner";
     }
 
     /**
@@ -77,6 +100,7 @@ public class TimelineController {
         Model model,
         @RequestParam("startDate") String startDate,
         @RequestParam("endDate") String endDate,
+        @RequestParam("plan_name") String plan_name,
         HttpSession session
     ) {
         String personId = (String) session.getAttribute("personId");
@@ -88,9 +112,9 @@ public class TimelineController {
         model.addAttribute("personId", personId);
         model.addAttribute("startDate", startDateTime);
         model.addAttribute("endDate", endDateTime);
-
-        model.addAttribute("req", "/planner/addTimeline");
-        return "/planner/myPlanner";
+        model.addAttribute("plan_name", plan_name);
+		
+        return "planner/addTimeline";
     }
 
     /**
@@ -112,11 +136,14 @@ public class TimelineController {
         // 타임라인을 다시 로드해서 반환
         LocalDateTime startDate = dto.getStart_date();
         LocalDateTime endDate = dto.getEnd_date();
-
+        String plan_name = dto.getPlan_name();
+        
+        model.addAttribute("plan_name", plan_name);
         model.addAttribute("startDate", startDate);
         model.addAttribute("endDate", endDate);
+
         model.addAttribute("req", "/planner/timeline");
-        return "/planner/myPlanner";
+        return "planner/myPlanner";
     }
 
     /**
@@ -135,8 +162,25 @@ public class TimelineController {
         model.addAttribute("personId", personId);
         model.addAttribute("result", result);
         
-        model.addAttribute("req", "/planner/deleteTimeline");
-        return "/planner/myPlanner";
+        model.addAttribute("req", "/planner/timeline");
+        return "planner/myPlanner";
     }
 	
+    @GetMapping("/planner/deleteTimelineHistory")
+    public String deleteTimelineHistory(
+            Model model,
+            @RequestParam("plan_name") String plan_name,
+            HttpSession session
+        ) {
+            String personId = (String) session.getAttribute("personId");
+
+            boolean result = timelineService.deleteTimelineAll(personId, plan_name);
+
+            model.addAttribute("personId", personId);
+            model.addAttribute("result", result);
+            
+    		model.addAttribute("req", "none");
+            return "planner/myPlanner";
+        }
+    
 }

@@ -31,6 +31,9 @@ public class Timeline {
     @Column(name = "timeline_seq")
     private Long timelineSeq;  // 타임라인 시퀀스 (NUMBER)
     
+	@Column(name = "plan_name", nullable = false)
+	private String plan_name;
+	
 	@ManyToOne
     @JoinColumn(name = "id", nullable = false)
 	@JsonBackReference  // 무한참조 방지

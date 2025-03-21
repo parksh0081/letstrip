@@ -26,8 +26,6 @@ public class TravelplanDAO {
 	    Travelplan existplan = travelplanRepository.findById(id).orElse(null);
 
 	    if (existplan != null) {
-	        // 이미 존재하는 여행 계획이 있으면, 타임라인 초기화
-	        existplan.getTimelines().clear();  // 컬렉션을 유지한 채 clear
 	        
 	        return travelplanRepository.save(existplan);  // 기존 여행 계획 업데이트
 	    } else {

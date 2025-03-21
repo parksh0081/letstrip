@@ -1,11 +1,12 @@
-
-<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
-<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>My Planner</title>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" />
-
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 <style type="text/css">
+
 body {
 	line-height: 1.3em;
 }
@@ -26,7 +27,7 @@ body {
 .tl-item {
 	list-style: none;
 	margin: auto;
-	margin-left: 200px;
+	margin-left: 50px;
 	min-height: 50px;
 	border-left: 3px solid #DF7600;
 	padding: 0 0 50px 30px;
@@ -150,12 +151,17 @@ body {
   transition: all 0.3s ease;
 }
 </style>
-
-
-<script type="text/javascript">
+</head>
+<body>
+<div id="timelineContainer" th:fragment="timelineContainer">
+<script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+<script>
 	//Thymeleaf에서 값 가져오기
 	let startDate = `[[${startDate}]]`;
 	let endDate = `[[${endDate}]]`;
+	let plan_name = `[[${plan_name}]]`;
 	
 	// 값이 없으면 기본값 설정 (오늘 날짜)
 	if (!startDate || startDate === "null") {
@@ -167,50 +173,168 @@ body {
 	
 	// 한국날짜 형식으로 변환해서 출력
 	function convertToKoreanDateTime(utcDateString) {
-        const date = new Date(utcDateString); // UTC 시간 변환
-       
-        const year = date.getFullYear();
-        const month = date.getMonth() + 1;
-        const day = date.getDate();
-        let hours = date.getHours();
-        const minutes = String(date.getMinutes()).padStart(2, "0");
-
-        const period = hours < 12 ? "오전" : "오후";
-        hours = hours % 12 || 12; // 12시간제 변환 (0시는 12시로)
-
-        return `${year}년 ${month}월 ${day}일 ${period} ${hours}시 ${minutes}분`;
-    }
-    
-	function fetchTLData() {
-		const body = document.querySelector("#tl");
-		
-		fetch("/planner/timelineJson")
-		.then(response => {
-			if(!response.ok) {
-				throw new Error("네트워크 응답이 좋지 않습니다.");
-			}
-			return response.json();		// json 데이터를 객체로 변경 
-		})
-		.then(data => {
-			if (data.items && data.items.length > 0) {
-	            data.items.forEach(dto => {
-	                make_timeline(dto);
-	            });
-	        } else {
-	            body.textContent = "등록된 일정이 없습니다.";
-	        }
-			
-		})
-		.catch(err => {
-			body.textContent = err.message;
-		});
+	    const date = new Date(utcDateString); // UTC 시간 변환
+	   
+	    const year = date.getFullYear();
+	    const month = date.getMonth() + 1;
+	    const day = date.getDate();
+	    let hours = date.getHours();
+	    const minutes = String(date.getMinutes()).padStart(2, "0");
+	
+	    const period = hours < 12 ? "오전" : "오후";
+	    hours = hours % 12 || 12; // 12시간제 변환 (0시는 12시로)
+	
+	    return `${year}년 ${month}월 ${day}일 ${period} ${hours}시 ${minutes}분`;
 	}
+	
+	
+	let timelineDataByDate = {};   // 날짜별 데이터
+	let dateList = [];  // startDate ~ endDate 날짜 목록 저장
+
+	// 날짜 배열 생성 함수
+	function generateDateArray(start, end) {
+	    const arr = [];
+	    let current = moment(start);
+	    const last = moment(end);
+	    while (current.isSameOrBefore(last)) {
+	        arr.push(current.format("YYYY-MM-DD"));
+	        current.add(1, 'days');
+	    }
+	    return arr;
+	}
+
+	// 탭 생성 함수 (빈 데이터도 포함)
+	function inputNewTP(dates) {
+	    const tlTabContainer = document.querySelector(".nav-tabs");
+	    tlTabContainer.innerHTML = ""; // 기존 탭 초기화
+
+	    dates.forEach((date, index) => {
+	        const li = document.createElement("li");
+	        li.className = index === 0 ? "active" : "";
+	        li.style.cursor = "pointer";
+	        
+	        const a = document.createElement("a");
+	        a.textContent = `${index + 1}일차`;
+	        a.onclick = function() {
+	            // 탭 클릭시 active 효과 처리
+	            document.querySelectorAll(".nav-tabs li").forEach(li => li.classList.remove("active"));
+	            li.classList.add("active");
+	            showTimelineByDate(date);
+	        };
+	        
+	        li.appendChild(a);
+	        tlTabContainer.appendChild(li);
+	    });
+	}
+
+	// 특정 날짜 타임라인 보여주기
+	function showTimelineByDate(dateKey) {
+	    const body = document.querySelector("#tl");
+	    body.innerHTML = "";    // 초기화
+	    
+	    if (timelineDataByDate[dateKey] && timelineDataByDate[dateKey].length > 0) {
+	        // 시간순 정렬
+	        timelineDataByDate[dateKey].sort((a, b) => new Date(a.datetime) - new Date(b.datetime));
+	        timelineDataByDate[dateKey].forEach(dto => {
+	            make_timeline(dto);
+	        });
+	    } else {
+	        // 데이터 없는 경우
+	        const noData = document.createElement("li");
+	        noData.textContent = "등록된 일정이 없습니다.";
+	        body.appendChild(noData);
+	    }
+	}
+
+	// fetch 후 데이터 처리
+	function fetchTLData() {
+	    fetch("/planner/timelineJson?plan_name=" + encodeURIComponent(plan_name))
+	    .then(response => {
+	        if (!response.ok) {
+	            throw new Error("네트워크 오류");
+	        }
+	        return response.json();
+	    })
+	    .then(data => {
+	        // 데이터 초기화
+	        Object.keys(timelineDataByDate).forEach(key => timelineDataByDate[key] = []);
+	        
+	        if (data.items && data.items.length > 0) {
+	            data.items.forEach(dto => {
+	                const dateKey = dto.datetime.split("T")[0];    // 날짜 키
+	                if (!timelineDataByDate[dateKey]) {
+	                    timelineDataByDate[dateKey] = [];
+	                }
+	                timelineDataByDate[dateKey].push(dto);
+	            });
+	        }
+	        // 초기 표시 날짜
+	        showTimelineByDate(dateList[0]);
+	    })
+	    .catch(err => {
+	        console.error('Error fetching timeline data: ', err);
+	        // 데이터 없을 때도 초기 탭/타임라인 보여주기
+	        showTimelineByDate(dateList[0]);
+	    });
+	}
+
+	// 페이지 로딩 시
+	document.addEventListener("DOMContentLoaded", function() {
+	    // 날짜 목록 생성
+	    dateList = generateDateArray(startDate, endDate);
+	    
+	    // timelineDataByDate 초기화 (각 날짜 빈 배열)
+	    dateList.forEach(date => {
+	        timelineDataByDate[date] = [];
+	    });
+
+	    // 탭 먼저 생성
+	    inputNewTP(dateList);
+
+	    // 첫날 표시 (아직 데이터는 없을 수도 있음)
+	    showTimelineByDate(dateList[0]);
+
+	    // 서버 데이터 불러오기
+	    fetchTLData();
+	});
+
+	// 데이터 추가 시도 시
+	window.addEventListener("message", function(event) {
+	    if (event.origin !== window.location.origin) return; // 보안 체크
+	    
+	    const receivedData = event.data;
+	    
+	    fetch('/api/save-data', {
+	        method: 'POST',
+	        headers: {
+	            'Content-Type': 'application/json',
+	        },
+	        body: JSON.stringify(receivedData),
+	    })
+	    .then(response => response.json())
+	    .then(data => {
+	        const dateKey = data.datetime.split("T")[0];
+	        if (!timelineDataByDate[dateKey]) {
+	            timelineDataByDate[dateKey] = [];
+	        }
+	        timelineDataByDate[dateKey].push(data);
+	        
+	        showTimelineByDate(dateKey);
+	        // 탭 재생성 필요 없음 → 이미 dateList로 만들어둠
+	    })
+	    .catch(error => {
+	        console.error('Error saving data:', error);
+	        alert("저장 실패");
+	    });
+	}, false);
+	
 	
 	function make_timeline(dto) {
 		let date = convertToKoreanDateTime(dto.datetime);
 		
 		const tl = document.getElementById('tl');
 	    const tlItems = document.createElement('li');
+	   	tlItems.setAttribute("data-timeline-seq", dto.timelineSeq);	// 화면의 각 타임라인에 seq속성 추가해서 바로 반영
 	    
 	    tlItems.innerHTML = `
 	        <div class="timestamp">${date}</div>
@@ -223,6 +347,7 @@ body {
 	    tlItems.classList.add("tl-item");
 	    tl.appendChild(tlItems);
 	}
+	
 	
 	function onDelete(timelineSeq) {
 		// alert(typeof datetime);
@@ -255,99 +380,42 @@ body {
 	
 	let openWin;
 	function getMemo() {
-		inputNewTP();
 		
 	 	// moment.js를 사용하여 날짜 변환
 	    const start_date = moment(startDate, "YYYY-MM-DD").format("YYYY-MM-DD");
 	    const end_date = moment(endDate, "YYYY-MM-DD").format("YYYY-MM-DD");
-	    
+	
 	    // hidden input에 값 설정
 	    document.querySelector('input[name="startDate"]').value = start_date;
 	    document.querySelector('input[name="endDate"]').value = end_date;
-
+	    document.querySelector('input[name="plan_name"]').value = plan_name;
+	    
 	    // GET 방식으로 데이터 전달
-	    let url = "/planner/addTimeline?startDate=" + start_date + "&endDate=" + end_date;
-		// window.open(url, "창이름", "브라우저 설정")
+	    let url = "/planner/addTimeline?plan_name=" + plan_name + "&startDate=" + start_date + "&endDate=" + end_date;
+		
+	    // window.open(url, "창이름", "브라우저 설정")
 		openWin = window.open(url, "타임라인 추가", "width=500 height=700 left=500 top=200");
 	}
 	
-	 // 자식 창에서 데이터 전송 시 호출됨
-    window.addEventListener("message", function(event) {
-        if (event.origin !== window.location.origin) return; // 보안 체크
-
-        const receivedData = event.data;  // {"id': "aa", "title": "ㅁㄴㅇㄹ", "memo": "ㅁㄴㅇㄹ", "datetime": "2025-03-12T11:21"}
-      	console.log("Rdata =", receivedData);
-     	// 데이터를 서버로 전송
-        fetch('/api/save-data', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(receivedData),
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log('Data saved successfully:', data);
-            make_timeline(data);
-        })
-        .catch(error => {
-            console.error('Error saving data:', error);
-            alert("저장 실패");
-        });
-     }, false);
-	 
-	 
-     document.addEventListener("DOMContentLoaded", function() {
-    	fetchTLData();
-    });
 	
-	function inputNewTP() {
-		
-		
-	    const tlTabContainer = document.querySelector(".nav-tabs");
-	    tlTabContainer.innerHTML = ""; // 탭 초기화
-	    
-	    const ul = document.createElement("ul");
-	    ul.className = "nav nav-tabs"
-	    ul.style.listStyle = "none";
-	    ul.style.padding = "0";
-	    
-	    const totalDays = Math.round((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
-	    
-	    for (let i = 0; i < totalDays; i++) {
-	        const li = document.createElement("li");
-	        li.className= "nav-item"
-	        li.style.display = "inline-block";
-	        li.style.padding = "10px";
-	        li.style.marginRight = "5px";
-	        li.style.cursor = "pointer";
-	        li.innerHTML = `<a class="nav-link active" aria-current="true">${i + 1}일차</a>`;
-	        
-	        ul.appendChild(li);
-	    }
-	    
-	    tlTabContainer.appendChild(ul);
-    }
 	
 	// 날짜 선택 범위 제한
 	$(document).ready(function() {	
-		
-        // daterangepicker 초기화
-        $('input[name="daterange"]').daterangepicker({
-            locale: {
-                format: 'YYYY-MM-DD'
-            },
-            startDate: startDate,
-            endDate: endDate
-        });
+		// daterangepicker 초기화
+	    $('input[name="daterange"]').daterangepicker({
+	        locale: {
+	            format: 'YYYY-MM-DD'
+	        },
+	        startDate: startDate,
+	        endDate: endDate
+	    });
 	});
-
 </script>
-
 <div id="container">
 	<form action="/planner/addTimeline" name="form1">
 		<input type="hidden" name="startDate">
 		<input type="hidden" name="endDate">
+		<input type="hidden" name="plan_name">
 		
 		<div class="nav nav-tabs"></div>
 		<div class="history-tl-container">
@@ -358,4 +426,10 @@ body {
 			<input id="addbtn" class="btn" type="button" value="추가" onclick="getMemo()">
 		</div>
 	</form>
+	
+	<a href="/planner/myPlanner">myPlanner</a>
 </div>
+</div>
+
+</body>
+</html>
