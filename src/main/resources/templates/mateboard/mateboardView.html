@@ -606,6 +606,28 @@ document.addEventListener("DOMContentLoaded", function() {
     mateboardCommentList(mateboardseq);  // 댓글을 불러오는 함수
 });
 
+
+// 랜덤 코드 생성 함수 (영문자 + 숫자 조합, 10자리)
+function generateRandomCode() {
+	const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+	let result = '';
+	const length = 10;
+	for (let i = 0; i < length; i++) {
+		const randomIndex = Math.floor(Math.random() * characters.length);
+		result += characters[randomIndex];
+	}
+	return result;
+}
+
+// 채팅방 참여 버튼 클릭 시 실행되는 함수
+function joinChatRoom() {
+	// 랜덤 10자리 코드 생성
+	const roomCode = generateRandomCode();
+	alert(`채팅방에 참여할 코드: ${roomCode}`);
+	// 웹소켓 페이지로 이동 (웹소켓 페이지 구현 필요)
+	location.href = `/chatroom?roomCode=${roomCode}`;
+}
+
 </script>
 
 	<div class="container">
@@ -652,6 +674,9 @@ document.addEventListener("DOMContentLoaded", function() {
 			</th:block>
 			<input type="button" id="list_btn" class="btn" value="목록" th:onclick="|location.href='mateboardList?pg=${pg}'|"> 
 			<input type="button" class="btn btn-outline" id="commentSubmit_btn" value="답글 저장" onclick="mateboardComment()">
+			<div align="center">
+			<input type="button" id="join_chat_btn" class="btn" value="채팅방 참여" onclick="joinChatRoom()">
+			</div>
 		</div>
 	</div>
 

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>채팅방</title>
+    <style>
+
+    </style>
+</head>
+<body>
+    <div>
+        <h2>채팅방: <span id="roomCode">[채팅방 코드]</span></h2>
+        <div id="messages"></div>
+        <input type="text" id="message" placeholder="메시지 입력...">
+        <button onclick="sendMessage()">전송</button>
+    </div>
+
+    <script>
+        const roomCode = new URLSearchParams(window.location.search).get('roomCode');
+        document.getElementById("roomCode").innerText = roomCode;
+        
+        const socket = new WebSocket(`http://localhost:8080/chat?roomCode=${roomCode}`);
+
+        socket.onopen = function(event) {
+            console.log("웹소켓 연결 성공!");
+        };
+
+        socket.onmessage = function(event) {
+            const messageContainer = document.getElementById("messages");
+            const message = document.createElement("div");
+            message.textContent = event.data;
+            messageContainer.appendChild(message);
+        };
+
+        function sendMessage() {
+            const messageInput = document.getElementById("message");
+            if (messageInput.value) {
+                socket.send(messageInput.value);
+                messageInput.value = '';
+            }
+        }
+    </script>
+</body>
+</html>
