@@ -3,63 +3,27 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
-<script type="text/javascript">
 
-// function renderTable(data){
-// 	const placeBody = document.getElementById("placeBody");
-// 	placeBody.className="placeBody"
-// 	placeBody.innerHTML=""; 	// 기존 태그 삭제 
-	
-// 	const p=document.createElement("p");
-// 	p.className="p1";
-// 	placeBody.appendChild(p);
-// 	p.textContent=data.place_id;
-// }
-
-/// load
-/* function loadView(place){
-	alert(place);
-	 fetch("/map/mapPlaceView" ,{
-		 method: 'POST',
-	     headers: {
-	        'Content-Type': 'application/json'  // JSON 형식으로 보낸다는 헤더
-	     },
-	     body: JSON.stringify(place)  // place 객체를 JSON 문자열로 변환하여 요청 본문에 포함
-		 })
-		.then(response=>{
-			if(!response.ok) {
-				throw new Error("네트워크 응답이 좋지 않습니다.");
-			}
-			return response.json();   // json 데이터를 json 객체로 변경해서 리턴
-		})
-		.then(data => {
-			alert(data.place_id);
-			renderTable(data);		// 가게 정보
-		
-		})
-		.catch(err => {
-				alert("Err:"+err.message);
-			});
-} */
-
- 
-</script>
 <style>
-	.offcanvas {
-		height: 100vh !important; /* 화면 전체 높이 */
-		max-height: 100vh; /* 최대 높이 지정 */
-		overflow: hidden; /* 전체 스크롤 방지 */
-	}
-	.offcanvas-body {
-		overflow-y: auto; /* 내부 스크롤 활성화 */
-		max-height: calc(100vh - 50px); /* 높이 조정 (헤더 공간 제외) */
-	}
+.offcanvas {
+	height: 100vh !important; /* 화면 전체 높이 */
+	max-height: 100vh; /* 최대 높이 지정 */
+	/* overflow: hidden; */ /* 전체 스크롤 방지 */
+}
+.offcanvas-body, .card-body {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 56px); /* 전체 화면 높이에서 헤더(56px) 제외 */
+    overflow: hidden; /* 전체 높이에 맞추기 */
+    padding-left: 30px;
+}
 
-	#placesList {
-		max-height: 70vh; /* 최대 높이 설정 */
-		overflow-y: auto; /* 스크롤 가능하게 */
-	}
-
+#placesList, .tab-content {
+    flex-grow: 1; /* 부모 요소 높이만큼 확장 */
+    overflow-y: auto; /* 목록이 많으면 스크롤 */
+    padding-left: 0; /* 기본 padding 제거 */
+    margin: 0; /* 기본 margin 제거 */
+}
 
 </style>
 </head>

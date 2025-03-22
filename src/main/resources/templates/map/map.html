@@ -50,7 +50,7 @@ body{
 <body>
 
 <div class="map_wrap"> 
-    <div id="map" style="width:100%;height:950px;position:relative;overflow:hidden;"></div>
+    <div id="map" style="width:100%;height:950px;position:relative;"></div>
 
 </div>
 
@@ -75,19 +75,17 @@ function loadView(place){
 				throw new Error("네트워크 응답이 좋지 않습니다.");
 			}
 			
-
 			return response.json();   // json 데이터를 json 객체로 변경해서 리턴
 		})
 		.then(data => {
-			
 			//renderTable(data);		// 가게 정보
-		
+			return fetch("/map/mapPlaceView?place_id=" + data.id);
 		})
-		.catch(err => {
-				alert("Err:"+err.message);
+		/* .catch(err => {
+				alert("Err mapPlaceViewJson:"+err.message);
 			});
 	 
-	fetch("mapPlaceView?place_id="+place.id)
+	fetch("/map/mapPlaceView?place_id="+id) */
 		.then(response=>{
 			if(!response.ok) {
 				throw new Error("네트워크 응답이 좋지 않습니다.");
@@ -97,8 +95,8 @@ function loadView(place){
 		.then(html => {
 			// 받아온 HTML을 innerHTML로 삽입
 	        document.getElementById("placeBody").innerHTML = html;
-
-	        // 새로운 HTML 삽입 후 이벤트 리스너 추가
+			
+			// 새로운 HTML 삽입 후 이벤트 리스너 추가
 	        const reviewButton = document.getElementById("reviewButton");
 	        if (reviewButton) {
 	            reviewButton.addEventListener("click", function() {
@@ -108,13 +106,13 @@ function loadView(place){
 		
 		})
 		.catch(err => {
-				alert("Err:"+err.message);
+				alert("Err: "+err.message);
 			});
 
 	function openReviewForm(id) {
 		// TODO 주석 해제하기 로그인 후 이용 가능 
 		if(personId!=null){
-	    	window.open("mapReviewWriteForm?place_id="+id, "리뷰작성", "width=500, height=500, scrollbars=yes, resizable=no");
+	    	window.open("mapReviewWriteForm?place_id="+id, "리뷰작성", "width=500, height=500, left=500, top=200, scrollbars=yes, resizable=no, popup=yes, fullscreen=no");
 		}else{
 			alert("로그인 후 이용가능합니다.");
 			location.href="/personLoginForm";
@@ -122,29 +120,31 @@ function loadView(place){
 		
 	}
 }
-function renderTable(data){
-	const placeBody = document.getElementById("placeBody");
-	placeBody.className="placeBody"
-	placeBody.innerHTML=""; 	// 기존 태그 삭제 
-	
-	const p=document.createElement("p");
-	p.className="p1";
-	placeBody.appendChild(p);
-	p.textContent=data.place_id;	
-}
 
 function updateSideTab(place_id){
 	console.log("place_id in JS:", place_id);
 	fetch("updateSideTab?place_id="+place_id)
 		.then(response=>response.text())
 		.then(html=>{
-			alert(html);
 			document.getElementById("reviewListContainer").innerHTML=html;
 		})
 		.catch(err=>{
 				alert("Err:"+err.message);
 			});
 }
+
+function updateStarRating(place_id){
+	console.log("place_id in JS:", place_id);
+	fetch("updateStarRating?place_id="+place_id)
+		.then(response=>response.text())
+		.then(html=>{
+			document.getElementById("starContainer").innerHTML=html;
+		})
+		.catch(err=>{
+				alert("Err:"+err.message);
+			});
+}
+
 
 
 // ** 여기서부터는 map 에 관한 코드 

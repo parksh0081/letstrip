@@ -5,13 +5,13 @@ function reviewCheck(){
 	var placeid=frm.placeid.value;
 	// 별점 검사 
 	if(!frm.star.value){
-		alert("falseStar");
+		alert("별점을 입력해주세요.");
 		return false;
 	}
 	
 	// 리뷰 검사 
 	if(!frm.content.value){
-		alert("falseContent")
+		alert("리뷰를 작성해주세요.")
 		return false;
 	}
 	
@@ -28,8 +28,8 @@ function reviewCheck(){
 	.then(data=>{
 		alert("리뷰가 등록되었습니다.");
 		if(window.opener){
-			alert("opener, "+placeid);
 			window.opener.updateSideTab(placeid); 	// 리뷰 목록 창 새로고침을 위한 함수 호출  
+			window.opener.updateStarRating(placeid); 
 			window.close(); // 팝업 닫기 
 		}
 	})

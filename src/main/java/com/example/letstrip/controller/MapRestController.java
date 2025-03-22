@@ -40,17 +40,25 @@ public class MapRestController {
 
 	@PostMapping("/map/mapPlaceViewJson")
 	public Map<String, Object> map(@RequestBody PlaceDTO dto, Model model){
-		System.out.println(dto.toString());
 		Place place=placeService.select(dto.getId());
-		
+		System.out.println(dto.toString());
 		if (place==null){
 			//TODO 사진 문제 해결...
 			if(dto.getPlace_image()==null) {
-				dto.setPlace_image("원조할아버지손두부.jpg");
+				dto.setPlace_image("??.jpg");
+			}
+			if(dto.getRoad_address_name()=="") {
+				dto.setRoad_address_name("정보가 없습니다.");
+			}
+			if(dto.getPhone()=="") {
+				dto.setPhone("정보가 없습니다.");
+			}
+			if(dto.getCategory_name()=="") {
+				dto.setCategory_name("정보가 없습니다.");
 			}
 			place=placeService.insert(dto);
 		}
-
+		
 
 		Map<String, Object> map = new HashMap<>();
 		map.put("id", place.getId());

@@ -18,7 +18,7 @@
 	rel="stylesheet"
 	integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
 	crossorigin="anonymous">
-    <style>
+ <style>
     .nav-link {
     color: black !important; /* 활성화된 탭 글씨 색을 어두운 빨간색으로 설정 */
 	}
@@ -139,38 +139,8 @@
  <!-- 사이드탭=티폴트 -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
  
-  <nav id="nav" style="position: fixed; left: 0; top: 0; z-index: 2;">
-	 <div th:replace="~{map/mapSideTab}"></div>
-	 <script>
-						    document.addEventListener("DOMContentLoaded", function() {
-						        // HTML이 로드된 후에 버튼 클릭 이벤트 추가
-						        document.getElementById("reviewButton").addEventListener("click", openReviewForm);
-						    });
-						 	// 🚀 리뷰 작성 창 열기 함수
-						    function openReviewForm() {
-						        alert("리뷰 작성 창을 엽니다!");
-						        window.open("reviewWriteForm", "리뷰작성", "width=600,height=400,scrollbars=yes");
-						    }
-						    function func(){
-						    	alert("FF");
-						    }
-						</script>
-	<!-- <div class="offcanvas offcanvas-start" data-bs-backdrop="false" tabindex="-1" id="staticBackdrop" aria-labelledby="staticBackdropLabel"
-		style=" position: fixed; left: 4.5rem; top: 0; z-index: 1050">
-	  <div class="offcanvas-header">
-	  
-	  	검색창
-	  	<form class="w-75 me-5" role="search" action="mapSearch" method="post">
-          <input type="search" class="form-control" placeholder="Search..." aria-label="Search" name="search">
-        </form>
-	    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-	  </div>
-	  <div class="offcanvas-body">
-	    <div>
-	      I will not close if you click outside of me.
-	    </div>
-	  </div>
-	</div> -->
+  <nav id="nav" style="position: fixed; left: 0; top: 0; z-index: 2; overflow: scroll;">
+	 <div th:replace="~{map/mapSideTab}" style="overflow :scroll;"></div>
   </nav>
 
   <div class="d-flex flex-column flex-shrink-0 bg-body-tertiary" style="width: 4.5rem; height: 950px; z-index: 3;">
@@ -197,16 +167,16 @@
       <li>
         <a href="#" class="nav-link py-3 border-bottom rounded-0" title="Orders" data-bs-toggle="tooltip" data-bs-placement="right">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-three-dots" viewBox="0 0 16 16">
-  <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3"/>
-</svg>
-		 </a>
+			  <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3"/>
+		</svg>
+		</a>
       </li>
       
     </ul>
 
   </div>
 <!-- 지도맵 넣기  -->
-<div th:replace="~{/map/map}" style="z-index: 1;"> </div> 
+<div th:replace="~{/map/map}" style="z-index: 1; overflow:hidden;"> </div> 
  
 </main>
 <script src="../assets/dist/js/bootstrap.bundle.min.js"></script>
