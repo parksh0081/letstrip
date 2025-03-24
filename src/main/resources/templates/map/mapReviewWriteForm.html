@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<link rel="stylesheet" href="../css/bootstrap.min.css">
+<script type="text/javascript" src="/js/mapReviewScript.js?v=3"></script>
+<style type="text/css">
+.main{
+	margin:0 auto;
+	justify-content: center; 
+/* 	display: flex; 
+	justify-content: center; 
+	align-items: center; */
+}
+/* component */
+.star-rating {
+  color:gray;
+  display:flex;
+  flex-direction: row-reverse;
+  font-size:2.4em;
+  justify-content:space-around;
+  padding:0 .2em;
+  text-align:center;
+  width:6em;
+  margin: auto;
+}
+
+.star-rating input {
+  display:none;
+}
+
+.star-rating label {
+  cursor:pointer;
+}
+
+.star-rating :checked ~ label {
+  color:#FFD700;
+}
+
+.mb-3{
+	display:flex; 
+	justify-content: center; 
+	align-items: center; 
+	border: 1.5px solid silver;
+	height: 36px;
+	width:400px;
+	border-radius: 30px;
+	margin-left: 40px;
+}
+</style>
+
+</head>
+<body>
+
+<div class="main">
+	<h2 style="text-align: center;">[[${place.place_name}]]</h2>			
+	<!-- <h4 style="text-align: center;">[[${session.personId}]]</h4> -->
+			 
+	<form action="mapReviewWrite" method="post" name="form1" enctype="multipart/form-data">
+	<input type="hidden" name="id" th:value="${session.personId}">
+	<input type="hidden" name="placeid" th:value="${place.id}">
+	<div class="star-rating">
+		<input type="radio" id="5-stars" name="star" value="5" />
+		<label for="5-stars" class="star">&#9733;</label>
+		<input type="radio" id="4-stars" name="star" value="4" />
+		<label for="4-stars" class="star">&#9733;</label>
+		<input type="radio" id="3-stars" name="star" value="3" />
+		<label for="3-stars" class="star">&#9733;</label>
+		<input type="radio" id="2-stars" name="star" value="2" />
+		<label for="2-stars" class="star">&#9733;</label>
+		<input type="radio" id="1-star" name="star" value="1" />
+		<label for="1-star" class="star">&#9733;</label>
+	</div>
+			
+		<textarea rows="10" cols="50" name="content" placeholder="이곳에 다녀온 경험을 공유해 주세요."
+				style="margin:15px; padding: 15px;"></textarea>
+			
+		<!-- 파일 첨부 -->
+		<!-- justify-content: center;는 가로 방향으로 중앙 정렬
+			align-items: center;는 세로 방향으로 중앙 정렬  -->
+		<br>
+		<div class="mb-3">
+			<input class="form-control" type="file" id="formFileMultiple" name="img" multiple>
+		</div>
+
+		<!-- TODO 버튼 활성화/비활성화 -->
+		<!-- <th:block  th:if="mapReviewCheck()">
+			<button type="button" class="btn btn-primary">제출</button>	
+		</th:block>
+		<th:block thLif="!mapR	eviewCheck()"> 버튼 비활성화
+			<button type="button" class="btn btn-primary" disabled>제출</button>	
+		</th:block> -->
+		<button type="button" class="btn btn-primary" onclick="reviewCheck()">제출</button>	
+		
+		<button type="reset" class="btn btn-primary">취소</button>				
+	</form>
+	</div>
+
+</body>
+</html>
