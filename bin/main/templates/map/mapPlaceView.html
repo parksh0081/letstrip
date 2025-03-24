@@ -6,7 +6,7 @@
 
 <style type="text/css">
 .nav-link {
-    color: black !important; /* 활성화된 탭 글씨 색을 어두운 빨간색으로 설정 */
+    color: FF9000 !important; /* 활성화된 탭 글씨 색을 어두운 빨간색으로 설정 */
 }
 .nav-link.active {
 	color: #FF9000 !important; /* 기본 글씨 색을 빨간색으로 설정 */
@@ -84,9 +84,9 @@
 			      <li class="nav-item flex-fill">
 			        <a class="nav-link" href="#second" data-bs-toggle="tab" id="second_tab">리뷰</a>
 			      </li>
-			      <li class="nav-item flex-fill">
+<!-- 			      <li class="nav-item flex-fill">
 			        <a class="nav-link" href="#third" aria-disabled="true" data-bs-toggle="tab" id="third_tab">정보</a>
-			      </li>
+			      </li> -->
 			    </ul>
 			  </div>
 			  <!-- 탭 body -->
@@ -97,15 +97,15 @@
 				  	<!-- 아이콘 -->
 				  	<div style="display:flex; justify-content: center; align-items: center; ">
 					  	<!-- 찜 아이콘 -->
-					  	<button id="store-link" style="position: relative; width: 38px; height: 38px; margin:15px;">
+					  	<a id="store-link" style="position: relative; width: 38px; height: 38px; margin:15px;">
 						  	<svg xmlns="http://www.w3.org/2000/svg" width="38" height="38" fill="currentColor" class="bi bi-circle" viewBox="0 0 16 16" style="z-index: 1; position: absolute; top: 0; left: 0; color:#FF9000;">
 		  						<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
 							</svg>
 						  	<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-heart" viewBox="0 0 16 16" style="z-index: 0; color:#FF9000; position: absolute; top:50%; left: 50%; transform: translate(-50%, -50%);">
 		  						<path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"/>
 							</svg>
-						</button>
-						<p>저장</p>
+						</a>
+						<p>찜</p>
 						<!-- 공유 아이콘 -->
 						<div style="position: relative; width: 38px; height: 38px; margin: 15px;">
 							<svg xmlns="http://www.w3.org/2000/svg" width="38" height="38" fill="currentColor" class="bi bi-circle" viewBox="0 0 16 16" style="z-index: 1; position: absolute; top: 0; left: 0; color: #FF9000;">
@@ -226,12 +226,24 @@
 									<label for="1-star" class="star" id="grayStar">&#9733;</label>
 								</th:block>
 							</th:block>
-							
 						</div>
 							
 	
 							<!-- 리뷰 글 -->
 							<div th:text="${review.content}" style="display: flex; margin-left:7px;">content</div>
+							<!-- 리뷰 사진 -->
+								<!-- review.images가 비어 있지 않으면 이미지 목록을 출력 -->
+								<th:block th:if="${review.images != null and review.images.size() > 0}">
+								    <th:block th:each="image : ${review.images}">
+								    	<img alt="이미지" th:src="@{'/storage/'+${image.place_image}}" width="100">
+								        <!-- <div th:text="${image.place_image}"> </div> -->
+								    </th:block>
+								</th:block>
+
+								<!-- <th:block th:each="image:${review.images}">
+									<img alt="이미지" th:src="@{storage/}+${image}" width="100">
+								</th:block> -->
+							<!-- </th:block> -->
 							<hr>
 						</div>
 					</th:block>
