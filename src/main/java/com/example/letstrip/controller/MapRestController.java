@@ -22,10 +22,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.example.letstrip.dto.PlaceDTO;
 import com.example.letstrip.dto.ReviewDTO;
+import com.example.letstrip.dto.StoreDTO;
 import com.example.letstrip.entity.Place;
 import com.example.letstrip.entity.Review;
+import com.example.letstrip.entity.Store;
 import com.example.letstrip.service.MapReviewService;
 import com.example.letstrip.service.PlaceService;
+import com.example.letstrip.service.StoreService;
 
 
 @RestController
@@ -37,6 +40,8 @@ public class MapRestController {
 	@Autowired
 	MapReviewService mapReviewService;
 	
+	@Autowired
+	StoreService storeService;
 
 	@PostMapping("/map/mapPlaceViewJson")
 	public Map<String, Object> map(@RequestBody PlaceDTO dto, Model model){
@@ -120,20 +125,32 @@ public class MapRestController {
 				model.addAttribute("review",review);
 			}
 			
-//			model.addAttribute("fileNames",fileNames);
-			
 			return ResponseEntity.ok("리뷰 저장 완료!!");
 		}
 		
-//		@GetMapping("/map/updateSideTab")
-//		public String updateSideTab(Model model, @RequestParam("place_id") String place_id) {
-//		System.out.println("placeid: "+place_id);
-//			// 리뷰 목록 
-//			List<Review>reviewList=mapReviewService.selectList(place_id);
-//			
-//			model.addAttribute("reviewList",reviewList);
-//			//return "map::mapReviewListFragment"; // 프래그먼트 반환 
-//			//return "mapPlaceView::reviewList"; // 프래그먼트 반환 
-//			return "/map/mapReviewListFragment";
-//		}
+		// ** 내 찜 
+		@PostMapping("/map/mapPlaceStore")
+		public ResponseEntity<Map<String, Object>> mapPlaceStore(@RequestBody StoreDTO dto) {
+			// 찜 저장 
+			System.out.println(dto.toString());
+			
+			Store store=storeService.selectCheck(dto.getId(),dto.getPlaceid());
+					
+			if(store==null) { // 저장된게 없으면 저장  
+				storeService.insert(dto);
+			}else { // 저장된게 있으면 삭제 
+				storeService.delete(dto.getId(), dto.getPlaceid());
+			}
+			
+			// 최신 storeList 가져오기
+	        List<Store> updatedStoreList = storeService.selectList(dto.getId());
+
+	        Map<String, Object> response = new HashMap<>();
+	        response.put("success", true);
+	        response.put("storeList", updatedStoreList); // JSON으로 리스트 반환
+
+	        return ResponseEntity.ok(response);
+		}
+		
+
 }

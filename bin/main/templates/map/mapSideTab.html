@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+<script type="text/javascript" src="/js/mapPlaceStoreScript.js"></script>
 
 <style>
 .offcanvas {
@@ -51,6 +52,46 @@
 	    <div id="pagination"></div>
 	  </div>
 	</div>
-			</div>
+</div>
+
+<!-- 사이드탭=내찜 목록 -->
+<div class="offcanvas offcanvas-start" data-bs-backdrop="false" tabindex="-1" id="staticBackdrop2" aria-labelledby="staticBackdropLabel"
+		style=" position: fixed; left: 4.5rem; top: 0; z-index: 1050">
+	  <div class="offcanvas-header">
+	  
+	  	<!-- 검색창 -->
+	  	<form class="w-75 me-5" role="search" onsubmit="" name="form1">
+          <input type="text" class="form-control" value="" placeholder="Search..." aria-label="Search" id="keyword2">
+        </form>
+        
+        <!-- close 창 -->
+	    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+	  </div>
+	  	
+	  <div id="placeBody2">
+	  	<div class="offcanvas-body">
+		  <th:block th:if="${session.personId!=null}">
+			  <script th:inline="javascript">
+				var personId=/*[[${session.personId}]]*/null;
+		         // 페이지 로딩 시 초기 찜 목록 불러오기
+		          document.addEventListener("DOMContentLoaded", function () {
+		                updateStoreList(personId);
+		            });
+		  	 </script>
+		  </th:block>
+		 
+	  <th:block th:if="${session.personId==null}">
+	  	<div class="container" style="text-align: center; margin-top: 80px;">
+	  		<p>로그인하신 후 이용하실 수 있습니다.</p>
+	  		<button type="button" class="btn btn-primary btn-sm" onclick="location.href='/personLoginForm'"
+				style="--bs-btn-padding-y: .3rem; --bs-btn-padding-x: 2rem; --bs-btn-font-size: .9rem; background-color:#FF9000; border: #FF9000;">
+				로그인 
+			</button>
+	  	</div>
+	  </th:block>
+	  
+	</div>
+	</div>
+</div>
 </body>
 </html>

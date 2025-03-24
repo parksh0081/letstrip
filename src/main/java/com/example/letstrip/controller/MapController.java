@@ -1,6 +1,6 @@
 package com.example.letstrip.controller;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -9,10 +9,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import com.example.letstrip.dto.StoreDTO;
 import com.example.letstrip.entity.Place;
 import com.example.letstrip.entity.Review;
+import com.example.letstrip.entity.Store;
 import com.example.letstrip.service.MapReviewService;
 import com.example.letstrip.service.PlaceService;
+import com.example.letstrip.service.StoreService;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -24,6 +28,9 @@ public class MapController {
 	
 	@Autowired
 	MapReviewService mapReviewService;
+	
+	@Autowired
+	StoreService storeService;
 	
 	@GetMapping("/map/mapMain")
 	public String mapMain() {
@@ -105,5 +112,23 @@ public class MapController {
 		return "map/mapPlaceView::starContainer"; // 프래그먼트 반환 
 		}
 	
+	// ** 내 찜 사이드탭
+	@GetMapping("/map/mapPlaceStoreTab")
+	public String mapPlaceStoreTab(Model model, @RequestParam("id") String id) {
+		// 찜 리스트 들고오기 
+		List<Store>storeList=storeService.selectList(id);
+		if (storeList == null) {  //storeList가 null이라면 빈 리스트로 초기화
+	        storeList = new ArrayList<>();
+	    }
+		for(Store store:storeList) {
+			store.addPlace(placeService.select(store.getPlaceid()));
+		}
+				
+		model.addAttribute("storeList",storeList);
+		return "/map/mapPlaceStoreTab";
+	}
+	
+	
+
 }
 
