@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>교통편 정보</title>
+<style type="text/css">
+body .transport-container {
+	margin-top: 20px;
+	font-family: Roboto, sans-serif;
+    /* background-color: #f4f4f9; */
+    text-align: center;
+}
+
+h2 {
+    color: #333;
+    font-weight: bold;
+}
+
+.transbutton {
+	width: 150px;
+	border: none;
+}
+
+.transbutton:hover {
+	background-color: #FF9000;
+}
+
+#transport-form {
+	background: #f4f4f9;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    display: inline-block;
+    text-align: left;
+    margin-top: 20px;
+    margin-bottom: 30px;
+    width: 380px;
+}
+
+label {
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+input {
+    width: 345px;
+    padding: 8px;
+    margin: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.search {
+	width: 340px;
+	margin-top: 10px;
+	border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #FF9000;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* button:hover {
+    background-color: #FF9000;
+} */
+
+.table-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.transport-table {
+    width: 100%;
+    max-width: 500px; /* 테이블 크기 조절 */
+    border-collapse: collapse;
+    border: 2px solid #333; /* 테두리 확실하게 적용 */
+    background-color: #fff;
+    margin: 0 auto;
+}
+
+.transport-table th, .transport-table td {
+    border: 1px solid #333; /* 셀마다 테두리 적용 */
+    padding: 10px;
+    text-align: left;
+}
+
+.transport-table th {
+    background-color: #f4f4f9;
+    font-weight: bold;
+}
+
+
+</style>
+</head>
+<body>
+<div class="header-container">
+    <div th:replace="~{layouts/header}"></div>
+</div>
+    <div class="transport-container">
+        <h2>Drive Schedule</h2>
+        <div style="margin-bottom: 10px;">
+        	<input type="button" class="transbutton" value="🚗 자차" onclick="location.href='/transport'">
+	        <input type="button" class="transbutton" value="🚌 버스" onclick="location.href='/bus'">
+	        <input type="button" class="transbutton" value="🚆 기차" onclick="location.href='/train'">
+        </div>
+        <form id="transport-form">
+		    <div>
+		        <label for="departure">출발지</label>
+		        <input type="text" id="departure" name="departure" required>
+		    </div>
+		    <div>
+		        <label for="arrival">도착지</label>
+		        <input type="text" id="arrival" name="arrival" required>
+		    </div>
+		    <button type="submit" class="search">조회</button>
+		</form>
+
+        <div id="transport-result">
+            <!-- 결과가 여기에 출력됩니다 -->
+        </div>
+    </div>
+    <!--<script src="/js/app.js"></script>  자바스크립트 연결 -->
+    <script type="text/javascript">
+    document.getElementById('transport-form').addEventListener('submit', function(event) {
+        event.preventDefault(); // 기본 폼 제출 방지
+
+        const departure = document.getElementById('departure').value;
+        const arrival = document.getElementById('arrival').value;
+
+        // API 요청 URL 생성
+        const url = `/api/transport?departure=${encodeURIComponent(departure)}&arrival=${encodeURIComponent(arrival)}`;
+
+        // 비동기 요청 보내기
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+            	const { carRoute } = data;
+
+                if (carRoute && carRoute.distance) {
+                    const distanceKm = (carRoute.distance / 1000).toFixed(1) + " km";
+                    const durationHours = Math.floor(carRoute.duration / 3600);
+                    const durationMinutes = Math.floor((carRoute.duration % 3600) / 60);
+                    const durationStr = `${durationHours}시간 ${durationMinutes}분`;
+                    const taxiFare = carRoute.fare.taxi.toLocaleString() + "원";
+                    const tollFare = carRoute.fare.toll.toLocaleString() + "원";
+            	
+                 	// 결과 출력
+                    const resultContainer = document.getElementById('transport-result');
+                    resultContainer.innerHTML = `
+                        <h3>🚗 자차 경로 정보</h3>
+                        <table class="transport-table">
+                                <tr>
+                                    <th>출발지</th>
+                                    <td>${data.departure}</td>
+                                </tr>
+                                <tr>
+                                    <th>도착지</th>
+                                    <td>${data.arrival}</td>
+                                <tr>
+                                    <th>소요 시간</th>
+                                    <td>${durationStr}</td>
+                                </tr>
+                                <tr>
+                                    <th>택시 요금</th>
+                                    <td>${taxiFare}</td>
+                                </tr>
+                                <tr>
+                                    <th>통행료</th>
+                                    <td>${tollFare}</td>
+                                </tr>
+                                <tr>
+                                    <th>거리</th>
+                                    <td>${distanceKm}</td>
+                                </tr>
+                            
+                        </table>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `<p>🚨 경로를 찾을 수 없습니다.</p>`;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('transport-result').innerHTML = '교통편 정보를 가져오는 데 오류가 발생했습니다.';
+            });
+    });
+
+    </script>
+
+</body>
+</html>
+
+
+
