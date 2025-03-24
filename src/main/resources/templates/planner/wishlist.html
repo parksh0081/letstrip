@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	
+	<div th:fragment="wishDetailContainer" class="wishDetail">
+		<p class="name">[[${place.place_name}]]</p>
+		<div><img th:src="@{${place.place_image}}" alt="Place Image"></div>
+		<div>[[${place.category_group_name}]]</div>
+		<br>
+		<div>[[${place.phone}]]</div>
+		<div>[[${place.address_name}]]</div>
+		<div>[[${place.road_address_name}]]</div>
+	</div>
+	
+</body>
+</html>

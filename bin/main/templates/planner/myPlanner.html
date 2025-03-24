@@ -27,22 +27,28 @@ footer {
 	margin: auto;
 	margin-top: 50px;
 }
+
+/* timeline */
 #tlContainer {
 	padding: 20px;
-	width: 450px;
-	height: 100%; /* 고정된 높이 */
-	border: 1px solid gray;
+	width: 550px;
+	height: 700px; /* 고정된 높이 */
+	
+	border-radius: 15px;
+	background-color: #fcf6ed;
 	float: left;
 	text-align: center;
 	margin: auto;
 	
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+ 	font-family: 'Roboto', sans-serif;
 	display: flex;
 	flex-direction: column;
 	justify-content: flex-start;
 	align-items: center;
 
 	/* 스크롤을 위한 수정 */
-	max-height: 760px; /* 높이 고정 */
+	max-height: 700px; /* 높이 고정 */
 	overflow-y: auto; /* 내부 스크롤 활성화 */
 }
 #tlContainer #plusTP {
@@ -51,7 +57,7 @@ footer {
 
 .tag_myplanner {
 	align-self: flex-start;
-	color: purple;
+	color: #333;
 	text-decoration: none;
 }
 .tag_myplanner:hover {
@@ -82,50 +88,17 @@ footer {
 	height: 30px;
 }
 
-
-#form_search {
-	width: 50%;
-	float: left;
-	margin-left: 50px;
-}
-#wish_search{
-	width: 25px;
-	height: 25px;
-	display: inline;
-	font-size: 1.2em;
-
-}
-.input_search {
-  padding: 0.375rem 0.75rem; /* 좌우 padding 약간 추가 */
-  margin-bottom: 30px;
-  margin-top: 40px;
-  line-height: 1.5;
-  color: #212529;
-  background-color: transparent;
-  border: 1px solid #ff9000;
-  border-radius: 8px;
-  transition: border-color 0.2s ease; /* 부드러운 전환 */
-}
-.input_search:focus {
-  outline: 0;
-}
-.btn_search {margin-bottom: 5px; background-color: white;}
-.btn_search:focus {
-	outline: 2px solid #ff9000;  /* 클릭 시 아웃라인 색상 설정 */
-    outline-offset: 2px;          /* 아웃라인과 요소 사이의 간격 */
-}
-
-
+/* wishlist */
 #wishlistContainer {
 	padding: 20px;
 	width: 400px;
 	height: 80%; /* 고정된 높이 */
-	border: 1px solid gray;
 	float: left;
 	text-align: center;
 	margin: auto;
-	margin-left: 50px;
+	margin-left: 30px;
 	
+	border-radius: 12px;
 	display: flex;
 	flex-direction: column;
 	justify-content: flex-start;
@@ -136,19 +109,32 @@ footer {
 	max-height: 650px; /* 높이 고정 */
 	overflow-y: auto; /* 내부 스크롤 활성화 */
 }
-
-
-
-#wishDetailContainer {
+#wishcontainer {
+	width: 350px;
+	height: 700px;
+	margin: 20px auto;
 	padding: 20px;
-	width: 400px;
+	background-color: #ffffff;
+	border: 1px solid lightgray;
+	border-radius: 12px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+	font-family: 'Roboto', sans-serif;
+	color: #333;
+}
+.wish-item {
+	margin: 10px;
+}
+
+/* detail */
+#wishDetailContainer {
+	padding: 20px 0px;
+	width: 350px;
 	height: 80%; /* 고정된 높이 */
-	border: 1px solid gray;
 	float: left;
 	text-align: center;
 	margin: auto;
 	
-	
+	border-radius: 12px;	
 	display: flex;
 	flex-direction: column;
 	justify-content: flex-start;
@@ -159,6 +145,68 @@ footer {
 	max-height: 650px; /* 높이 고정 */
 	overflow-y: auto; /* 내부 스크롤 활성화 */
 }
+
+/* wishDetailContainer 기본 스타일 */
+.wishDetail {
+  width: 350px;
+  height: 700px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #ffffff;
+  border: 1px solid lightgray;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  font-family: 'Roboto', sans-serif;
+  color: #333;
+}
+
+/* 각 데이터 라벨 */
+.wishDetail div {
+  margin-bottom: 10px;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+/* 이미지 스타일 */
+.wishDetail div img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin-top: 10px;
+  object-fit: cover;
+}
+
+/* 카테고리 강조 */
+.wishDetail div.name{
+  font-weight: bold;
+  color: #ff9000;
+}
+
+/* Wish List and Detail p tags */
+#wishlistContainer p,
+#wishDetailContainer p {
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: center;
+    padding: 10px;
+    background-color: #fcf6ed;
+    border-radius: 8px;
+    width: 100%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Specific styling for the "Wish List" p tag */
+#wishlistContainer p {
+    font-size: 22px;  /* Slightly larger font size for emphasis */
+    color: #333;    /* Change color to match the page theme */
+}
+
+/* Specific styling for the "Detail" p tag */
+#wishDetailContainer p {
+    font-size: 20px;  /* Medium size for clarity */
+    color: #333;      /* Dark color for better contrast */
+}
+
 </style>
 </head>
 
@@ -201,7 +249,7 @@ function fetchTLnameData() {
 		<!-- 타임라인 구역 -->
 		<div id="tlContainer">
 			<a class="tag_myplanner" href="/planner/myPlanner">
-				<svg id="myplanner" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="purple" class="bi bi-calendar2-check" viewBox="0 0 20 20">
+				<svg id="myplanner" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#333" class="bi bi-calendar2-check" viewBox="0 0 20 20">
 				  <path d="M10.854 8.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L7.5 10.793l2.646-2.647a.5.5 0 0 1 .708 0"/>
 				  <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M2 2a1 1 0 0 0-1 1v11a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1z"/>
 				  <path d="M2.5 4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5H3a.5.5 0 0 1-.5-.5z"/>
@@ -223,28 +271,31 @@ function fetchTLnameData() {
 				<div th:include="~{${req}}"></div>
 			</th:block>
 		</div>
-		<!-- 검색창(지역 조회) -->
-		<div id="search_plan_bar">
-			<form id="form_search" name="form_search" action="#">
-				<input type="text" size="75" placeholder="지역으로 검색  ex)경기도 화성시" class="input_search">
-				<button class="btn btn_search">
-					<svg id="wish_search" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#ff9000" class="bi bi-search-heart" viewBox="0 0 16 16">
-					  <path d="M6.5 4.482c1.664-1.673 5.825 1.254 0 5.018-5.825-3.764-1.664-6.69 0-5.018"></path>
-					  <path d="M13 6.5a6.47 6.47 0 0 1-1.258 3.844q.06.044.115.098l3.85 3.85a1 1 0 0 1-1.414 1.415l-3.85-3.85a1 1 0 0 1-.1-.115h.002A6.5 6.5 0 1 1 13 6.5M6.5 12a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11"></path>
-					</svg>
-				</button>
-			</form>
-		</div>
+		
 		<!-- 찜 목록 구역 -->
 		<div id="wishlistContainer">
-			<p>wish list</p>
+			<div id="wishcontainer" th:fragment="wishContainer">
+			   	<p>Wish List</p>
+			    <th:block th:each="store : ${storeList}">	
+			        <div class="wish-item" th:data-place-id="${store.getPlace().id}">
+			            <font size="3" th:text="${store.getPlace().place_name}">place_name</font>
+			        </div>
+			    </th:block>
+			</div>
 		</div>
-
+		
 		<!-- 찜 장소 상세 정보 -->
 		<div id="wishDetailContainer">
-			<p>wish detail</p>
 		</div>
-
+		
+		<script type="text/javascript" src="/js/mapPlaceStoreScript.js"></script>
+		<script th:inline="javascript">
+		    // 이벤트 위임으로 클릭 이벤트 처리 (동적으로 추가된 요소 대응)
+		    $('#wishcontainer').on('click', '.wish-item', function() {
+		        let placeId = $(this).data('place-id');
+		        $('#wishDetailContainer').load('/planner/wishlistDetail?place_id=' + placeId);
+		    });
+		</script>
 	</main>
 	
 	
