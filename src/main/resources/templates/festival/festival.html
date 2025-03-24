@@ -208,34 +208,45 @@ button[type="submit"]:hover {
 
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
+
 <script>
+// Function to handle the AJAX form submission
+function submitSearchForm(event) {
+    event.preventDefault(); // Prevent the form from submitting normally
+
+    const form = document.getElementById('searchForm');
+    const formData = new FormData(form);
+
+    // Send the form data via AJAX
+    fetch('/festival/searchFestivals', {
+        method: 'GET',
+        body: new URLSearchParams(formData),
+    })
+    .then(response => response.text()) // Get the response as text (HTML content)
+    .then(data => {
+        // Update the festival list container with the new content
+        document.querySelector('.container').innerHTML = data;
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+// Add event listener for form submission
+document.getElementById('searchForm').addEventListener('submit', submitSearchForm);
+
 function selectArea(button) {
-    // 모든 버튼에서 active 제거
     const buttons = document.querySelectorAll('#arealist button');
     buttons.forEach(btn => btn.classList.remove('active'));
-
-    // 클릭한 버튼 active 추가
     button.classList.add('active');
-
-    // hidden input에 값 설정
     document.getElementById('selectedArea').value = button.getAttribute('value');
-
 }
 
 function selectMonth(button) {
-    // 모든 버튼에서 active 제거
     const buttons = document.querySelectorAll('#monthButtons button');
     buttons.forEach(btn => btn.classList.remove('active'));
-
-    // 클릭한 버튼 active 추가
     button.classList.add('active');
-
-    // hidden input에 값 설정
     document.getElementById('selectedMonth').value = button.getAttribute('value');
-
 }
 
-// 페이지 로드 시, 이전 선택 유지
 window.onload = function() {
     const selectedArea = document.getElementById('selectedArea').value || "[[${param.areas}]]";
     const selectedMonth = document.getElementById('selectedMonth').value || "[[${param.months}]]";
@@ -260,14 +271,12 @@ window.onload = function() {
         document.getElementById('selectedMonth').value = selectedMonth;
     }
 };
-
 </script>
-
 
 <h3>Festival Search</h3>
 <div>
     <form action="/festival/searchFestivals" method="get" name="form1" id="searchForm">
-       <input type="hidden" name="areas" id="selectedArea">
+        <input type="hidden" name="areas" id="selectedArea">
         <input type="hidden" name="months" id="selectedMonth">
     
         <ul class="tag_list area_list" id="arealist">
@@ -289,10 +298,10 @@ window.onload = function() {
             <li id="37"><button type="button" class="btn" name="areas" value="전북" onclick="selectArea(this)"><span>#전북</span></button></li>
             <li id="38"><button type="button" class="btn" name="areas" value="전남" onclick="selectArea(this)"><span>#전남</span></button></li>
             <li id="39"><button type="button" class="btn" name="areas" value="제주" onclick="selectArea(this)"><span>#제주</span></button></li>
-        </ul>
+       </ul>
         
         <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
-            <div class="btn-group me-2" role="group" aria-label="Month group"  id="monthButtons">
+            <div class="btn-group me-2" role="group" aria-label="Month group" id="monthButtons">
                 <button type="button" class="btn" name="months" value="Jan" onclick="selectMonth(this)">1월</button>
                 <button type="button" class="btn" name="months" value="Feb" onclick="selectMonth(this)">2월</button>
                 <button type="button" class="btn" name="months" value="Mar" onclick="selectMonth(this)">3월</button>
@@ -307,12 +316,13 @@ window.onload = function() {
                 <button type="button" class="btn" name="months" value="Dec" onclick="selectMonth(this)">12월</button>
             </div>
         </div>
+        
         <div class="search_name_button">
-        <span>
-            <label for="name">키워드</label>
-            <input type="text" id="name" name="name" placeholder="축제 이름을 입력하세요">
-        </span>
-        <button type="submit">검색</button>
+            <span>
+                <label for="name">키워드</label>
+                <input type="text" id="name" name="name" placeholder="축제 이름을 입력하세요">
+            </span>
+            <button type="submit">검색</button>
         </div>
     </form>
 </div>
@@ -327,21 +337,22 @@ window.onload = function() {
                 <div class="fes-info">
                     <div class="title" th:text="${festival.name}"></div>
                     <div class="fes-base">
-                        <span th:text="${festival.period}"></span>
-                        <span th:text="${festival.area}"></span>
+                        <div th:text="${festival.area}"></div>
+                        <div th:text="${festival.month}"></div>
                     </div>
                     <div class="fes-content" th:text="${festival.content}"></div>
                 </div>
             </li>
         </ul>
     </div>
-</div>
-
-<!-- Pagination -->
-<div class="pagination">
-    <a th:if="${page > 1}" th:href="@{/festival/festivalSearch(page=${page - 1}, areas=${param.areas}, months=${param.months}, name=${param.name})}">이전</a>
-    <span th:text="'Page ' + ${page}"></span>
-    <a th:href="@{/festival/festivalSearch(page=${page + 1}, areas=${param.areas}, months=${param.months}, name=${param.name})}">다음</a>
+    <div class="pagination">
+        <span th:if="${festivalPage.hasPrevious()}">
+            <a th:href="@{/festival/searchFestivals(page=${festivalPage.number - 1})}">&laquo; 이전</a>
+        </span>
+        <span th:if="${festivalPage.hasNext()}">
+            <a th:href="@{/festival/searchFestivals(page=${festivalPage.number + 1})}">다음 &raquo;</a>
+        </span>
+    </div>
 </div>
 
 </body>
