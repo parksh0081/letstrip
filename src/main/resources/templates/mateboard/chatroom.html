@@ -10,9 +10,11 @@
 .container {
 	min-width: 100%;
 	min-height: 100%;
+	margin: auto;
 }
 #sendMessage{
 	display: flex;
+	align-items: center;
 }
 #message {
 	width: 500px;
@@ -27,13 +29,18 @@
 	font-size: 15px;
 	color: white;
 }
+.room-info {
+	display: flex;
+}
 </style>
 <script>
 // DOMContentLoaded 이벤트로 DOM이 완전히 로드된 후 실행되게 함 // 아닐시 오류
 window.addEventListener('DOMContentLoaded', (event) => {
     const roomCode = new URLSearchParams(window.location.search).get('roomCode');
-    document.getElementById("roomCode").innerText = roomCode;
-
+    const roomName = new URLSearchParams(window.location.search).get('roomName');
+    document.getElementById("roomName").innerText = roomName;
+    document.getElementById("roomCode").innerText = "[" + roomCode + "]";
+    
     const socket = new WebSocket(`ws://localhost:8080/chat?roomCode=${roomCode}`);
 
     socket.onopen = function(event) {
@@ -67,7 +74,9 @@ window.addEventListener('DOMContentLoaded', (event) => {
 
 <div class="container">
     <div>
-        <h2>채팅방 코드: <span id="roomCode">[채팅방 코드]</span></h2>
+        <div class="room-info">
+            <p id="roomName" style="font-weight: bold; font-size: 30px"></p><p id="roomCode" style="color: gray"></p>
+        </div>
         <div id="messages"></div>
         <div id="sendMessage">
         <input type="text" id="message" class="form-control" placeholder="메시지 입력...">

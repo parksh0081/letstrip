@@ -631,12 +631,14 @@ function generateRandomCode() {
 
 // 채팅방 참여 버튼 클릭 시 실행되는 함수
 function joinChatRoom() {
+	const roomName = prompt("채팅방 이름을 입력하세요.");
 	// 랜덤 10자리 코드 생성
 	const roomCode = generateRandomCode();
-	alert(`채팅방 참여 코드: ${roomCode}`);
+	alert(`${roomName} 생성, 채팅방 참여 코드: ${roomCode}`);
 	// 웹소켓 페이지로 이동 (웹소켓 페이지 구현 필요)
-	window.open(`/chatroom?roomCode=${roomCode}`, '_blank');
+	window.open(`/chatroom?roomName=${roomName}&roomCode=${roomCode}`, '_blank');
 }
+
 
 </script>
 
