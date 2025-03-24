@@ -66,17 +66,17 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         String roomCode = (String) session.getAttributes().get("roomCode");
-        
+
         // 해당 방 코드에 대한 세션 목록을 가져오거나 새로 생성
         sessions.computeIfAbsent(roomCode, k -> new ArrayList<>()).add(session);
-        
-        // 입장 알림 메시지 보내기
-        TextMessage enterMessage = new TextMessage("A participant has entered the chat.");
-        
+
+        // 입장 알림 메시지 (초록색)
+        String enterMessage = "<span style='color: green;'>[참여자가 채팅방에 입장하였습니다.]</span>";
+
         // 해당 방에 연결된 모든 사용자에게 입장 메시지 전송
         for (WebSocketSession s : sessions.get(roomCode)) {
             if (s.isOpen()) {
-                s.sendMessage(enterMessage);
+                s.sendMessage(new TextMessage(enterMessage));
             }
         }
     }
@@ -84,21 +84,21 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         String roomCode = (String) session.getAttributes().get("roomCode");
-        
+
         // 해당 방 코드에서 세션 목록에서 제거
         List<WebSocketSession> roomSessions = sessions.get(roomCode);
         if (roomSessions != null) {
             roomSessions.remove(session);
         }
 
-        // 퇴장 알림 메시지 보내기
-        TextMessage leaveMessage = new TextMessage("A participant has left the chat.");
-        
+        // 퇴장 알림 메시지 (빨간색)
+        String leaveMessage = "<span style='color: purple;'>[참여자가 채팅방을 떠났습니다.]</span>";
+
         // 해당 방에 연결된 모든 사용자에게 퇴장 메시지 전송
         if (roomSessions != null) {
             for (WebSocketSession s : roomSessions) {
                 if (s.isOpen()) {
-                    s.sendMessage(leaveMessage);
+                    s.sendMessage(new TextMessage(leaveMessage));
                 }
             }
         }

@@ -1,43 +1,81 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>채팅방</title>
-    <style>
-
-    </style>
+<meta charset="UTF-8">
+<title>채팅방</title>
+<link rel="stylesheet" href="../css/bootstrap.min.css">
 </head>
 <body>
-    <div>
-        <h2>채팅방: <span id="roomCode">[채팅방 코드]</span></h2>
-        <div id="messages"></div>
-        <input type="text" id="message" placeholder="메시지 입력...">
-        <button onclick="sendMessage()">전송</button>
-    </div>
+<style type="text/css">
+.container {
+	min-width: 100%;
+	min-height: 100%;
+}
+#sendMessage{
+	display: flex;
+}
+#message {
+	width: 500px;
+}
+#sendButton {
+	width: 60px;
+	height: 35px;
+	background-color: #ff9000;
+	margin-top: 1px;
+	margin-left: 10px;
+	vertical-align: middle;
+	font-size: 15px;
+	color: white;
+}
+</style>
+<script>
+// DOMContentLoaded 이벤트로 DOM이 완전히 로드된 후 실행되게 함 // 아닐시 오류
+window.addEventListener('DOMContentLoaded', (event) => {
+    const roomCode = new URLSearchParams(window.location.search).get('roomCode');
+    document.getElementById("roomCode").innerText = roomCode;
 
-    <script>
-        const roomCode = new URLSearchParams(window.location.search).get('roomCode');
-        document.getElementById("roomCode").innerText = roomCode;
-        
-        const socket = new WebSocket(`http://localhost:8080/chat?roomCode=${roomCode}`);
+    const socket = new WebSocket(`ws://localhost:8080/chat?roomCode=${roomCode}`);
 
-        socket.onopen = function(event) {
-            console.log("웹소켓 연결 성공!");
-        };
+    socket.onopen = function(event) {
+        console.log("웹소켓 연결 성공!");
+    };
 
-        socket.onmessage = function(event) {
-            const messageContainer = document.getElementById("messages");
-            const message = document.createElement("div");
-            message.textContent = event.data;
-            messageContainer.appendChild(message);
-        };
+    socket.onmessage = function(event) {
+        const messageContainer = document.getElementById("messages");
+        const message = document.createElement("div");
+        const br = document.createElement("br");
+        message.innerHTML = event.data;
+        messageContainer.appendChild(message);
+        messageContainer.appendChild(br);
+    };
 
-        function sendMessage() {
-            const messageInput = document.getElementById("message");
-            if (messageInput.value) {
-                socket.send(messageInput.value);
-                messageInput.value = '';
-            }
+    // 메시지 전송 함수
+    function sendMessage() {
+        const messageInput = document.getElementById("message");
+        if (messageInput.value) {
+            socket.send(messageInput.value);
+            messageInput.value = '';
         }
-    </script>
+    }
+
+    // 전송 버튼 클릭 시 sendMessage 실행
+    document.getElementById("sendButton").addEventListener("click", sendMessage);
+});
+</script>    
+	
+<div th:replace="~{layouts/header}"></div>   
+
+<div class="container">
+    <div>
+        <h2>채팅방 코드: <span id="roomCode">[채팅방 코드]</span></h2>
+        <div id="messages"></div>
+        <div id="sendMessage">
+        <input type="text" id="message" class="form-control" placeholder="메시지 입력...">
+        <input id="sendButton" type="button" class="btn" value="전송">
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{layouts/footer}"></div>   
 </body>
 </html>
