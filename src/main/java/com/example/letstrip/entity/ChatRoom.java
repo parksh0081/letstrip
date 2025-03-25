@@ -15,6 +15,6 @@ import lombok.NoArgsConstructor;
 public class ChatRoom {
 	@Id
     private String chatroomid;
-    private String chatroomName;
+    private String chatroomname;
     private java.util.Date chattime;
 }

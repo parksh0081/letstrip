@@ -7,10 +7,10 @@ import lombok.Data;
 @Data
 public class ChatRoomDTO {
     private String chatroomid;
-    private String chatroomName;
+    private String chatroomname;
     private java.util.Date chattime;
     
     public ChatRoom toEntity() {
-    	return new ChatRoom(chatroomid, chatroomName, chattime);
+    	return new ChatRoom(chatroomid, chatroomname, chattime);
     }
 }

@@ -15,11 +15,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.letstrip.dto.ChatRoomDTO;
+import com.example.letstrip.entity.ChatRoom;
 import com.example.letstrip.entity.Mateboard;
+import com.example.letstrip.service.ChatRoomService;
 import com.example.letstrip.service.MateboardService;
 
 import jakarta.servlet.http.HttpSession;
@@ -31,6 +35,9 @@ public class MateboardRestController {
    
    @Autowired
    MateboardService service;
+   
+   @Autowired
+   ChatRoomService chatroomService;
    
    // 목록
    @GetMapping("/mateboardListJson")
@@ -115,6 +122,7 @@ public class MateboardRestController {
 		
 	}
    
+    // 이미지 삭제 
 	@PostMapping(value = "/mateboardImageDelete")
 	public void mateboardImageDelete(@RequestParam("file") String fileName) {
 	    // 폴더 위치
@@ -134,5 +142,26 @@ public class MateboardRestController {
 			}
 	}  
 
+	// 채팅방 저장
+	@PostMapping("/createChatRoom")
+	public ResponseEntity<Map<String, Object>> createChatRoom(@RequestBody ChatRoomDTO dto) {
+	    Map<String, Object> response = new HashMap<>();
+
+	    try {
+	        // ChatRoomDTO를 Service로 전달
+	    	ChatRoom chatRoom = chatroomService.chatRoomWrite(dto);
+	        if (chatRoom != null) {
+	            response.put("success", true);
+	            return ResponseEntity.ok(response);
+	        } else {
+	            response.put("success", false);
+	            return ResponseEntity.status(500).body(response);
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        response.put("success", false);
+	        return ResponseEntity.status(500).body(response);
+	    }
+	}
 }
 
