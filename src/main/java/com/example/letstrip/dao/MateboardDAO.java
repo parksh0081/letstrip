@@ -72,6 +72,13 @@ public class MateboardDAO {
 		}
 		return result;
 	}
+
+	// 조회수 업데이트 
+	public void updateView(int seq) {
+		Mateboard mateboard = mateboardRepository.findById(seq).orElse(null);
+		mateboard.setHit(mateboard.getHit() + 1);
+		mateboardRepository.save(mateboard);
+	}
 	
 
 }

@@ -12,9 +12,13 @@ public class ChatMessageService {
 	@Autowired
 	ChatMessageDAO dao;
 
+	// 채팅 내역 저장 
 	public boolean saveChatMessage(ChatMessage chatMessage) {
 		return dao.saveChatMessage(chatMessage);
 	}
 
-
+	// 채팅 내역 가져오기 
+	public String chatcontent(String chatroomId, String personId) {
+		return dao.chatcontent(chatroomId, personId);
+	}
 }

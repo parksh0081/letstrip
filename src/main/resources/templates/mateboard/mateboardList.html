@@ -56,6 +56,28 @@ p#TRIPMATE {
 </style>
 
 <script type="text/javascript" th:inline="javascript">
+
+// 새글쓰기 로그인 확인
+function isLoginWrite() {
+	var id = /*[[${session.personId}]]*/ null;  // 자바스크립트 내추럴 템플릿
+	if(id == null) {
+	 alert("먼저 로그인 하세요.");
+	 return false;
+	} 
+	location.href='mateboardWriteForm';
+}
+
+//채팅목록 로그인 확인
+function isLoginChatList() {
+	var id = /*[[${session.personId}]]*/ null;  // 자바스크립트 내추럴 템플릿
+	if(id == null) {
+	 alert("먼저 로그인 하세요.");
+	 return false;
+	} 
+	location.href='chatList';
+}
+
+
 let pg = /*[[${pg}]]*/ 1;
 
 function fetchMateboardData(page){
@@ -96,7 +118,6 @@ function renderTable(data) {
          <td style="height: 55px;"><a class="subjectA" href="mateboardView?seq=${matetable.seq}&pg=${data.pg}">${matetable.subject}</a></td>
          <td style="height: 55px;">${matetable.id}</td>
          <td style="height: 55px;">${matetable.logtime}</td>
-         <td style="height: 55px;">${matetable.good}</td>
          <td style="height: 55px;">${matetable.hit}</td>
       `;
       tableBody.appendChild(tr)      
@@ -107,7 +128,6 @@ function renderTable(data) {
    for (let i = 0; i < remainingRows; i++) {
        const tr = document.createElement("tr");
        tr.innerHTML = `
-           <td style="height: 55px;"></td>
            <td style="height: 55px;"></td>
            <td style="height: 55px;"></td>
            <td style="height: 55px;"></td>
@@ -290,10 +310,9 @@ document.addEventListener("DOMContentLoaded", function() {
       <tr align="center" style="pointer-events: none; " height="3">
          <td width="100">No</td>
          <td width="350">제목</td>
-         <td width="80">글쓴이</td>
+         <td width="100">글쓴이</td>
          <td width="100">작성일</td>
-         <td width="80">추천수</td>
-         <td width="80">조회수</td>
+         <td width="100">조회수</td>
       </tr>
       <tr align="center" class="mateboard_principle" height="3">
          <td width="100"> 
@@ -302,14 +321,9 @@ document.addEventListener("DOMContentLoaded", function() {
                <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0M7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z"/>
             </svg>
          </td>
-         <td width="300"><a href="#" class="principle">* 반갑습니다. MATE게시판입니다.</a></td>
+         <td width="350"><a href="#" class="principle">* 반갑습니다. MATE게시판입니다.</a></td>
          <td width="100">관리자</td>
-         <td width="150">yyyy-mm-dd</td>
-         <td width="100">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="19" fill="currentColor" class="bi bi-balloon-heart" viewBox="0 0 14 14">
-               <path fill-rule="evenodd" d="m8 2.42-.717-.737c-1.13-1.161-3.243-.777-4.01.72-.35.685-.451 1.707.236 3.062C4.16 6.753 5.52 8.32 8 10.042c2.479-1.723 3.839-3.29 4.491-4.577.687-1.355.587-2.377.236-3.061-.767-1.498-2.88-1.882-4.01-.721zm-.49 8.5c-10.78-7.44-3-13.155.359-10.063q.068.062.132.129.065-.067.132-.129c3.36-3.092 11.137 2.624.357 10.063l.235.468a.25.25 0 1 1-.448.224l-.008-.017c.008.11.02.202.037.29.054.27.161.488.419 1.003.288.578.235 1.15.076 1.629-.157.469-.422.867-.588 1.115l-.004.007a.25.25 0 1 1-.416-.278c.168-.252.4-.6.533-1.003.133-.396.163-.824-.049-1.246l-.013-.028c-.24-.48-.38-.758-.448-1.102a3 3 0 0 1-.052-.45l-.04.08a.25.25 0 1 1-.447-.224l.235-.468ZM6.013 2.06c-.649-.18-1.483.083-1.85.798-.131.258-.245.689-.08 1.335.063.244.414.198.487-.043.21-.697.627-1.447 1.359-1.692.217-.073.304-.337.084-.398"/>
-            </svg>
-         </td>
+         <td width="100">yyyy-mm-dd</td>
          <td width="100">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="19" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
                <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z"/>
@@ -321,9 +335,10 @@ document.addEventListener("DOMContentLoaded", function() {
          <!-- 동적으로 추가 / 검색기능 -->
       </tbody>
    </table>
-      <div style="display: flex; justify-content: space-between;">
-         <input type="button" value="새글쓰기" class="btn" onclick="location.href='mateboardWriteForm'" style="margin-left: 10px; height: 30px; font-size: 11px; margin-right: 100px;">
-         <nav id="pagination">
+      <div style="display: flex;">
+         <input type="button" value="새글쓰기" class="btn" onclick="isLoginWrite()" style="margin-left: 10px; height: 30px; font-size: 11px;">
+         <input type="button" value="채팅목록" class="btn" onclick="isLoginChatList()" style="margin-left: 10px; height: 30px; font-size: 11px;">
+         <nav id="pagination" style="margin: auto; width: 300px;">
             <!-- 동적으로 추가 / 검색된 페이징 동적으로 추가-->
          </nav>
          <span class="search_box" style="display: flex;">

@@ -17,4 +17,10 @@ public class ChatRoomService {
 	public ChatRoom chatRoomWrite(ChatRoomDTO dto) {
 		return dao.chatRoomWrite(dto);
 	}
+
+	// 채팅방 이름 가져오기 
+	public String chatroomName(String chatroomid) {
+		return dao.chatRoomName(chatroomid);
+	}
+
 }

@@ -21,4 +21,9 @@ public class ChatRoomDAO {
 		ChatRoom chatRoom = dto.toEntity();
 		return chatRoomRepository.save(chatRoom);
 	}
+
+	// 채팅방 이름 
+	public String chatRoomName(String chatroomid) {
+		return chatRoomRepository.findByChatRoomId(chatroomid);
+	}
 }

@@ -36,9 +36,6 @@ public class MateboardRestController {
    @Autowired
    MateboardService service;
    
-   @Autowired
-   ChatRoomService chatroomService;
-   
    // 목록
    @GetMapping("/mateboardListJson")
    public Map<String, Object> mateboardListJson(@RequestParam(value = "pg", defaultValue = "1")int pg) {
@@ -141,27 +138,5 @@ public class MateboardRestController {
 				e.printStackTrace();
 			}
 	}  
-
-	// 채팅방 저장
-	@PostMapping("/createChatRoom")
-	public ResponseEntity<Map<String, Object>> createChatRoom(@RequestBody ChatRoomDTO dto) {
-	    Map<String, Object> response = new HashMap<>();
-
-	    try {
-	        // ChatRoomDTO를 Service로 전달
-	    	ChatRoom chatRoom = chatroomService.chatRoomWrite(dto);
-	        if (chatRoom != null) {
-	            response.put("success", true);
-	            return ResponseEntity.ok(response);
-	        } else {
-	            response.put("success", false);
-	            return ResponseEntity.status(500).body(response);
-	        }
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	        response.put("success", false);
-	        return ResponseEntity.status(500).body(response);
-	    }
-	}
 }
 

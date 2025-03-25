@@ -55,6 +55,11 @@ public class MateboardService {
 		return dao.mateboardModify(dto);
 	}
 
+	// 조회수 업데이트 
+	public void updateView(int seq) {
+		dao.updateView(seq);
+	}
+
 
 
 }

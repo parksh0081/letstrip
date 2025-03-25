@@ -60,6 +60,9 @@ public class MateboardController {
 	public String mateboardView(@RequestParam("pg") int pg, @RequestParam("seq") int seq, Model model) {
 		Mateboard mateboard = service.mateboardView(seq);
 		
+		// 조회수 업데이트
+		service.updateView(seq);
+		
 		model.addAttribute("pg", pg);
 		model.addAttribute("seq", seq);
 		model.addAttribute("mateboard", mateboard);

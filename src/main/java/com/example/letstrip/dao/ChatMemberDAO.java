@@ -1,5 +1,7 @@
 package com.example.letstrip.dao;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -61,5 +63,9 @@ public class ChatMemberDAO {
             chatMemberRepository.save(chatMember);
         }
     }
+
+	public List<String> chatList(String personId) {
+		return chatMemberRepository.findAllByPersonId(personId);
+	}
 
 }

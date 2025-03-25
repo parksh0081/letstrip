@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+
+<style type="text/css">
+.container {
+   width: 1200px;
+   height: 740px;
+   margin: auto;
+}
+
+p#TRIPMATE {
+	color: #ff9000; 
+	margin-top: 30px; 
+	margin-left: 10px; 
+	margin-bottom: 0px; 
+	font-weight: bold; 
+	font-size: 30px;
+}
+
+#title_List {
+   color: #ff9000;
+   text-decoration: none;	
+}
+
+#Listcontent{
+	display: flex;
+	margin-top: 10px;
+	height: 550px;
+}
+
+.left {
+   width: 315px; 
+   margin-left: 5px;
+   height: 600px;
+   overflow-y: auto;
+}
+
+.right {
+   width: 875px; 
+   margin-right: 5px;
+   height: 600px;
+}
+
+tbody {
+	overflow-y: auto;
+	height: 100%;
+	word-wrap: break-word;
+}
+
+tbody tr:hover td {
+     background: rgba(128, 128, 128, 0.1);   /* 색상은 바꿔주세요.. */
+}
+
+#contenttext{
+   width: 100%; 
+   height: 100%;
+   overflow-y: scroll; 
+   padding-left: 10px;
+   border: 1px dotted gray;
+}
+
+</style>
+
+<script type="text/javascript" th:inline="javascript">
+function loadChatRoomContent(row) {
+    var chatroomId = row.getAttribute('data-chatroomid');
+    
+    document.getElementById('contenttext').innerHTML = '';
+
+    fetch(`/mateboard/chatRoomContent?chatroomId=${chatroomId}`)
+        .then(response => {
+            //console.log(response.ok);
+            return response.json();  // JSON으로 변환
+        })
+        .then(data => {
+            document.getElementById('contenttext').innerHTML = data.chatContent;
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+}
+
+
+</script>
+
+
+</head>
+<body>
+
+<div th:replace="~{layouts/header}"></div>   
+
+<div class="container">
+   <p id="TRIPMATE"><a href="mateboardList" id="title_List">TRIP MATE</a></p>
+   <hr style="border-width:2px; margin-bottom: 0px; margin-top: 5px;">
+   <div id="Listcontent">
+       <div class="left">
+            <table class="table" id="Listtable">
+                <thead>
+                    <tr>
+                        <td>채팅방 ID</td>
+                        <td>채팅방 이름</td>
+                    </tr>
+                </thead>
+                <tbody>
+   					 <tr th:each="chatroom : ${chatRoomIdAndName}" th:attr="data-chatroomid=${chatroom[0]}" onclick="loadChatRoomContent(this)">
+				        <td th:text="${chatroom[0]}"></td> 
+				        <td th:text="${chatroom[1]}"></td> 
+				    </tr>
+                </tbody>
+            </table>
+       </div>
+       <div class="right">
+			<div id="contenttext">
+					
+			</div>
+	   </div>	
+   </div>
+</div>
+
+
+
+<div th:replace="~{layouts/footer}"></div>   
+</body>
+</html>
