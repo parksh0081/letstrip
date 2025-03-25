@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>교통편 정보</title>
+<style type="text/css">
+body .train-container {
+	font-family: Arial, sans-serif;
+	text-align: center;
+	padding: 20px;
+}
+
+h2 {
+	color: #333;
+	font-weight: bold;
+}
+
+.transbutton {
+	width: 150px;
+	border: none;
+}
+
+.transbutton:hover {
+	background-color: #FF9000;
+}
+
+#trainForm {
+    background: #f4f4f9;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    display: inline-block;
+    text-align: left;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    width: 380px;
+}
+
+label {
+    font-weight: bold;
+    margin-top: 10px;
+    margin-right: 10px;
+}
+
+select {
+	margin-left: 10px;
+	width: 275px;
+	padding: 8px;
+	border: 1px solid #ddd;
+}
+
+input {
+    width: 345px;
+    padding: 8px;
+    margin: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.search {
+	width: 340px;
+	border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #FF9000;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+
+#trainResults {
+    margin-top: 20px;
+}
+
+h5 {
+	margin: 10px 0;
+	font-weight: bold !important;
+	color: #606060 !important;
+}
+
+table {
+    width: 700px;
+    margin: 0 auto;
+    border-collapse: separate; 
+    border-spacing: 0; 
+    background: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 5px; 
+    overflow: hidden; 
+}
+
+th, td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: center;
+}
+
+th {
+    background: #FF9000;
+    color: white;
+}
+
+tr:nth-child(even) {
+    background: #f2f2f2;
+}
+
+</style>
+</head>
+<body>
+<div th:replace="~{layouts/header}"></div>
+	<div class="train-container">
+		<h2>Train Schedule</h2>
+		<div style="margin-bottom: 10px;">
+        	<input type="button" class="transbutton" value="🚗 자차" onclick="location.href='/transport'">
+	        <input type="button" class="transbutton" value="🚌 버스" onclick="location.href='/bus'">
+	        <input type="button" class="transbutton" value="🚆 기차" onclick="location.href='/train'">
+        </div>
+	    <form id="trainForm">
+	    	<div>
+	    		<label for="departureCode">출발지</label>
+		        <select id="departureCode" name="departureCode">
+		            <option value="3900587">강릉</option>
+		            <option value="3900229">광주송정</option>
+		            <option value="3900085">김천</option>
+		            <option value="3900073">대전</option>
+		            <option value="3900567">동백산</option>
+		            <option value="3900096">동대구</option>
+		            <option value="3900580">동해</option>
+		            <option value="3900686">마산</option>
+		            <option value="3900242">목포</option>
+		            <option value="3900621">부전</option>
+		            <option value="3900114">부산</option>
+		            <option value="3900560">분천</option>
+		            <option value="3900023">서울</option>
+		            <option value="3900195">서대전</option>
+		            <option value="3901102">안동</option>
+		            <option value="3900592">아우라지</option>
+		            <option value="3900164">영주</option>
+		            <option value="3900279">여수EXPO</option>
+		            <option value="3900153">제천</option>
+		            <option value="3900699">진주</option>
+		            <option value="3900565">철암</option>
+		            <option value="3900388">청량리</option>
+		            <option value="3900639">태화강</option>
+		            <option value="3901040">포항</option>
+		            <option value="3900361">행신</option>
+		        </select>
+	    	</div>
+	    	
+	    	<div>
+	    		<label for="arrivalCode">도착지</label>
+		        <select id="arrivalCode" name="arrivalCode">
+		            <option value="3900587">강릉</option>
+		            <option value="3900229">광주송정</option>
+		            <option value="3900085">김천</option>
+		            <option value="3900073">대전</option>
+		            <option value="3900567">동백산</option>
+		            <option value="3900096">동대구</option>
+		            <option value="3900580">동해</option>
+		            <option value="3900686">마산</option>
+		            <option value="3900242">목포</option>
+		            <option value="3900621">부전</option>
+		            <option value="3900114">부산</option>
+		            <option value="3900560">분천</option>
+		            <option value="3900023">서울</option>
+		            <option value="3900195">서대전</option>
+		            <option value="3901102">안동</option>
+		            <option value="3900592">아우라지</option>
+		            <option value="3900164">영주</option>
+		            <option value="3900279">여수EXPO</option>
+		            <option value="3900153">제천</option>
+		            <option value="3900699">진주</option>
+		            <option value="3900565">철암</option>
+		            <option value="3900388">청량리</option>
+		            <option value="3900639">태화강</option>
+		            <option value="3901040">포항</option>
+		            <option value="3900361">행신</option>
+		        </select>
+	    	</div>
+	    	
+	
+	        <div>
+	        	<label for="departureDate">날짜</label>
+	        	<input type="text" id="departureDate" name="departureDate" required><br><br>
+	        </div>
+	       
+	        
+	        <button type="submit" class="search">조회</button>
+	    </form>
+	
+	    <div id="trainResults"></div>
+	</div>
+    
+
+    <script>
+        document.getElementById("trainForm").addEventListener("submit", function(event) {
+            event.preventDefault();  // 기본 폼 제출 방지
+
+            const departureDate = document.getElementById("departureDate").value.replace(/-/g, "");
+            const departureCode = document.getElementById("departureCode").value;
+            const arrivalCode = document.getElementById("arrivalCode").value;
+           
+
+            // Fetch를 이용해 데이터 요청
+            fetch(`/trainSchedule?departureDate=${departureDate}
+            &departureCode=${departureCode}
+            &arrivalCode=${arrivalCode}
+            `)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data); // 응답 데이터를 콘솔에 출력
+                    displayTrainSchedule(data);
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                });
+        });
+        
+
+        function displayTrainSchedule(data) {
+            const resultsDiv = document.getElementById("trainResults");
+
+            if (data.response.body.items.item.length > 0) {
+                let htmlContent = `
+                    <h5>🚆 기차 경로 조회</h5>
+                    <table border="1">
+                        <thead>
+                            <tr>
+                                <th>Train No</th>
+                                <th>출발지</th>
+                                <th>도착지</th>
+                                <th>날짜</th>
+                                <th>출발시간</th>
+                                <th>도착시간</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+
+                data.response.body.items.item.forEach(item => {
+                    let formattedDate = `${item.run_ymd.substring(0, 4)}-${item.run_ymd.substring(4, 6)}-${item.run_ymd.substring(6, 8)}`;
+                    let departureTime = item.trn_plan_dptre_dt.split(" ")[1].substring(0, 5); // HH:mm 형식
+                    let arrivalTime = item.trn_plan_arvl_dt.split(" ")[1].substring(0, 5); // HH:mm 형식
+
+                    htmlContent += `
+                        <tr>
+                            <td>${item.trn_no}</td>
+                            <td>${item.dptre_stn_nm}</td>
+                            <td>${item.arvl_stn_nm}</td>
+                            <td>${formattedDate}</td>
+                            <td>${departureTime}</td>
+                            <td>${arrivalTime}</td>
+                        </tr>
+                    `;
+                });
+
+                htmlContent += `
+                        </tbody>
+                    </table>
+                    <!-- 기차 예매 링크 추가 -->
+                    <div style="margin-top: 20px;">
+                        <a href="https://www.korail.com" target="_blank" style="color: #FF9000; font-size: 16px; font-weight: bold;">기차 예매하기</a>
+                    </div>
+                `;
+
+                resultsDiv.innerHTML = htmlContent;
+            } else {
+                resultsDiv.innerHTML = "<p>🚨 해당 조건에 맞는 기차가 없습니다..</p>";
+            }
+        }
+
+    </script>
+<div th:replace="~{layouts/footer}"></div>
+</body>
+</html>
