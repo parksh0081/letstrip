@@ -23,7 +23,7 @@ public class WebSocketInterceptor extends HttpSessionHandshakeInterceptor {
         }
         
         // URL에서 roomName과 roomCode를 추출
-        String roomName = request.getURI().getQuery();  // "roomName=〇〇&roomCode=Ton6rqkQyI"
+        String roomName = request.getURI().getQuery(); 
 
         // URL 쿼리 파라미터에서 'roomName'과 'roomCode' 추출
         if (roomName != null) {

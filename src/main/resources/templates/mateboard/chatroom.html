@@ -29,6 +29,16 @@
 	font-size: 15px;
 	color: white;
 }
+#exitButton{
+	width: 60px;
+	height: 35px;
+	background-color: #ff9000;
+	margin-top: 1px;
+	margin-left: 10px;
+	vertical-align: middle;
+	font-size: 15px;
+	color: white;
+}
 .room-info {
 	display: flex;
 }
@@ -68,8 +78,50 @@ window.addEventListener('DOMContentLoaded', (event) => {
 
     // 전송 버튼 클릭 시 sendMessage 실행
     document.getElementById("sendButton").addEventListener("click", sendMessage);
+    
+    function exitMessages() {
+        const exitConfirmed = confirm("퇴장하시겠습니까? 해당 탭은 닫히며, 여기까지의 채팅 기록이 저장됩니다.");
+        
+        if (exitConfirmed) {
+            const messageContainer = document.getElementById("messages");
+
+            // 전체 메시지들을 하나의 배열로 묶기
+            const messages = Array.from(messageContainer.children).map(child => child.innerText);
+
+            const roomCode = new URLSearchParams(window.location.search).get('roomCode');  
+
+            const exitMessage = "[사용자가 채팅방을 나갔습니다.]";
+
+            // POST 요청을 사용해 서버로 메시지 전송
+            fetch('/chat/exit', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    chatcontent: messages.join("<br>") + "<br>" + exitMessage,
+                    chatroomid: roomCode
+                })
+            })
+            .then(response => response.json())  // 응답을 JSON 형식으로 처리
+            .then(data => {
+                // boolean 값이 true이면 메시지가 성공적으로 저장되었다는 의미
+                if (data) {
+                    console.log('메시지가 성공적으로 저장되었습니다.');
+                    window.close();
+                } else {
+                    console.error('메시지 저장 실패');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    }
+
+document.getElementById("exitButton").addEventListener("click", exitMessages);
+
 });
-</script>    
+</script>
+
 	
 <div th:replace="~{layouts/header}"></div>   
 
@@ -82,6 +134,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
         <div id="sendMessage">
         <input type="text" id="message" class="form-control" placeholder="메시지 입력...">
         <input id="sendButton" type="button" class="btn" value="전송">
+        <input id="exitButton" type="button" class="btn" value="퇴장">
         </div>
     </div>
 </div>

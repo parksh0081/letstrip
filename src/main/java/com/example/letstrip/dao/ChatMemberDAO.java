@@ -26,7 +26,7 @@ public class ChatMemberDAO {
     public void saveChatMember(String personId, String roomCode) {
         // personId가 null인 경우 예외를 던짐
         if (personId == null) {
-            throw new IllegalArgumentException("personId cannot be null");
+            throw new IllegalArgumentException("error");
         }
 
         // 기존에 참가한 기록이 있는지 확인
@@ -36,7 +36,7 @@ public class ChatMemberDAO {
             ChatMember chatMember = new ChatMember();
             ChatMemberId memberId = new ChatMemberId();
             memberId.setChatroomid(roomCode);
-            memberId.setId(personId);  // personId가 null이면 문제가 발생할 수 있음
+            memberId.setId(personId); 
             chatMember.setId(memberId);
 
             // 채팅방 존재 여부 확인
