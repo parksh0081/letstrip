@@ -119,34 +119,104 @@
 </style>
 
 <script>
-const images = [
-    '/image/seoul.jpg',
-    '/image/jeju.jpg',
-    '/image/busan.jpg',
-    '/image/jeonju.png',
-    '/image/gangneung.jpg',
-    '/image/geongju.jpg'
-];
+const slidesData = [
+    {
+        src: '/image/seoul.jpg',
+        alt: '서울 이미지',
+        link: '/poster/seoul'
+    }, {
+    	 src: '/image/jeju.jpg',
+         alt: '제주 이미지',
+         link: '/poster/jeju'
+    }, {
+	   	 src: '/image/busan.jpg',
+	     alt: '부산 이미지',
+	     link: '/poster/busan'
+	}, {
+		 src: '/image/jeonju.jpg',
+	     alt: '전주 이미지',
+	     link: '/poster/jeonju'
+	}, {
+		 src: '/image/gangneung.jpg',
+	     alt: '강릉 이미지',
+	     link: '/poster/gangneung'
+	}, {
+		 src: '/image/geongju.jpg',
+	     alt: '경주 이미지',
+	     link: '/poster/geongju'
+	}];
 
 const slidesContainer = document.getElementById('slides');
-
-// 이미지를 슬라이드에 추가하는 함수
 function createSlides() {
-    images.forEach(src => {
+    slidesData.forEach(slide => {
+        // 이미지와 관련된 HTML을 생성
+        const a = document.createElement('a');
+
+     	// 팝업을 여는 onclick 이벤트 추가
+        a.onclick = function(event) {
+            event.preventDefault(); // 기본 링크 동작을 막음
+            window.open(slide.link, 'popupWindow', 'width=500,height=500'); // 팝업 창 열기
+        };
+        
         const img = document.createElement('img');
-        img.src = src;
-        img.classList.add('slide');
-        slidesContainer.appendChild(img);
+        img.src = slide.src;
+        img.alt = slide.alt;
+        a.appendChild(img);
+        
+        // 슬라이드 컨테이너에 추가
+        slidesContainer.appendChild(a);
     });
 
     // 이미지 복사본을 추가하여 연속적으로 이어지게 만들기
-    images.forEach(src => {
+    slidesData.forEach(slide => {
+        const a = document.createElement('a');
+     	
+        // 팝업을 여는 onclick 이벤트 추가
+        a.onclick = function(event) {
+            event.preventDefault(); // 기본 링크 동작을 막음
+            window.open(slide.link, 'popupWindow', 'width=500,height=500'); // 팝업 창 열기
+        };
+        
         const img = document.createElement('img');
-        img.src = src;
-        img.classList.add('slide');
-        slidesContainer.appendChild(img);
+        img.src = slide.src;
+        img.alt = slide.alt;
+        a.appendChild(img);
+        
+        // 슬라이드 컨테이너에 추가
+        slidesContainer.appendChild(a);
     });
 }
+
+
+// const images = [
+//     '/image/seoul.jpg',
+//     '/image/jeju.jpg',
+//     '/image/busan.jpg',
+//     '/image/jeonju.png',
+//     '/image/gangneung.jpg',
+//     '/image/geongju.jpg'
+// ];
+
+// const slidesContainer = document.getElementById('slides');
+
+// // 이미지를 슬라이드에 추가하는 함수
+// function createSlides() {
+//     images.forEach(src => {
+//         const img = document.createElement('img');
+//         img.src = src;
+//         img.classList.add('slide');
+//         slidesContainer.appendChild(img);
+        
+//     });
+
+//     // 이미지 복사본을 추가하여 연속적으로 이어지게 만들기
+//     images.forEach(src => {
+//         const img = document.createElement('img');
+//         img.src = src;
+//         img.classList.add('slide');
+//         slidesContainer.appendChild(img);
+//     });
+// }
 
 createSlides();
 </script>

@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<style type="text/css">
+body {
+  margin: 0;
+}
+
+.body-wrap {
+  background-color: #fff;
+  width: 600px;
+  min-height: 500px;
+  margin: 0 auto;
+  font-size: 12px;
+}
+
+.pres-timeline {
+  font-family: roboto, helvetica, sans-serif;
+  font-size: 12px;
+  color: #4A4A4A;
+  width: 100%;
+  margin: 30px 0;
+}
+.pres-timeline > div > div {
+  padding: 1em 0;
+  box-sizing: border-box;
+}
+.pres-timeline .periods-container, .pres-timeline .cards-container {
+  overflow: hidden;
+  box-sizing: border-box;
+  position: relative;
+  min-height: 100px;
+  transition: height 0.5s ease-in-out;
+  background-color: #FFF;
+}
+.periods-container:before {
+  background-image: linear-gradient(left, #FFF, rgba(248, 248, 248, 0));
+  left: 0;
+  content: "";
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  height: 100%;
+  width: 100px;
+}
+.periods-container:after {
+  background-image: linear-gradient(right, #FFF, rgba(248, 248, 248, 0));
+  right: 0;
+  content: "";
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  height: 100%;
+  width: 100px;
+}
+.periods-container .btn-back, .periods-container .btn-next {
+  display: inline-block;
+  width: 15%;
+  height: 100%;
+  position: absolute;
+  cursor: pointer;
+  z-index: 10;
+  transition: 0.3s ease-in-out;
+}
+.periods-container .btn-back:hover, .periods-container .btn-next:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+.periods-container .btn-back.hide, .periods-container .btn-next.hide {
+  display: none;
+}
+.periods-container .btn-back {
+  left: 0;
+}
+.periods-container .btn-next {
+  right: 0;
+}
+.periods-container section {
+  width: 70%;
+  height: 0;
+  position: absolute;
+  margin-left: 15%;
+  border-bottom: 5px solid #dfe3e6;
+  padding: 1.5em;
+  box-sizing: border-box;
+  transition: transform 0.3s ease-in-out, opacity 0.2s ease, height 0.3s ease;
+  bottom: 0;
+  opacity: 0;
+  background-color: #fff;
+}
+.periods-container section.active {
+  height: auto;
+  opacity: 1;
+  transform: translateX(0);
+  z-index: 5;
+}
+.periods-container section.active .title, .periods-container section.active p {
+  display: block;
+}
+.periods-container section.prev {
+  height: auto;
+  opacity: 0.4;
+  transform: translateX(-100%);
+  z-index: 0;
+}
+.periods-container section.prev .year {
+  text-align: right;
+}
+.periods-container section.next {
+  height: auto;
+  opacity: 0.4;
+  transform: translateX(100%);
+  z-index: 0;
+}
+.periods-container section .year {
+  font-size: 20px;
+  font-weight: 400;
+}
+.periods-container section .title {
+  color: #4A4A4A;
+  font-size: 28px;
+  font-weight: 400;
+  display: none;
+}
+.periods-container section p {
+  display: none;
+}
+
+.timeline-container {
+  position: relative;
+  width: 100%;
+  height: 50px;
+  overflow: hidden;
+}
+.timeline-container:before {
+  background-image: linear-gradient(left, #FFF, rgba(248, 248, 248, 0));
+  left: 0;
+  content: "";
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  height: 100%;
+  width: 100px;
+}
+.timeline-container:after {
+  background-image: linear-gradient(right, #FFF, rgba(248, 248, 248, 0));
+  right: 0;
+  content: "";
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  height: 100%;
+  width: 100px;
+}
+.timeline-container .timeline {
+  position: absolute;
+  display: block;
+  height: 50px;
+  transition: left 0.3s ease-in-out;
+}
+.timeline-container .timeline ol {
+  display: block;
+  width: 100%;
+  height: 2px;
+  background-color: #dfe3e6;
+  list-style: none;
+  padding-left: 210px;
+  padding-right: 300px;
+}
+.timeline-container .timeline ol li {
+  display: inline-block;
+  padding: 5px;
+  margin-top: -11px;
+  margin-left: 80px;
+  border-radius: 50%;
+  border: 3px solid #7f9298;
+  background-color: #FFF;
+  position: relative;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+.timeline-container .timeline ol li.active {
+  box-shadow: none;
+}
+.timeline-container .timeline ol li.active:before {
+  content: "";
+  display: block;
+  height: 25px;
+  width: 1px;
+  position: absolute;
+  top: -25px;
+  transition: opacity 0.3s ease-in-out;
+}
+.timeline-container .timeline ol li.active:after {
+  content: "";
+  display: block;
+  height: 25px;
+  width: 1px;
+  position: absolute;
+  bottom: -25px;
+  transition: opacity 0.3s ease-in-out;
+}
+.timeline-container .btn-back, .timeline-container .btn-next {
+  display: inline-block;
+  position: absolute;
+  cursor: pointer;
+  margin-top: -2px;
+  z-index: 11;
+  transition: all 0.3s ease;
+}
+.timeline-container .btn-back.hide, .timeline-container .btn-next.hide {
+  display: none;
+}
+.timeline-container .btn-back:hover, .timeline-container .btn-next:hover {
+  border-color: #7f9298;
+}
+.timeline-container .btn-back {
+  left: 1em;
+}
+.timeline-container .btn-next {
+  right: 1em;
+}
+
+.cards-container:before {
+  background-image: linear-gradient(left, #FFF, rgba(248, 248, 248, 0));
+  left: 0;
+  content: "";
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  height: 100%;
+  width: 100px;
+}
+.cards-container:after {
+  background-image: linear-gradient(right, #FFF, rgba(248, 248, 248, 0));
+  right: 0;
+  content: "";
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  height: 100%;
+  width: 100px;
+}
+.cards-container section {
+  width: 70%;
+  position: absolute;
+  margin-left: 15%;
+  margin-bottom: 2em;
+  border: 1px solid #f5f7f6;
+  padding: 1.5em;
+  box-sizing: border-box;
+  transition: transform 0.3s ease-in-out;
+  top: 0;
+  opacity: 0;
+  border-radius: 8px;
+  background-color: #fff;
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.15);
+}
+.cards-container section.active {
+  height: auto;
+  opacity: 1;
+  transform: translateX(0);
+  z-index: 5;
+}
+.cards-container section.prev {
+  height: auto;
+  opacity: 0.4;
+  transform: translateX(-105%);
+  z-index: 0;
+}
+.cards-container section.next {
+  height: auto;
+  opacity: 0.4;
+  transform: translateX(105%);
+  z-index: 0;
+}
+.cards-container section .year {
+  text-align: center;
+  font-size: 16px;
+  margin: 0;
+}
+.cards-container section .title {
+  font-weight: 400;
+}
+.cards-container section img {
+  width: 100%;
+}
+</style>
+
+<script type="text/javascript">
+class PRESTimeline {
+	constructor(target, color) {
+		this.base = target;
+		this.color = color;
+		this.periodContainer = $(this.base).find(".periods-container");
+		this.cardContainer = $(this.base).find(".cards-container");
+		this.timelineNodeContainer = $(this.base).find(".timeline-container .timeline");
+
+		this._parseData();
+		this._initialColor();
+		this._generateTimeline();
+		this._setStateClasses();
+		this._assignBtn();
+		this._adjustPeriodContainer();
+		this._adjustCardContainer();
+	}
+
+	_parseData() {
+		let base = this.base;
+		let periods = $(base).find(".periods-container section").toArray();
+		for (let section of periods) {
+			section.period = $(section).attr("period");
+			section.index = $(section).index();
+		}
+		this.periodData = periods;
+
+		let data = $(base).find(".cards-container section").toArray();
+		for (let section of data) {
+			section.period = $(section).attr("period");
+			section.index = $(section).index();
+		}
+		this.cardData = data;
+
+		this.activePeriod = this.periodData[0];
+		this.activePeriodIndex = 0;
+		this.activeCard = this.cardData[0];
+		this.activeCardIndex = 0;
+	}
+
+	_setStateClasses() {
+		// Periods
+		$(this.base).find(".periods-container section.active").removeClass("active");
+		$(this.base).find(".periods-container section.prev").removeClass("prev");
+		$(this.base).find(".periods-container section.next").removeClass("next");
+
+		$(this.activePeriod).addClass("active");
+		if ($(this.activePeriod).prev().length != 0) {
+			$(this.activePeriod).prev().addClass("prev");
+			$(this.base).find(".periods-container .btn-back").removeClass("hide");
+		} else {
+			$(this.base).find(".periods-container .btn-back").addClass("hide");
+		}
+		if ($(this.activePeriod).next().length != 0) {
+			$(this.activePeriod).next().addClass("next");
+			$(this.base).find(".periods-container .btn-next").removeClass("hide");
+		} else {
+			$(this.base).find(".periods-container .btn-next").addClass("hide");
+		}
+
+		// Cards
+		$(this.base).find(".cards-container section.active").removeClass("active");
+		$(this.base).find(".cards-container section.prev").removeClass("prev");
+		$(this.base).find(".cards-container section.next").removeClass("next");
+
+		$(this.activeCard).addClass("active");
+		if ($(this.activeCard).prev().length != 0) {
+			$(this.activeCard).prev().addClass("prev");
+		}
+		if ($(this.activeCard).next().length != 0) {
+			$(this.activeCard).next().addClass("next");
+		}
+
+		// Timeline
+		$(this.base).find(".timeline li.active").removeClass("active");
+		$(this.timelineData[this.activeCard.index]).addClass("active");
+
+		let timelineB = $(this.base).find(".timeline-container .btn-back");
+		let timelineN = $(this.base).find(".timeline-container .btn-next");
+		if (this.activeCardIndex === 0) {
+			timelineB.addClass("hide");
+		} else {
+			timelineB.removeClass("hide");
+		}
+		if (this.activeCardIndex >= this.cardData.length - 1) {
+			timelineN.addClass("hide");
+		} else {
+			timelineN.removeClass("hide");
+		}
+	}
+
+	_generateTimeline() {
+		let htmlWrap = "<ol></ol>";
+		$(this.timelineNodeContainer).append(htmlWrap);
+		let wrap = $(this.timelineNodeContainer).find("ol");
+		let numNode = this.cardData.length;
+		for (let i = 0; i < numNode; i++) {
+			let c = this.cardData[i].color;
+			wrap.append(
+				'<li class="' +
+					this.cardData[i].period +
+					'" style="border-color: ' +
+					c +
+					'"></li>'
+			);
+		}
+		let nodeW = 200;
+		wrap.css("width", nodeW * numNode - 16);
+		let nodeList = $(this.base).find(".timeline ol li").toArray();
+		this.timelineData = nodeList;
+	}
+
+	_assignBtn() {
+		let periodPrev = $(this.base).find(".periods-container .btn-back");
+		let periodNext = $(this.base).find(".periods-container .btn-next");
+		periodPrev.click(() => {
+			if (this.activePeriodIndex > 0) {
+				this.activePeriodIndex -= 1;
+				this.activePeriod = this.periodData[this.activePeriodIndex];
+				this._chainActions("period");
+				this._setStateClasses();
+			}
+			this._adjustPeriodContainer();
+		});
+		periodNext.click(() => {
+			if (this.activePeriodIndex < this.periodData.length - 1) {
+				this.activePeriodIndex += 1;
+				this.activePeriod = this.periodData[this.activePeriodIndex];
+				this._chainActions("period");
+				this._setStateClasses();
+			}
+			this._adjustPeriodContainer();
+		});
+
+		let timelinePrev = $(this.base).find(".timeline-container .btn-back");
+		let timelineNext = $(this.base).find(".timeline-container .btn-next");
+		timelinePrev.click(() => {
+			if (this.activeCardIndex > 0) {
+				this.activeCardIndex -= 1;
+				this.activeCard = this.cardData[this.activeCardIndex];
+				this._chainActions("timeline");
+				this._setStateClasses();
+			}
+			this._adjustCardContainer();
+			this._adjustPeriodContainer();
+		});
+		timelineNext.click(() => {
+			if (this.activeCardIndex < this.cardData.length - 1) {
+				this.activeCardIndex += 1;
+				this.activeCard = this.cardData[this.activeCardIndex];
+				this._chainActions("timeline");
+				this._setStateClasses();
+			}
+			this._adjustCardContainer();
+			this._adjustPeriodContainer();
+		});
+
+		for (let i = 0; i < this.timelineData.length; i++) {
+			$(this.timelineData[i]).click(() => {
+				this.activeCardIndex = this.cardData[i].index;
+				this.activeCard = this.cardData[this.activeCardIndex];
+				this._chainActions("timeline");
+				this._setStateClasses();
+				this._adjustCardContainer();
+				this._shiftTimeline();
+			});
+		}
+	}
+
+	_initialColor() {
+		for (let i = 0; i < this.periodData.length; i++) {
+			let p = this.periodData[i].period;
+			this.periodData[i].color = this.color[p];
+			let temp = this.periodData[i];
+			$(temp).css("border-color", temp.color);
+			$(temp).find(".year").css("color", temp.color);
+
+			let sbstyle = document.createElement("style");
+			document.head.appendChild(sbstyle);
+			sbstyle.sheet.insertRule(
+				"li." + p + ".active { background-color: " + this.color[p] + " !important } ",
+				0
+			);
+			sbstyle.sheet.insertRule(
+				"li." + p + "::before { background-color: " + this.color[p] + " } ",
+				0
+			);
+			sbstyle.sheet.insertRule(
+				"li." + p + "::after { background-color: " + this.color[p] + " } ",
+				0
+			);
+		}
+		for (let i = 0; i < this.cardData.length; i++) {
+			let p = this.cardData[i].period;
+			this.cardData[i].color = this.color[p];
+			let temp = this.cardData[i];
+			$(temp).css("border-color", temp.color);
+			$(temp).find(".year").css("color", temp.color);
+		}
+	}
+
+	_adjustPeriodContainer() {
+		let activeH = $(this.activePeriod).outerHeight();
+		$(this.periodContainer).height(activeH);
+	}
+
+	_adjustCardContainer() {
+		let activeH = $(this.activeCard).outerHeight() + 24;
+		$(this.cardContainer).height(activeH);
+	}
+
+	_shiftTimeline() {
+		let timelineW = $(this.base).find(".timeline-container").outerWidth();
+		let timelinePadding = 210;
+		let activeNodeX = $(this.timelineData[this.activeCardIndex]).position().left;
+		let finalPos = -activeNodeX + timelinePadding;
+		$(this.timelineNodeContainer).css("left", finalPos);
+	}
+
+	_chainActions(state) {
+		switch (state) {
+			case "period":
+				if (this.activePeriod.period != this.activeCard.period) {
+					let ta = [];
+					for (let i = 0; i < this.cardData.length; i++) {
+						let temp = this.cardData[i];
+						if (this.activePeriod.period === temp.period) ta.push(temp);
+					}
+					this.activeCard = ta[0];
+					this.activeCardIndex = ta[0].index;
+				}
+				break;
+			case "timeline":
+				if (this.activeCard.period != this.activePeriod.period) {
+					let ta;
+					for (let i = 0; i < this.periodData.length; i++) {
+						let temp = this.periodData[i];
+						if (this.activeCard.period === temp.period) ta = temp;
+					}
+					this.activePeriod = ta;
+					this.activePeriodIndex = ta.index;
+				}
+				break;
+		}
+		this._shiftTimeline();
+		this._adjustCardContainer();
+	}
+}
+
+// ## document load ##
+$(document).ready(function () {
+	let colorcode = {
+		period1: "#fec541",
+		period2: "#36d484",
+		period3: "#32ccf4"
+	};
+	let timeline = new PRESTimeline($("#this-timeline"), colorcode);
+});
+</script>
+</head>
+<body>
+<div class="body-wrap">
+<!-- # component starts -->
+  <div class="pres-timeline" id="this-timeline">
+<!-- ###   -->
+<!--   <div class="periods-section"> -->
+    <div class="periods-container">
+      <section class="period-single" period="period1">
+        <h4 class="year">1일차</h4>
+        <h2 class="title">서울 여행 추천 코스</h2>
+        <p>명동 거리에서 느끼는 활기찬 서울 라이프</p>
+      </section>
+      <section class="period-single" period="period2">
+        <h4 class="year">2일차</h4>
+        <h2 class="title">서울 여행 추천 코스</h2>
+        <p>역사부터 트렌드, 서울의 모든 것, 하루에 정복하기</p>
+      </section>
+      <section class="period-single" period="period3">
+        <h4 class="year">3일차</h4>
+        <h2 class="title">서울 여행 추천 코스</h2>
+        <p>핫플레이스부터 쇼핑, 젊음의 거리까지!</p>
+      </section>
+      <div class="btn-back"></div>
+      <div class="btn-next"></div>
+    </div>
+<!--   </div> -->
+<!-- ### -->
+<!--   <div class="timeline-section"> -->
+    <div class="timeline-container">
+      <!--     # timeline graphic place holder - fill with js -->
+      <div class="timeline"></div>
+  
+      <div class="btn-back"><svg width="30" height="30" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg"><path fill="none" d="M0 0h30v30H0z"/><path fill="#D8D8D8" fill-rule="evenodd" d="M11.828 15l7.89-7.89-2.83-2.828L6.283 14.89l.11.11-.11.11L16.89 25.72l2.828-2.83"/></svg></div>
+      <div class="btn-next"><svg width="30" height="30" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg"><path fill="none" d="M0 0h30v30H0z"/><path fill="#D8D8D8" fill-rule="evenodd" d="M18.172 14.718l-7.89-7.89L13.112 4l10.606 10.607-.11.11.11.11-10.608 10.61-2.828-2.83 7.89-7.89"/></svg></div>
+    </div>
+<!--   </div> -->
+<!-- ### -->
+<!--   <div class="cards-section"> -->
+    <div class="cards-container">
+      <section class="card-single active" period="period1">
+        <h4 class="year">예상소요시간: 6시간</h4>
+        <h2 class="title">명동</h2>
+        <div class="content">
+          <img src="" alt="" />
+		  <p>패션, 뷰티, 맛집, 스트리트 푸드까지—명동은 하루 종일 즐겨도 모자란 서울의 핫플레이스입니다. 글로벌 브랜드부터 인기 K-뷰티 로드숍까지, 눈길 닿는 곳마다 쇼핑 리스트가 쏟아지고, 골목골목 숨어있는 다양한 길거리 음식이 여행의 재미를 더해줍니다. 명동성당과 함께하는 도심 속 문화 산책, 그리고 밤에도 꺼지지 않는 활기찬 거리의 에너지! 서울 여행의 시작과 끝, 명동에서 특별한 하루를 즐겨보세요.</p>
+        </div>
+      </section>
+      <section class="card-single" period="period2">
+        <h4 class="year">예상소요시간: 30분</h4>
+        <h2 class="title">광화문 광장</h2>
+        <div class="content">
+          <img src="" alt="" />
+          <p>서울의 중심에서 역사와 현대가 만나는 곳, 광화문광장! 세종대왕 동상과 이순신 장군 동상이 자리한 이곳은 광활한 광장과 함께 서울의 상징적 공간입니다. 다양한 문화 행사와 분수, 조각들이 어우러져 산책하기에도 좋은 명소입니다.</p>
+        </div>
+      </section>
+      <section class="card-single" period="period2">
+        <h4 class="year">예상소요시간: 2시간</h4>
+        <h2 class="title">경복궁</h2>
+        <div class="content">
+          <img src="" alt="" />
+          <p>조선의 웅장함이 살아 숨 쉬는 경복궁! 고궁의 아름다운 건축미와 고즈넉한 분위기를 느낄 수 있는 서울 필수 여행지입니다. 근정전, 경회루 등 주요 전각들을 둘러보고, 전통 한복을 입고 특별한 추억을 남겨보세요.</p>
+        </div>
+      </section>
+      <section class="card-single" period="period2">
+        <h4 class="year">예상소요시간: 1시간</h4>
+        <h2 class="title">인사동</h2>
+        <div class="content">
+          <img src="" alt="" />
+          <p>서울 속 전통의 거리, 인사동! 골목골목 펼쳐진 갤러리, 전통 찻집, 수공예품 상점들이 한국의 멋과 정취를 전합니다. 전통과 현대가 어우러진 독특한 분위기에서 한국적인 감성을 제대로 느껴보세요.</p>
+        </div>
+      </section>
+      <section class="card-single" period="period2">
+        <h4 class="year">예상소요시간: 1시간</h4>
+        <h2 class="title">삼청동</h2>
+        <div class="content">
+          <img src="" alt="" />
+          <p>감성 가득한 골목길, 삼청동! 한옥과 모던 카페, 소품 가게들이 조화를 이루는 곳으로, 걷기만 해도 힐링이 되는 동네입니다. 한옥 담장 사이로 펼쳐지는 아기자기한 풍경과 사진 찍기 좋은 스팟이 가득해요.</p>
+        </div>
+      </section>
+      <section class="card-single" period="period2">
+        <h4 class="year">예상소요시간: 1시간</h4>
+        <h2 class="title">광장시장</h2>
+        <div class="content">
+          <img src="" alt="" />
+          <p>서울의 대표 전통시장, 광장시장! 빈대떡, 마약김밥, 육회 등 다양한 먹거리 천국으로, 맛있는 향과 활기찬 상인들의 소리로 가득한 곳입니다. 서울의 진짜 로컬 분위기를 즐기고 싶다면 필수 방문지!</p>
+        </div>
+      </section>
+      <section class="card-single" period="period2">
+        <h4 class="year">예상소요시간: 1시간</h4>
+        <h2 class="title">DDP(동대문디자인플라자)</h2>
+        <div class="content">
+          <img src="" alt="" />
+          <p>서울의 현대적 아이콘, DDP! 미래적인 건축미가 돋보이는 이곳은 전시, 패션쇼, 야시장 등 다양한 문화 행사가 열리는 공간입니다. 낮에는 전시 관람, 밤에는 화려한 LED 장미 정원이 포인트!</p>
+        </div>
+      </section>
+      <section class="card-single" period="period2">
+        <h4 class="year">예상소요시간: 1시간</h4>
+        <h2 class="title">남산케이블카</h2>
+        <div class="content">
+          <img src="" alt="" />
+          <p>남산 정상까지 편안하게 오를 수 있는 남산케이블카! 도심 속에서 색다른 서울 전망을 즐기며, 탑승 순간부터 설레는 서울의 하늘 여행이 시작됩니다. 남산 서울타워까지 이어지는 로맨틱 코스.</p>
+        </div>
+      </section>
+      <section class="card-single" period="period2">
+        <h4 class="year">예상소요시간: 1시간</h4>
+        <h2 class="title">N서울타워(남산서울타워)</h2>
+        <div class="content">
+          <img src="" alt="" />
+          <p>서울을 한눈에 담을 수 있는 명소, N서울타워! 전망대에서 펼쳐지는 서울 도심의 야경은 물론, 사랑의 자물쇠와 다양한 포토존으로 연인, 가족 모두에게 인기 만점. 서울의 랜드마크에서 특별한 추억을!</p>
+        </div>
+      </section>
+      <section class="card-single" period="period2">
+        <h4 class="year">예상소요시간: 2시간</h4>
+        <h2 class="title">한강공원</h2>
+        <div class="content">
+          <img src="" alt="" />
+          <p>서울 시민들의 힐링 스팟, 한강공원! 넓은 강변에서 자전거 타기, 피크닉, 야경 감상까지 다양한 즐길 거리가 가득합니다. 낮에는 여유롭게, 밤에는 반짝이는 도심 야경과 함께 서울의 매력을 느껴보세요.</p>
+        </div>
+      </section>
+      <section class="card-single" period="period3">
+        <h4 class="year">예상소요시간: 3시간</h4>
+        <h2 class="title">강남역</h2>
+        <div class="content">
+          <img src="" alt="" />
+          <p>서울의 트렌드 중심지, 강남역! 패션, 뷰티, 맛집, 카페가 밀집해 있어 하루 종일 즐기기 좋은 핫플레이스입니다. 지하상가부터 거리 상점까지 최신 패션 아이템을 쇼핑할 수 있고, 감각적인 카페와 다양한 맛집이 곳곳에 자리해 있어 젊은 층에게 특히 인기입니다. 밤이 되면 화려한 네온사인과 북적이는 거리에서 강남 특유의 활기찬 분위기를 느낄 수 있어요. 교통도 편리해 서울 어디로든 이동하기 좋은 시작점입니다. 서울의 트렌디한 매력을 제대로 즐기고 싶다면 강남역은 빼놓을 수 없는 필수 코스!</p>
+        </div>
+      </section>
+      <section class="card-single" period="period3">
+        <h4 class="year">예상소요시간: 2시간</h4>
+        <h2 class="title">코엑스몰</h2>
+        <div class="content">
+          <img src="" alt="" />
+          <p>서울 최대 규모의 복합쇼핑몰, 코엑스몰! 패션, 라이프스타일, 전시, 엔터테인먼트까지 한 공간에서 모두 즐길 수 있는 도심 속 명소입니다. 대형 서점, 영화관, 스타필드 코엑스 아쿠아리움 등 다양한 시설이 있어 가족, 친구, 연인 모두에게 인기 만점. 또한 코엑스 내 도심공항터미널을 통해 공항 체크인과 탑승 수속을 간편하게 해결할 수 있어 여행객들에게도 편리함을 제공합니다. 비 오는 날, 실내에서 여유롭게 쇼핑과 문화를 즐기기에 최고의 장소!</p>
+        </div>
+      </section>
+      <section class="card-single" period="period3">
+        <h4 class="year">예상소요시간: 2시간</h4>
+        <h2 class="title">홍익대학교(홍대거리, 공항철도)</h2>
+        <div class="content">
+          <img src="" alt="" />
+          <p>서울의 젊음과 예술이 살아 숨 쉬는 곳, 홍익대학교 앞 홍대 거리! 스트리트 퍼포먼스, 개성 넘치는 카페, 패션 편집숍, 그래피티 아트까지, 어디를 가도 감각적인 분위기가 가득합니다. 저녁이 되면 라이브 공연과 다양한 길거리 먹거리로 한층 더 활기를 띠며, 자유로운 에너지를 체험할 수 있어요. 공항철도를 통해 인천공항과 바로 연결돼 있어 접근성도 뛰어나 외국인 여행자들에게 인기. 서울에서 가장 감각적이고 자유로운 거리의 매력을 느끼고 싶다면 홍대가 정답입니다!</p>
+        </div>
+      </section>
+    </div>
+<!--   </div> -->
+<!-- ###   -->
+  </div>
+<!-- # component ends -->
+</div>
+</body>
+</html>

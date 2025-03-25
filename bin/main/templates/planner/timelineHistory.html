@@ -1,7 +1,6 @@
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" />
 <style type="text/css">
-
+/* TimelineController */
 #timelineHistoryContainer {
 	line-height: 1.3em;
 	min-height: 500px;
@@ -11,14 +10,7 @@
 	
 }
 
-.history-tl-container {
-	font-family: "Roboto", sans-serif;
-	margin: auto;
-	display: block;
-	position: relative;
-}
-
-#tl {
+#tl-history {
 	margin: 20px 0;
 	padding: 0;
 	display: inline-block;
@@ -143,14 +135,8 @@
   transition: all 0.3s ease;
 }
 </style>
-
-<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" />
-
-
 <div id="timelineHistoryContainer">
 <div class="history-tl-container">
-
 <script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
 <script>
@@ -181,7 +167,7 @@
 	
 	
 	function showTimelineByDate(dateKey) {
-		const body = document.querySelector("#tl");
+		const body = document.querySelector("#tl-history");
 		body.innerHTML = "";	// 초기화
 	
 		if (timelineDataByDate[dateKey]) {
@@ -200,7 +186,7 @@
 	function make_timeline(dto) {
 		let date = convertToKoreanDateTime(dto.datetime);
 	
-		const tl = document.getElementById('tl');
+		const tl = document.getElementById('tl-history');
 		const tlItems = document.createElement('li');
 	
 		tlItems.innerHTML = `
@@ -229,7 +215,7 @@
 	let timelineDataByDate = {};
 	// 서버에서 데이터를 가져오는 함수
 	function fetchTLData() {
-		const body = document.querySelector("#tl");
+		const body = document.querySelector("#tl-history");
 		body.textContent = "불러오는 중...";
 	
 		fetch("/planner/timelineJson?plan_name=" + encodeURIComponent(plan_name))
@@ -265,9 +251,9 @@
 			        });
 
 			        // Hidden input 값 세팅
-			        document.querySelector('input[name="startDate"]').value = start_date;
-			        document.querySelector('input[name="endDate"]').value = end_date;
-			        document.querySelector('input[name="plan_name"]').value = plan_name;
+			        document.querySelector('#history-startDate').value = start_date;
+			        document.querySelector('#history-endDate').value = end_date;
+			        document.querySelector('#history-plan_name').value = plan_name;
 
 			        // 탭 생성
 			        inputNewTP(dateList);
@@ -336,8 +322,8 @@
 	
 	function onModify() {
 		if (confirm("수정하시겠습니까?")) {
-			const startDate = document.querySelector('input[name="startDate"]').value;
-			const endDate = document.querySelector('input[name="endDate"]').value;
+			const startDate = document.querySelector('#history-startDate').value;
+			const endDate = document.querySelector('#history-endDate').value;
 			
 			window.location.href="/planner/timeline?plan_name="+ plan_name 
 									+ "&startDate="+ startDate + "&endDate=" + endDate;
@@ -346,13 +332,13 @@
 </script>
 
 	<form action="#" name="form1">
-		<input type="hidden" name="startDate">
-		<input type="hidden" name="endDate">
-		<input type="hidden" name="plan_name">
+		<input type="hidden" name="startDate" id="history-startDate">
+		<input type="hidden" name="endDate" id="history-endDate">
+		<input type="hidden" name="plan_name" id="history-plan_name">
 		
 		<div class="nav nav-tabs"></div>
 		<div class="history-tl-container">
-			<ul id="tl">
+			<ul id="tl-history">
 				
 			</ul>
 			<br>

@@ -13,10 +13,16 @@ body {
     background-color: #f8f9fa;
 }
 
-h3 {
-    text-align: center;
-    margin-top: 20px;
+.page-title {
+    font-size: 2.5rem;          /* 적당히 큼직한 글씨 */
+    font-weight: bold;        /* 굵게 */
+    color: #ff9000;           /* 포인트 컬러 적용 */
+    text-align: center;       /* 가운데 정렬 */
+    margin: 20px 0;           /* 위아래 여백 */
+    letter-spacing: 1px;      /* 글자 간격 살짝 */
+    padding-bottom: 5px;
 }
+
 
 /* Container */
 .container {
@@ -106,12 +112,12 @@ h3 {
 }
 
 .area_list li button.active {
-    background-color: #007bff;
+    background-color: #ff9000;
     color: white;
 }
 
 /* Month Buttons */
-.btn-toolbar {
+.btn-month{
     display: flex;
     justify-content: center;
     margin: 20px 0;
@@ -137,7 +143,8 @@ h3 {
 }
 
 .btn-group button.active {
-    background-color: #007bff;
+    background-color: #ff9000;
+    color: white;
     border: none;
 }
 
@@ -170,7 +177,21 @@ button[type="submit"] {
     transition: background-color 0.3s;
 }
 
-button[type="submit"]:hover {
+button[type="reset"] {
+    width: 150px;
+    padding: 8px;
+    background-color: #f2f2f2;
+    margin-top: 8px;
+    margin-left: 8px;
+    color: black;
+    border: none;
+    border-radius: 5px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button[type="submit"], button[type="reset"]:hover {
     background-color: #ff9000;
     color: white;
 }
@@ -187,10 +208,11 @@ button[type="submit"]:hover {
     margin-top: 20px;
 }
 
-.pagination span {
+.pagination span a{
     padding: 10px;
     font-size: 1em;
-    color: #007bff;
+    text-decoration: none;
+    color: #ff9000;
     cursor: pointer;
 }
 
@@ -233,6 +255,25 @@ function submitSearchForm(event) {
 // Add event listener for form submission
 document.getElementById('searchForm').addEventListener('submit', submitSearchForm);
 
+function resetSelect() {
+	const form = document.getElementById('searchForm');
+    const formData = new FormData(form);
+
+    // Clear hidden fields
+    document.getElementById('selectedArea').value = "";
+    document.getElementById('selectedMonth').value = "";
+    // Clear keyword input
+    document.getElementById('name').value = "";
+    
+	// ⭐ 모든 area 버튼의 active 클래스 제거
+    const areaButtons = document.querySelectorAll('#arealist button');
+    areaButtons.forEach(btn => btn.classList.remove('active'));
+
+    // ⭐ 모든 month 버튼의 active 클래스 제거
+    const monthButtons = document.querySelectorAll('#monthButtons button');
+    monthButtons.forEach(btn => btn.classList.remove('active'));
+}
+
 function selectArea(button) {
     const buttons = document.querySelectorAll('#arealist button');
     buttons.forEach(btn => btn.classList.remove('active'));
@@ -272,9 +313,10 @@ window.onload = function() {
     }
 };
 </script>
+<div th:replace="~{layouts/header}"></div>
 
-<h3>Festival Search</h3>
-<div>
+<div id="ResetContainer">
+	<h1 class="page-title">Festival</h1>
     <form action="/festival/searchFestivals" method="get" name="form1" id="searchForm">
         <input type="hidden" name="areas" id="selectedArea">
         <input type="hidden" name="months" id="selectedMonth">
@@ -300,7 +342,7 @@ window.onload = function() {
             <li id="39"><button type="button" class="btn" name="areas" value="제주" onclick="selectArea(this)"><span>#제주</span></button></li>
        </ul>
         
-        <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+        <div class="btn-month" role="toolbar" aria-label="Toolbar with button groups">
             <div class="btn-group me-2" role="group" aria-label="Month group" id="monthButtons">
                 <button type="button" class="btn" name="months" value="Jan" onclick="selectMonth(this)">1월</button>
                 <button type="button" class="btn" name="months" value="Feb" onclick="selectMonth(this)">2월</button>
@@ -323,6 +365,7 @@ window.onload = function() {
                 <input type="text" id="name" name="name" placeholder="축제 이름을 입력하세요">
             </span>
             <button type="submit">검색</button>
+            <button type="reset" onclick="resetSelect()">검색 초기화</button>
         </div>
     </form>
 </div>
@@ -355,5 +398,6 @@ window.onload = function() {
     </div>
 </div>
 
+<div th:replace="~{layouts/footer}"></div>
 </body>
 </html>
