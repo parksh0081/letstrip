@@ -252,13 +252,28 @@ input[id="commentSubmit_btn"] {
 
 	<script type="text/javascript" th:inline="javascript">
 
-// 답글, 대댓글, 삭제는 로그인 검사
+// 답글, 대댓글 로그인 검사
 function isLogin() {
 	var id = /*[[${session.personId}]]*/ null;  // 자바스크립트 내추럴 템플릿
 	if(id == null) {
 	 alert("먼저 로그인 하세요.");
 	 return false;
 	} 
+	return true;
+}
+
+// 삭제는 로그인 검사
+function isLoginAndRight(data) {
+	var id = /*[[${session.personId}]]*/ null;  // 자바스크립트 내추럴 템플릿
+	if(id == null) {
+	 alert("먼저 로그인 하세요.");
+	 return false;
+	} else {
+		if(data.mateboardid != id) {
+			alert("삭제 권한이 없습니다.");
+			return false;
+		}
+	}
 	return true;
 }
 
@@ -406,7 +421,7 @@ function renderCommentList(data) {
    
    // 삭제하기 버튼 이벤트 (db에서도 삭제해야함)
    delInput.addEventListener("click", function() {
-	  if(isLogin()) {
+	  if(isLoginAndRight(data)) {
 	      if(confirm("정말 댓글을 삭제하시겠습니까?")) {
 	         fetch(`/mateboardCommentDelete?commentseq=${data.commentseq}`, {
 	              method: 'DELETE',
