@@ -225,7 +225,7 @@ public class MapRestController {
 				
 			}else { // 저장된게 있으면 삭제 
 				storeService.delete(dto.getId(), dto.getPlaceid());
-				result="찜 실패";
+				result="찜 취소";
 			}
 			
 			// 최신 storeList 가져오기
