@@ -13,7 +13,7 @@ import jakarta.annotation.PostConstruct;
 @Configuration
 public class ResourceConfiguration implements WebMvcConfigurer{
 	// 파일 저장 폴더의 경로 저장
-	@Value("${project.upload.path}")
+	@Value("${project.upload.path2}")
 	private String uploadpath;
 	
 	// 없으면 파일 생성

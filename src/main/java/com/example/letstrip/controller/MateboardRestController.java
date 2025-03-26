@@ -89,7 +89,7 @@ public class MateboardRestController {
    }
    
    // 파일 저장 폴더 경로
-	@Value("${project.upload.path}")
+	@Value("${project.upload.path2}")
 	private String uploadpath;  
    
    @PostMapping(value = "/mateboardImageUpload")
