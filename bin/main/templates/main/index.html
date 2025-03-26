@@ -133,7 +133,7 @@ const slidesData = [
 	     alt: '부산 이미지',
 	     link: '/poster/busan'
 	}, {
-		 src: '/image/jeonju.jpg',
+		 src: '/image/jeonju.png',
 	     alt: '전주 이미지',
 	     link: '/poster/jeonju'
 	}, {
@@ -161,6 +161,7 @@ function createSlides() {
         const img = document.createElement('img');
         img.src = slide.src;
         img.alt = slide.alt;
+        img.classList.add('slide');
         a.appendChild(img);
         
         // 슬라이드 컨테이너에 추가
@@ -180,6 +181,7 @@ function createSlides() {
         const img = document.createElement('img');
         img.src = slide.src;
         img.alt = slide.alt;
+        img.classList.add('slide');
         a.appendChild(img);
         
         // 슬라이드 컨테이너에 추가
