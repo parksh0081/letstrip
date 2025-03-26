@@ -241,7 +241,7 @@ window.onload = function() {
         <ul>
             <li th:each="themapark : ${list}">
                 <div class="fes-image">
-                	<img th:src="@{'/themapark/' + ${themapark.image1}}" alt="Themapark Image" >
+                	<img th:src="@{'/themapark/' + ${themapark.image1}}" alt="Themapark Image">
                 </div>
                 <div class="fes-info">
                 	<div style="display:flex; gap:6px;">
@@ -267,5 +267,6 @@ window.onload = function() {
     <a th:href="@{/festival/festivalSearch(page=${page + 1}, areas=${param.areas}, months=${param.months}, name=${param.name})}">다음</a>
 </div> -->
 
+<div th:replace="~{layouts/footer}" ></div>
 </body>
 </html>

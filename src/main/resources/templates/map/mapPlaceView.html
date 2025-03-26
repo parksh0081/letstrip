@@ -47,53 +47,62 @@
 #grayStar{
 	color:gray;
 }
+.bi-heart{
+	z-index: 0; 
+	color:#FF9000; 
+	position: absolute; 
+	top:50%; 
+	left: 50%; 
+	transform: translate(-50%, -50%);
 
- 
+}
+/* #store-link:hover .bi-heart{
+	background-color:red;
+}  */
 </style>
 
 
 </head>
 <body>
 
-
-	<div class="container">
-		<div id="placeBody">
+<div class="container">
+	<div id="placeBody">
 		<!-- 이미지 -->
 <!-- 		<h3>***이미지***</h3> -->
 		<!-- <img alt="" th:src="@{/image/{img}(img=${place.place_image})}" width="350" height="250" style="margin: 10px;"> -->
-			<br>
+	<br>
 
-			<div style="display: flex; align-items: center;">
-				<a href="mapMain">
-					<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-chevron-left" viewBox="0 0 16 16" style="color:#FF9000;">
-				  	<path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0"/>
-					</svg>
-				</a>
-				<h3>&ensp; [[${place.place_name}]]</h3>
-				<span style="color:gray;">&ensp;[[${place.category_group_name}]]</span>
-			</div>
+	<div style="display: flex; align-items: center;">
+		<a href="mapMain">
+			<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-chevron-left" viewBox="0 0 16 16" style="color:#FF9000;">
+			  	<path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0"/>
+			</svg>
+		</a>
+		<h3>&ensp; [[${place.place_name}]]</h3>
+		<span style="color:gray;">&ensp;[[${place.category_group_name}]]</span>
+	</div>
 			
-			<br>
-			<!-- 탭 -->
-			<div class="card text-center">
-			  <div class="card-header">
-			    <ul class="nav nav-tabs card-header-tabs justify-content-between">
-			      <li class="nav-item flex-fill">
-			        <a class="nav-link active" aria-current="true" href="#first" data-bs-toggle="tab" id="first_tab">개요</a>
-			      </li>
-			      <li class="nav-item flex-fill">
+	<br>
+	<!-- 탭 -->
+	<div class="card text-center">
+		<div class="card-header">
+			<ul class="nav nav-tabs card-header-tabs justify-content-between">
+				<li class="nav-item flex-fill">
+					<a class="nav-link active" aria-current="true" href="#first" data-bs-toggle="tab" id="first_tab">개요</a>
+			    </li>
+			    <li class="nav-item flex-fill">
 			        <a class="nav-link" href="#second" data-bs-toggle="tab" id="second_tab">리뷰</a>
-			      </li>
+			    </li>
 <!-- 			      <li class="nav-item flex-fill">
 			        <a class="nav-link" href="#third" aria-disabled="true" data-bs-toggle="tab" id="third_tab">정보</a>
 			      </li> -->
-			    </ul>
-			  </div>
-			  <!-- 탭 body -->
-			  <div class="card-body">
-			  	<div class="tab-content" id="myTabContent">
-				  <!-- 탭1-개요 -->
-				  <div class="tab-pane fade show active" id="first" role="tabpanel" aria-labelledby="first_tab">
+			</ul>
+		</div>
+		<!-- 탭 body -->
+		<div class="card-body2">
+	  		<div class="tab-content" id="myTabContent">
+				<!-- 탭1-개요 -->
+				<div class="tab-pane fade show active" id="first" role="tabpanel" aria-labelledby="first_tab">
 				  	<!-- 아이콘 -->
 				  	<div style="display:flex; justify-content: center; align-items: center; ">
 					  	<!-- 찜 아이콘 -->
@@ -101,11 +110,11 @@
 						  	<svg xmlns="http://www.w3.org/2000/svg" width="38" height="38" fill="currentColor" class="bi bi-circle" viewBox="0 0 16 16" style="z-index: 1; position: absolute; top: 0; left: 0; color:#FF9000;">
 		  						<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
 							</svg>
-						  	<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-heart" viewBox="0 0 16 16" style="z-index: 0; color:#FF9000; position: absolute; top:50%; left: 50%; transform: translate(-50%, -50%);">
+						  	<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-heart" viewBox="0 0 16 16">
 		  						<path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"/>
 							</svg>
 						</a>
-						<p>찜</p>
+						<!-- <p>찜</p> -->
 						<!-- 공유 아이콘 -->
 						<div style="position: relative; width: 38px; height: 38px; margin: 15px;">
 							<svg xmlns="http://www.w3.org/2000/svg" width="38" height="38" fill="currentColor" class="bi bi-circle" viewBox="0 0 16 16" style="z-index: 1; position: absolute; top: 0; left: 0; color: #FF9000;">
@@ -115,7 +124,7 @@
 			  					<path d="M11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.5 2.5 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5"/>
 							</svg>
 						</div>
-						<p>공유</p>
+						<!-- <p>공유</p> -->
 					</div>
 					<hr>
 				 
@@ -229,33 +238,36 @@
 						</div>
 							
 	
-							<!-- 리뷰 글 -->
-							<div th:text="${review.content}" style="display: flex; margin-left:7px;">content</div>
-							<!-- 리뷰 사진 -->
-								<!-- review.images가 비어 있지 않으면 이미지 목록을 출력 -->
-								<th:block th:if="${review.images != null and review.images.size() > 0}">
-								    <th:block th:each="image : ${review.images}">
-								    	<img alt="이미지" th:src="@{'/storage/'+${image.place_image}}" width="100">
-								        <!-- <div th:text="${image.place_image}"> </div> -->
-								    </th:block>
-								</th:block>
+						<!-- 리뷰 글 -->
+						<div th:text="${review.content}" style="display: flex; margin-left:7px;">content</div>
+						<br>
+						<!-- 리뷰 사진 -->
+						<th:block th:if="${review.images != null and review.images.size() > 0}">
+						    <div style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 10px;">
+						        <th:block th:each="image : ${review.images}">
+						            <img th:if="${image.place_image != null}" alt="이미지" th:src="@{'/storage/' + ${image.place_image}}"
+						                 style="width: 100px; height: 100px; object-fit: cover; border-radius: 4px;">
+						        </th:block>
+						    </div>
+						</th:block>
+						<!-- 좋아요 -->
 
-								<!-- <th:block th:each="image:${review.images}">
-									<img alt="이미지" th:src="@{storage/}+${image}" width="100">
-								</th:block> -->
-							<!-- </th:block> -->
-							<hr>
+						<div style="text-align: left; margin:10px;">
+						
+						<button type="button" class="btn btn-primary btn-sm" id="likeButton" th:data-seq="${review.seq}" 
+						   style="--bs-btn-padding-y: .3rem; --bs-btn-padding-x: 1rem; --bs-btn-font-size: .79rem; border: #FF9000; background: gray; align-items: center;">
+						   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6" width="22" height="22" style="padding-right: 3px;">
+							  <path stroke-linecap="round" stroke-linejoin="round"
+							  		d="M6.633 10.25c.806 0 1.533-.446 2.031-1.08a9.041 9.041 0 0 1 2.861-2.4c.723-.384 1.35-.956 1.653-1.715a4.498 4.498 0 0 0 .322-1.672V2.75a.75.75 0 0 1 .75-.75 2.25 2.25 0 0 1 2.25 2.25c0 1.152-.26 2.243-.723 3.218-.266.558.107 1.282.725 1.282m0 0h3.126c1.026 0 1.945.694 2.054 1.715.045.422.068.85.068 1.285a11.95 11.95 0 0 1-2.649 7.521c-.388.482-.987.729-1.605.729H13.48c-.483 0-.964-.078-1.423-.23l-3.114-1.04a4.501 4.501 0 0 0-1.423-.23H5.904m10.598-9.75H14.25M5.904 18.5c.083.205.173.405.27.602.197.4-.078.898-.523.898h-.908c-.889 0-1.713-.518-1.972-1.368a12 12 0 0 1-.521-3.507c0-1.553.295-3.036.831-4.398C3.387 9.953 4.167 9.5 5 9.5h1.053c.472 0 .745.556.5.96a8.958 8.958 0 0 0-1.302 4.665c0 1.194.232 2.333.654 3.375Z" />
+							</svg>[[${review.react}]]</button>
+						</div>
+						<hr>
 						</div>
 					</th:block>
 				</th:block>
 			</div>
 	      			
 			  </div>
-			  <!-- 탭3-정보 -->
-			      <div class="tab-pane fade" id="third" role="tabpanel" aria-labelledby="third_tab">
-			        <h5 class="card-title">Tab3</h5>
-			        <p class="card-text">This tab is disabled and won't be accessible.</p>
-			      </div>
 			</div>
 		</div>
 		</div>

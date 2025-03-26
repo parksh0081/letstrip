@@ -17,9 +17,18 @@
 .offcanvas-body, .card-body {
     display: flex;
     flex-direction: column;
-    height: calc(100vh - 56px); /* 전체 화면 높이에서 헤더(56px) 제외 */
+    height: calc(100vh - 10vh); /* 전체 화면 높이에서 제외 */
     overflow: hidden; /* 전체 높이에 맞추기 */
     padding-left: 30px;
+    box-sizing: border-box; /* padding과 border가 height에 포함되도록 설정 */
+}
+/* offcanvas-body에서 헤더 영역 제외한 높이 설정 */
+.offcanvas-body2, .card-body2 {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 35vh); /* 전체 화면 높이에서 제외 */
+    overflow: hidden; /* 전체 높이에 맞추기 */
+    padding: 20px;
     box-sizing: border-box; /* padding과 border가 height에 포함되도록 설정 */
 }
 
@@ -81,7 +90,7 @@
 	  </div>
 	  	
 	  <div id="placeBody2">
-	  	<div class="offcanvas-body">
+	  	<div class="offcanvas-body2">
 		  <th:block th:if="${session.personId!=null}">
 			  <script th:inline="javascript">
 				var personId=/*[[${session.personId}]]*/null;
