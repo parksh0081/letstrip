@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,20 +20,32 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-
+import com.example.letstrip.LetstripApplication;
 import com.example.letstrip.dto.PlaceDTO;
 import com.example.letstrip.dto.ReviewDTO;
+import com.example.letstrip.dto.ReviewlikeDTO;
 import com.example.letstrip.dto.StoreDTO;
 import com.example.letstrip.entity.Place;
 import com.example.letstrip.entity.Review;
+import com.example.letstrip.entity.Reviewlike;
 import com.example.letstrip.entity.Store;
+import com.example.letstrip.repository.ReviewlikeRepository;
 import com.example.letstrip.service.MapReviewService;
 import com.example.letstrip.service.PlaceService;
+import com.example.letstrip.service.ReviewlikeService;
 import com.example.letstrip.service.StoreService;
+
+import jakarta.persistence.EntityManager;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
 
 
 @RestController
 public class MapRestController {
+
+    private final ReviewlikeRepository reviewlikeRepository;
+
+    private final LetstripApplication letstripApplication;
 	
 	@Autowired
 	PlaceService placeService;
@@ -41,7 +54,18 @@ public class MapRestController {
 	MapReviewService mapReviewService;
 	
 	@Autowired
+	ReviewlikeService reviewlikeService;
+	
+	@Autowired
 	StoreService storeService;
+	
+	@Autowired
+	private EntityManager entityManager;
+
+    MapRestController(LetstripApplication letstripApplication, ReviewlikeRepository reviewlikeRepository) {
+        this.letstripApplication = letstripApplication;
+        this.reviewlikeRepository = reviewlikeRepository;
+    }
 
 	@PostMapping("/map/mapPlaceViewJson")
 	public Map<String, Object> map(@RequestBody PlaceDTO dto, Model model){
@@ -128,18 +152,80 @@ public class MapRestController {
 			return ResponseEntity.ok("리뷰 저장 완료!!");
 		}
 		
+		// review like
+		@Transactional
+		@GetMapping("/map/reviewLike") 
+		public ResponseEntity<Map<String, Object>> reviewLike(Model model,HttpServletRequest request) {
+			Map<String, Object> response=new HashMap<>();
+			
+			int seq=Integer.parseInt(request.getParameter("seq")); // 리뷰 글 번호 
+			String id=request.getParameter("id");
+			Review review=mapReviewService.selectReviewBySeq(seq); // get react
+			System.out.println("R:"+review.getReact());
+			ReviewlikeDTO reviewlikeDTO=new ReviewlikeDTO();
+			reviewlikeDTO.setReview_seq(seq);
+			reviewlikeDTO.setPerson_id(id);
+			reviewlikeDTO.setReview(review);
+			Reviewlike checkReviewlike=reviewlikeService.selectReviewlike(id, seq);
+			if(checkReviewlike==null) {  	// 좋아요 안눌러있었으면 좋아요 허용 
+				
+				reviewlikeService.insertReviewlike(reviewlikeDTO);
+				mapReviewService.updateReact(seq); // react update +1
+				response.put("result", "좋아요 완료");
+			}else {
+				
+				reviewlikeService.deleteReviewlike(id, seq);
+				mapReviewService.updateReactMinus(seq); 	// -1
+				response.put("result", "좋아요 취소");
+			}
+			review=mapReviewService.selectReviewBySeq(seq); // get react
+			entityManager.refresh(review);
+			response.put("react", review.getReact());
+			System.out.println("react: "+review.getReact());
+
+			return ResponseEntity.ok(response);
+		}
+		
+		// review like check
+		@GetMapping("/map/reviewlikeCheck")
+		public ResponseEntity<Map<String, Object>>reviewlikeCheck(@RequestParam("seq") int seq, @RequestParam("id") String id){
+			Map<String, Object> response = new HashMap<>();
+			Reviewlike checkReviewlike=reviewlikeService.selectReviewlike(id, seq);
+			if (checkReviewlike != null) {
+		        response.put("liked", true);  // 사용자가 좋아요 눌렀음
+		    } else {
+		        response.put("liked", false); // 사용자가 좋아요 안눌렀음
+		    }
+			return ResponseEntity.ok(response);
+		}
+		
+		// review like list
+		@GetMapping("/map/getUserLikes")
+		public ResponseEntity<Map<String, Object>>getUserLikes(@RequestParam("id") String id){
+			List<Reviewlike>list=reviewlikeService.selectListById(id);
+			 // seq 값만 리스트로 변환
+		    List<Integer> likeSeqList = list.stream().map(Reviewlike::getLike_seq) // Reviewlike 객체에서 seq 값만 추출
+		                                   .collect(Collectors.toList());
+
+		    Map<String, Object> response = new HashMap<>();
+		    response.put("list", likeSeqList); // 수정된 리스트 저장
+		    return ResponseEntity.ok(response);
+		}
+		
+		
 		// ** 내 찜 
 		@PostMapping("/map/mapPlaceStore")
 		public ResponseEntity<Map<String, Object>> mapPlaceStore(@RequestBody StoreDTO dto) {
 			// 찜 저장 
-			System.out.println(dto.toString());
-			
 			Store store=storeService.selectCheck(dto.getId(),dto.getPlaceid());
-					
+			String result="";		
 			if(store==null) { // 저장된게 없으면 저장  
 				storeService.insert(dto);
+				result="찜 완료";
+				
 			}else { // 저장된게 있으면 삭제 
 				storeService.delete(dto.getId(), dto.getPlaceid());
+				result="찜 취소";
 			}
 			
 			// 최신 storeList 가져오기
@@ -147,6 +233,7 @@ public class MapRestController {
 
 	        Map<String, Object> response = new HashMap<>();
 	        response.put("success", true);
+	        response.put("result", result);
 	        response.put("storeList", updatedStoreList); // JSON으로 리스트 반환
 
 	        return ResponseEntity.ok(response);

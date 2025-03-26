@@ -77,4 +77,24 @@ public class MapReviewDAO {
 		return repository.findCountContent(placeid);
 	}
 	
+	// 업데이트 좋아요 수 +
+	public int updateReact(int seq) {
+		return repository.updateReviewLike(seq);
+	}
+	
+	// 업데이트 좋아요 수 -
+	public int updateReactMinus(int seq) {
+		return repository.updateReviewLikeCancel(seq);
+	}
+	
+	// seq 로 리뷰 조회
+	public Review selectReviewBySeq(int seq) {
+		Review review=repository.findBySeq(seq);
+		if(review!=null) {
+			return review;
+		}else {
+			return null;
+		}
+	}
+	
 }

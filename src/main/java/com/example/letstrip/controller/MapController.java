@@ -1,8 +1,11 @@
 package com.example.letstrip.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,12 +16,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.example.letstrip.dto.StoreDTO;
 import com.example.letstrip.entity.Place;
 import com.example.letstrip.entity.Review;
+import com.example.letstrip.entity.Reviewlike;
 import com.example.letstrip.entity.Store;
 import com.example.letstrip.service.MapReviewService;
 import com.example.letstrip.service.PlaceService;
+import com.example.letstrip.service.ReviewlikeService;
 import com.example.letstrip.service.StoreService;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class MapController {
@@ -32,6 +38,9 @@ public class MapController {
 	@Autowired
 	StoreService storeService;
 	
+	@Autowired
+	ReviewlikeService reviewlikeService;
+	
 	@GetMapping("/map/mapMain")
 	public String mapMain() {
 		return "/map/mapMain";
@@ -44,7 +53,8 @@ public class MapController {
 	}
 
 	@GetMapping("/map/mapPlaceView")
-	public String mapPlaceViewHtml(@RequestParam("place_id") String place_id, Model model) {
+	public String mapPlaceViewHtml(@RequestParam("place_id") String place_id, Model model, HttpServletRequest request) {
+		
 		// 장소 정보 제공을 위한 
 		Place place=placeService.select(place_id);
 		// 리뷰 목록 
@@ -56,12 +66,35 @@ public class MapController {
 		// 각 별점 평균 
 		List<Map<String, Object>> listStar=mapReviewService.selectRatioStar(place_id);
 
-		model.addAttribute("reviewList",reviewList);
+		
 		model.addAttribute("place", place);
 		model.addAttribute("place_id", place_id);
 		model.addAttribute("finalStar", finalStar);
 		model.addAttribute("totalReview",totalReview);
 		model.addAttribute("listStar",listStar);
+		model.addAttribute("reviewList", reviewList);
+		
+//		// 좋아요 상태 추가 
+//		HttpSession session=request.getSession();
+//		String personId=(String) session.getAttribute("personId");
+//		Set<Integer>likeReviewSeqs=new HashSet<>();
+//		if(personId!=null) {
+//			// 누른 좋아요 리스트 들고오기 
+//			List<Reviewlike>likeList=reviewlikeService.selectListById(personId);
+//			for (Reviewlike like : likeList) {
+//				likeReviewSeqs.add(like.getReview().getSeq()); 
+//			}
+//		}
+//			// 각 리뷰에 사용자의 좋아요 상태 추가
+//			List<Map<String, Object>> reviewWithLikes = new ArrayList<>();
+//			for (Review review : reviewList) {
+//				Map<String, Object> reviewData = new HashMap<>();
+//				reviewData.put("review", review);
+//				reviewData.put("liked", likeReviewSeqs.contains(review.getSeq())); // 좋아요 여부 추가
+//				reviewWithLikes.add(reviewData);
+//			}			
+//		
+//		model.addAttribute("reviewList", reviewWithLikes);
 		
 		return "/map/mapPlaceView";
 	}

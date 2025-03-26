@@ -9,8 +9,9 @@ function storeCheck(placeid,personId){
 		            body: JSON.stringify({ id: personId, placeid: placeid }) // DTO와 동일한 구조로 전송
 		        })
 			.then(response=>response.json())
-			.then(()=>{
-				alert("store inset/delete success.");
+			.then((data)=>{
+				const msg=data.result;
+				alert(msg);
 				updateStoreList(personId);
 			})
 			.catch(err=>{

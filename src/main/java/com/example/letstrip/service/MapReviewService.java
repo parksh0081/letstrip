@@ -40,4 +40,19 @@ public class MapReviewService {
 	public int selectCountReview(String placeid) {
 		return dao.selectCountReview(placeid);
 	}
+	
+	// 업데이트 좋아요 수 +
+	public int updateReact(int seq) {
+		return dao.updateReact(seq);
+	}
+	
+	// 업데이트 좋아요 수 -
+	public int updateReactMinus(int seq) {
+		return dao.updateReactMinus(seq);
+	}
+	
+	// seq 로 리뷰 조회
+	public Review selectReviewBySeq(int seq) {
+		return dao.selectReviewBySeq(seq);
+	}
 }

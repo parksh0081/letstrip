@@ -3,28 +3,49 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
-<script type="text/javascript" src="/js/mapPlaceStoreScript.js"></script>
+<script type="text/javascript" src="/js/mapPlaceStoreScript.js?v=4"></script>
 
 <style>
+/* offcanvas 전체 높이 */
 .offcanvas {
-	height: 100vh !important; /* 화면 전체 높이 */
-	max-height: 100vh; /* 최대 높이 지정 */
-	/* overflow: hidden; */ /* 전체 스크롤 방지 */
+    height: 100vh !important;  /* 화면 전체 높이 */
+    max-height: 100vh; /* 최대 높이 지정 */
+    box-sizing: border-box; /* padding과 border가 height에 포함되도록 설정 */
 }
+
+/* offcanvas-body에서 헤더 영역 제외한 높이 설정 */
 .offcanvas-body, .card-body {
     display: flex;
     flex-direction: column;
-    height: calc(100vh - 56px); /* 전체 화면 높이에서 헤더(56px) 제외 */
+    height: calc(100vh - 10vh); /* 전체 화면 높이에서 제외 */
     overflow: hidden; /* 전체 높이에 맞추기 */
     padding-left: 30px;
+    box-sizing: border-box; /* padding과 border가 height에 포함되도록 설정 */
+}
+/* offcanvas-body에서 헤더 영역 제외한 높이 설정 */
+.offcanvas-body2, .card-body2 {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 25vh); /* 전체 화면 높이에서 제외 */
+    overflow: hidden; /* 전체 높이에 맞추기 */
+    padding: 20px;
+    box-sizing: border-box; /* padding과 border가 height에 포함되도록 설정 */
 }
 
+/* 스크롤이 가능한 목록 */
 #placesList, .tab-content {
-    flex-grow: 1; /* 부모 요소 높이만큼 확장 */
-    overflow-y: auto; /* 목록이 많으면 스크롤 */
-    padding-left: 0; /* 기본 padding 제거 */
-    margin: 0; /* 기본 margin 제거 */
+    flex-grow: 1;  /* 부모 요소 높이만큼 확장 */
+    overflow-y: auto;  /* 목록이 많으면 스크롤 */
+    padding-left: 0;  /* 기본 padding 제거 */
+    margin: 0;  /* 기본 margin 제거 */
+    box-sizing: border-box; /* padding과 border가 height에 포함되도록 설정 */
 }
+
+/* 추가적으로 last-child 요소에 margin 추가하여 잘림 방지 */
+#placesList > *:last-child {
+    margin-bottom: 30px; /* 마지막 항목 아래 여백을 추가 */
+}
+
 
 </style>
 </head>
@@ -69,7 +90,7 @@
 	  </div>
 	  	
 	  <div id="placeBody2">
-	  	<div class="offcanvas-body">
+	  	<div class="offcanvas-body2">
 		  <th:block th:if="${session.personId!=null}">
 			  <script th:inline="javascript">
 				var personId=/*[[${session.personId}]]*/null;
