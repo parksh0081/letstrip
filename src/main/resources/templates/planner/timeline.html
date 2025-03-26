@@ -1,0 +1,416 @@
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+<style type="text/css">
+
+#timelineContainer {
+	line-height: 1.3em;
+	min-height: 500px;
+	width: 100%;
+	height: 100%;
+	font-family: "Roboto", sans-serif;
+	
+}
+
+.history-tl-container {
+	font-family: "Roboto", sans-serif;
+	margin: auto;
+	display: block;
+	position: relative;
+}
+
+#tl {
+	margin: 20px 0;
+	padding: 0;
+	display: inline-block;
+}
+
+.tl-item {
+	list-style: none;
+	margin-left: 120px;
+	min-height: 50px;
+	border-left: 3px solid #DF7600;
+	padding: 0 0 50px 30px;
+	position: relative;
+}
+
+.tl-item:last-child {
+	border-left: 0;
+}
+
+.tl-item:last-child:before {
+	left: 1.5px;
+}
+
+.tl-item::before {
+	background: #FFFFFF none repeat scroll 0 0;
+	border: 3px solid #DF7600;
+	border-radius: 50%;
+	content: " ";
+	height: 18px;
+	left: 0px;
+	position: absolute;
+	top: -5px;
+	transition: all 500ms ease-in-out 0s;
+	width: 18px;
+	transform: translateX(-50%); /* X축 가운데 정렬 */
+}
+
+
+.item-title {
+	color: black;
+	font-size: 14px;
+	text-align: left;
+	width: 100px;
+}
+
+.item-memo {
+	color: rgba(0, 0, 0, 0.5);
+	font-size: 12px;
+	text-align: left;
+	width: 100px;
+}
+
+.timestamp {
+	color: #8D8D8D;
+	position: absolute;
+	width: 100px;
+	left: -130px;
+	text-align: right;
+	font-size: 12px;
+}
+.btn_orange {
+	background-color: #FF9000;
+	color: white;
+	font-family: "Roboto",sans-serif;	
+}
+#addbtn {margin: 5%;}
+.btn-xs {
+	position: absolute;
+	left: 120px;
+	background-color: white;
+	outline: 1px solid #ff9000;
+	color: #ff9000;
+	font-family: "Roboto",sans-serif;
+}
+.btn_orange:hover { background-color: #DF7600; color: white; }
+
+/* tab */
+/* 탭 컨테이너 */
+.nav-tabs {
+  border-bottom: none;
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+/* 탭 아이템 */
+.nav-tabs > li {
+  margin: 0 5px;
+  transition: all 0.3s ease;
+}
+
+/* 탭 링크 */
+.nav-tabs > li > a {
+  display: block;
+  padding: 10px 20px;
+  border-radius: 12px;
+  background-color: #f9f9f9;
+  color: #555;
+
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  font-weight: 500;
+}
+
+/* 호버 시 */
+.nav-tabs > li > a:hover {
+  background-color: #ffe8cc;
+  color: #d35400;
+  border-color: #f0ad4e;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* 활성 탭 */
+.nav-tabs > li.active > a,
+.nav-tabs > li.active > a:focus,
+.nav-tabs > li.active > a:hover {
+  color: white;
+  background-color: #ff9000;
+  border: 1px solid #ff9000;
+  border-bottom-color: transparent;
+  box-shadow: 0 4px 10px rgba(255, 144, 0, 0.4);
+  transform: translateY(-2px);
+}
+
+/* 부드러운 애니메이션 */
+.nav-tabs > li > a, 
+.nav-tabs > li.active > a {
+  transition: all 0.3s ease;
+}
+</style>
+
+<div id="timelineContainer">
+<script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+<script>
+	//Thymeleaf에서 값 가져오기
+	let startDate = `[[${startDate}]]`;
+	let endDate = `[[${endDate}]]`;
+	let plan_name = `[[${plan_name}]]`;
+	
+	// 값이 없으면 기본값 설정 (오늘 날짜)
+	if (!startDate || startDate === "null") {
+	    startDate = moment().format("YYYY-MM-DD");
+	}
+	if (!endDate || endDate === "null") {
+	    endDate = moment().add(1, "days").format("YYYY-MM-DD");
+	}
+	
+	// 한국날짜 형식으로 변환해서 출력
+	function convertToKoreanDateTime(utcDateString) {
+	    const date = new Date(utcDateString); // UTC 시간 변환
+	   
+	    const year = date.getFullYear();
+	    const month = date.getMonth() + 1;
+	    const day = date.getDate();
+	    let hours = date.getHours();
+	    const minutes = String(date.getMinutes()).padStart(2, "0");
+	
+	    const period = hours < 12 ? "오전" : "오후";
+	    hours = hours % 12 || 12; // 12시간제 변환 (0시는 12시로)
+	
+	    return `${year}년 ${month}월 ${day}일 ${period} ${hours}시 ${minutes}분`;
+	}
+	
+	
+	let timelineDataByDate = {};   // 날짜별 데이터
+	let dateList = [];  // startDate ~ endDate 날짜 목록 저장
+
+	// 날짜 배열 생성 함수
+	function generateDateArray(start, end) {
+	    const arr = [];
+	    let current = moment(start);
+	    const last = moment(end);
+	    while (current.isSameOrBefore(last)) {
+	        arr.push(current.format("YYYY-MM-DD"));
+	        current.add(1, 'days');
+	    }
+	    return arr;
+	}
+
+	// 탭 생성 함수 (빈 데이터도 포함)
+	function inputNewTP(dates) {
+	    const tlTabContainer = document.querySelector(".nav-tabs");
+	    tlTabContainer.innerHTML = ""; // 기존 탭 초기화
+
+	    dates.forEach((date, index) => {
+	        const li = document.createElement("li");
+	        li.className = index === 0 ? "active" : "";
+	        li.style.cursor = "pointer";
+	        
+	        const a = document.createElement("a");
+	        a.textContent = `${index + 1}일차`;
+	        a.onclick = function() {
+	            // 탭 클릭시 active 효과 처리
+	            document.querySelectorAll(".nav-tabs li").forEach(li => li.classList.remove("active"));
+	            li.classList.add("active");
+	            showTimelineByDate(date);
+	        };
+	        
+	        li.appendChild(a);
+	        tlTabContainer.appendChild(li);
+	    });
+	}
+
+	// 특정 날짜 타임라인 보여주기
+	function showTimelineByDate(dateKey) {
+	    const body = document.querySelector("#tl");
+	    body.innerHTML = "";    // 초기화
+	    
+	    if (timelineDataByDate[dateKey] && timelineDataByDate[dateKey].length > 0) {
+	        // 시간순 정렬
+	        timelineDataByDate[dateKey].sort((a, b) => new Date(a.datetime) - new Date(b.datetime));
+	        timelineDataByDate[dateKey].forEach(dto => {
+	            make_timeline(dto);
+	        });
+	    } else {
+	        // 데이터 없는 경우
+	        const noData = document.createElement("li");
+	        noData.textContent = "등록된 일정이 없습니다.";
+	        body.appendChild(noData);
+	    }
+	}
+
+	// fetch 후 데이터 처리
+	function fetchTLData() {
+	    fetch("/planner/timelineJson?plan_name=" + encodeURIComponent(plan_name))
+	    .then(response => {
+	        if (!response.ok) {
+	            throw new Error("네트워크 오류");
+	        }
+	        return response.json();
+	    })
+	    .then(data => {
+	        // 데이터 초기화
+	        Object.keys(timelineDataByDate).forEach(key => timelineDataByDate[key] = []);
+	        
+	        if (data.items && data.items.length > 0) {
+	            data.items.forEach(dto => {
+	                const dateKey = dto.datetime.split("T")[0];    // 날짜 키
+	                if (!timelineDataByDate[dateKey]) {
+	                    timelineDataByDate[dateKey] = [];
+	                }
+	                timelineDataByDate[dateKey].push(dto);
+	            });
+	        }
+	        // 초기 표시 날짜
+	        showTimelineByDate(dateList[0]);
+	    })
+	    .catch(err => {
+	        console.error('Error fetching timeline data: ', err);
+	        // 데이터 없을 때도 초기 탭/타임라인 보여주기
+	        showTimelineByDate(dateList[0]);
+	    });
+	}
+
+	// 페이지 로딩 시
+	document.addEventListener("DOMContentLoaded", function() {
+	    // 날짜 목록 생성
+	    dateList = generateDateArray(startDate, endDate);
+	    
+	    // timelineDataByDate 초기화 (각 날짜 빈 배열)
+	    dateList.forEach(date => {
+	        timelineDataByDate[date] = [];
+	    });
+
+	    // 탭 먼저 생성
+	    inputNewTP(dateList);
+
+	    // 첫날 표시 (아직 데이터는 없을 수도 있음)
+	    showTimelineByDate(dateList[0]);
+
+	    // 서버 데이터 불러오기
+	    fetchTLData();
+	});
+
+	// 데이터 추가 시도 시
+	window.addEventListener("message", function(event) {
+	    if (event.origin !== window.location.origin) return; // 보안 체크
+	    
+	    const receivedData = event.data;
+	    
+	    fetch('/api/save-data', {
+	        method: 'POST',
+	        headers: {
+	            'Content-Type': 'application/json',
+	        },
+	        body: JSON.stringify(receivedData),
+	    })
+	    .then(response => response.json())
+	    .then(data => {
+	        const dateKey = data.datetime.split("T")[0];
+	        if (!timelineDataByDate[dateKey]) {
+	            timelineDataByDate[dateKey] = [];
+	        }
+	        timelineDataByDate[dateKey].push(data);
+	        
+	        showTimelineByDate(dateKey);
+	        // 탭 재생성 필요 없음 → 이미 dateList로 만들어둠
+	    })
+	    .catch(error => {
+	        console.error('Error saving data:', error);
+	        alert("저장 실패");
+	    });
+	}, false);
+	
+	
+	function make_timeline(dto) {
+		let date = convertToKoreanDateTime(dto.datetime);
+		
+		const tl = document.getElementById('tl');
+	    const tlItems = document.createElement('li');
+	   	tlItems.setAttribute("data-timeline-seq", dto.timelineSeq);	// 화면의 각 타임라인에 seq속성 추가해서 바로 반영
+	    
+	    tlItems.innerHTML = `
+	    	<input class="btn btn-xs" type="button" value="삭제" onclick="onDelete('${dto.timelineSeq}')">
+	        <div class="timestamp">${date}</div>
+	        <div class="item-title">${dto.title}</div>
+	        <div class="item-memo">${dto.memo}</div>
+	    `;
+	    tlItems.classList.add("tl-item");
+	    tl.appendChild(tlItems);
+	}
+	
+	
+	function onDelete(timelineSeq) {
+		// alert(typeof datetime);
+		if(confirm("삭제하시겠습니까?")) {
+			// 서버에 삭제 요청 보내기 (GET 요청 또는 POST 요청으로 수정)
+	        fetch(`/planner/deleteTimeline?timelineSeq=${timelineSeq}`, {
+	            method: 'GET',
+	            redirect: 'follow'  // 리다이렉트 따르기
+	        })
+	        .then(response => {
+	            if (response.ok) {
+	                alert("삭제되었습니다.");
+	             	// 삭제 후 UI에서 항목 제거
+	                const itemToRemove = document.querySelector(`[data-timeline-seq="${timelineSeq}"]`);
+	                if (itemToRemove) {
+	                    itemToRemove.remove();
+	                }
+	            } else {
+	                throw new Error("삭제 실패");
+	            }
+	        })
+	        .catch(error => {
+	            console.error("Error deleting timeline:", error);
+	            alert("삭제에 실패했습니다.");
+	        });
+			
+		}
+	}
+	
+	
+	let openWin;
+	function getMemo() {
+		
+	 	// moment.js를 사용하여 날짜 변환
+	    const start_date = moment(startDate, "YYYY-MM-DD").format("YYYY-MM-DD");
+	    const end_date = moment(endDate, "YYYY-MM-DD").format("YYYY-MM-DD");
+	
+	    // hidden input에 값 설정
+	    document.querySelector('input[name="startDate"]').value = start_date;
+	    document.querySelector('input[name="endDate"]').value = end_date;
+	    document.querySelector('input[name="plan_name"]').value = plan_name;
+	    
+	    // GET 방식으로 데이터 전달
+	    let url = "/planner/addTimeline?plan_name=" + plan_name + "&startDate=" + start_date + "&endDate=" + end_date;
+		
+	    // window.open(url, "창이름", "브라우저 설정")
+		openWin = window.open(url, "타임라인 추가", "width=500 height=700 left=500 top=200");
+	}
+	
+	
+</script>
+<div id="container">
+	<form action="/planner/addTimeline" name="form1">
+		<input type="hidden" name="startDate">
+		<input type="hidden" name="endDate">
+		<input type="hidden" name="plan_name">
+		
+		<div class="nav nav-tabs"></div>
+		<div class="history-tl-container">
+			<ul id="tl">
+				
+			</ul>
+			<br>
+			<input id="addbtn" class="btn btn_orange" type="button" value="추가" onclick="getMemo()">
+		</div>
+	</form>
+	
+</div>
+</div>

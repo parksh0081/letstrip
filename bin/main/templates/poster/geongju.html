@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<style type="text/css">
+body {
+  margin: 0;
+}
+
+.body-wrap {
+  background-color: #fff;
+  width: 600px;
+  min-height: 500px;
+  margin: 0 auto;
+  font-size: 12px;
+}
+
+.pres-timeline {
+  font-family: roboto, helvetica, sans-serif;
+  font-size: 12px;
+  color: #4A4A4A;
+  width: 100%;
+  margin: 30px 0;
+}
+.pres-timeline > div > div {
+  padding: 1em 0;
+  box-sizing: border-box;
+}
+.pres-timeline .periods-container, .pres-timeline .cards-container {
+  overflow: hidden;
+  box-sizing: border-box;
+  position: relative;
+  min-height: 100px;
+  transition: height 0.5s ease-in-out;
+  background-color: #FFF;
+}
+.periods-container:before {
+  background-image: linear-gradient(left, #FFF, rgba(248, 248, 248, 0));
+  left: 0;
+  content: "";
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  height: 100%;
+  width: 100px;
+}
+.periods-container:after {
+  background-image: linear-gradient(right, #FFF, rgba(248, 248, 248, 0));
+  right: 0;
+  content: "";
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  height: 100%;
+  width: 100px;
+}
+.periods-container .btn-back, .periods-container .btn-next {
+  display: inline-block;
+  width: 15%;
+  height: 100%;
+  position: absolute;
+  cursor: pointer;
+  z-index: 10;
+  transition: 0.3s ease-in-out;
+}
+.periods-container .btn-back:hover, .periods-container .btn-next:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+.periods-container .btn-back.hide, .periods-container .btn-next.hide {
+  display: none;
+}
+.periods-container .btn-back {
+  left: 0;
+}
+.periods-container .btn-next {
+  right: 0;
+}
+.periods-container section {
+  width: 70%;
+  height: 0;
+  position: absolute;
+  margin-left: 15%;
+  border-bottom: 5px solid #dfe3e6;
+  padding: 1.5em;
+  box-sizing: border-box;
+  transition: transform 0.3s ease-in-out, opacity 0.2s ease, height 0.3s ease;
+  bottom: 0;
+  opacity: 0;
+  background-color: #fff;
+}
+.periods-container section.active {
+  height: auto;
+  opacity: 1;
+  transform: translateX(0);
+  z-index: 5;
+}
+.periods-container section.active .title, .periods-container section.active p {
+  display: block;
+}
+.periods-container section.prev {
+  height: auto;
+  opacity: 0.4;
+  transform: translateX(-100%);
+  z-index: 0;
+}
+.periods-container section.prev .year {
+  text-align: right;
+}
+.periods-container section.next {
+  height: auto;
+  opacity: 0.4;
+  transform: translateX(100%);
+  z-index: 0;
+}
+.periods-container section .year {
+  font-size: 20px;
+  font-weight: 400;
+}
+.periods-container section .title {
+  color: #4A4A4A;
+  font-size: 28px;
+  font-weight: 400;
+  display: none;
+}
+.periods-container section p {
+  display: none;
+}
+
+.timeline-container {
+  position: relative;
+  width: 100%;
+  height: 50px;
+  overflow: hidden;
+}
+.timeline-container:before {
+  background-image: linear-gradient(left, #FFF, rgba(248, 248, 248, 0));
+  left: 0;
+  content: "";
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  height: 100%;
+  width: 100px;
+}
+.timeline-container:after {
+  background-image: linear-gradient(right, #FFF, rgba(248, 248, 248, 0));
+  right: 0;
+  content: "";
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  height: 100%;
+  width: 100px;
+}
+.timeline-container .timeline {
+  position: absolute;
+  display: block;
+  height: 50px;
+  transition: left 0.3s ease-in-out;
+}
+.timeline-container .timeline ol {
+  display: block;
+  width: 100%;
+  height: 2px;
+  background-color: #dfe3e6;
+  list-style: none;
+  padding-left: 210px;
+  padding-right: 300px;
+}
+.timeline-container .timeline ol li {
+  display: inline-block;
+  padding: 5px;
+  margin-top: -11px;
+  margin-left: 80px;
+  border-radius: 50%;
+  border: 3px solid #7f9298;
+  background-color: #FFF;
+  position: relative;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+.timeline-container .timeline ol li.active {
+  box-shadow: none;
+}
+.timeline-container .timeline ol li.active:before {
+  content: "";
+  display: block;
+  height: 25px;
+  width: 1px;
+  position: absolute;
+  top: -25px;
+  transition: opacity 0.3s ease-in-out;
+}
+.timeline-container .timeline ol li.active:after {
+  content: "";
+  display: block;
+  height: 25px;
+  width: 1px;
+  position: absolute;
+  bottom: -25px;
+  transition: opacity 0.3s ease-in-out;
+}
+.timeline-container .btn-back, .timeline-container .btn-next {
+  display: inline-block;
+  position: absolute;
+  cursor: pointer;
+  margin-top: -2px;
+  z-index: 11;
+  transition: all 0.3s ease;
+}
+.timeline-container .btn-back.hide, .timeline-container .btn-next.hide {
+  display: none;
+}
+.timeline-container .btn-back:hover, .timeline-container .btn-next:hover {
+  border-color: #7f9298;
+}
+.timeline-container .btn-back {
+  left: 1em;
+}
+.timeline-container .btn-next {
+  right: 1em;
+}
+
+.cards-container:before {
+  background-image: linear-gradient(left, #FFF, rgba(248, 248, 248, 0));
+  left: 0;
+  content: "";
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  height: 100%;
+  width: 100px;
+}
+.cards-container:after {
+  background-image: linear-gradient(right, #FFF, rgba(248, 248, 248, 0));
+  right: 0;
+  content: "";
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  height: 100%;
+  width: 100px;
+}
+.cards-container section {
+  width: 70%;
+  position: absolute;
+  margin-left: 15%;
+  margin-bottom: 2em;
+  border: 1px solid #f5f7f6;
+  padding: 1.5em;
+  box-sizing: border-box;
+  transition: transform 0.3s ease-in-out;
+  top: 0;
+  opacity: 0;
+  border-radius: 8px;
+  background-color: #fff;
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.15);
+}
+.cards-container section.active {
+  height: auto;
+  opacity: 1;
+  transform: translateX(0);
+  z-index: 5;
+}
+.cards-container section.prev {
+  height: auto;
+  opacity: 0.4;
+  transform: translateX(-105%);
+  z-index: 0;
+}
+.cards-container section.next {
+  height: auto;
+  opacity: 0.4;
+  transform: translateX(105%);
+  z-index: 0;
+}
+.cards-container section .year {
+  text-align: center;
+  font-size: 16px;
+  margin: 0;
+}
+.cards-container section .title {
+  font-weight: 400;
+}
+.cards-container section img {
+  width: 100%;
+}
+</style>
+
+<script type="text/javascript">
+class PRESTimeline {
+	constructor(target, color) {
+		this.base = target;
+		this.color = color;
+		this.periodContainer = $(this.base).find(".periods-container");
+		this.cardContainer = $(this.base).find(".cards-container");
+		this.timelineNodeContainer = $(this.base).find(".timeline-container .timeline");
+
+		this._parseData();
+		this._initialColor();
+		this._generateTimeline();
+		this._setStateClasses();
+		this._assignBtn();
+		this._adjustPeriodContainer();
+		this._adjustCardContainer();
+	}
+
+	_parseData() {
+		let base = this.base;
+		let periods = $(base).find(".periods-container section").toArray();
+		for (let section of periods) {
+			section.period = $(section).attr("period");
+			section.index = $(section).index();
+		}
+		this.periodData = periods;
+
+		let data = $(base).find(".cards-container section").toArray();
+		for (let section of data) {
+			section.period = $(section).attr("period");
+			section.index = $(section).index();
+		}
+		this.cardData = data;
+
+		this.activePeriod = this.periodData[0];
+		this.activePeriodIndex = 0;
+		this.activeCard = this.cardData[0];
+		this.activeCardIndex = 0;
+	}
+
+	_setStateClasses() {
+		// Periods
+		$(this.base).find(".periods-container section.active").removeClass("active");
+		$(this.base).find(".periods-container section.prev").removeClass("prev");
+		$(this.base).find(".periods-container section.next").removeClass("next");
+
+		$(this.activePeriod).addClass("active");
+		if ($(this.activePeriod).prev().length != 0) {
+			$(this.activePeriod).prev().addClass("prev");
+			$(this.base).find(".periods-container .btn-back").removeClass("hide");
+		} else {
+			$(this.base).find(".periods-container .btn-back").addClass("hide");
+		}
+		if ($(this.activePeriod).next().length != 0) {
+			$(this.activePeriod).next().addClass("next");
+			$(this.base).find(".periods-container .btn-next").removeClass("hide");
+		} else {
+			$(this.base).find(".periods-container .btn-next").addClass("hide");
+		}
+
+		// Cards
+		$(this.base).find(".cards-container section.active").removeClass("active");
+		$(this.base).find(".cards-container section.prev").removeClass("prev");
+		$(this.base).find(".cards-container section.next").removeClass("next");
+
+		$(this.activeCard).addClass("active");
+		if ($(this.activeCard).prev().length != 0) {
+			$(this.activeCard).prev().addClass("prev");
+		}
+		if ($(this.activeCard).next().length != 0) {
+			$(this.activeCard).next().addClass("next");
+		}
+
+		// Timeline
+		$(this.base).find(".timeline li.active").removeClass("active");
+		$(this.timelineData[this.activeCard.index]).addClass("active");
+
+		let timelineB = $(this.base).find(".timeline-container .btn-back");
+		let timelineN = $(this.base).find(".timeline-container .btn-next");
+		if (this.activeCardIndex === 0) {
+			timelineB.addClass("hide");
+		} else {
+			timelineB.removeClass("hide");
+		}
+		if (this.activeCardIndex >= this.cardData.length - 1) {
+			timelineN.addClass("hide");
+		} else {
+			timelineN.removeClass("hide");
+		}
+	}
+
+	_generateTimeline() {
+		let htmlWrap = "<ol></ol>";
+		$(this.timelineNodeContainer).append(htmlWrap);
+		let wrap = $(this.timelineNodeContainer).find("ol");
+		let numNode = this.cardData.length;
+		for (let i = 0; i < numNode; i++) {
+			let c = this.cardData[i].color;
+			wrap.append(
+				'<li class="' +
+					this.cardData[i].period +
+					'" style="border-color: ' +
+					c +
+					'"></li>'
+			);
+		}
+		let nodeW = 200;
+		wrap.css("width", nodeW * numNode - 16);
+		let nodeList = $(this.base).find(".timeline ol li").toArray();
+		this.timelineData = nodeList;
+	}
+
+	_assignBtn() {
+		let periodPrev = $(this.base).find(".periods-container .btn-back");
+		let periodNext = $(this.base).find(".periods-container .btn-next");
+		periodPrev.click(() => {
+			if (this.activePeriodIndex > 0) {
+				this.activePeriodIndex -= 1;
+				this.activePeriod = this.periodData[this.activePeriodIndex];
+				this._chainActions("period");
+				this._setStateClasses();
+			}
+			this._adjustPeriodContainer();
+		});
+		periodNext.click(() => {
+			if (this.activePeriodIndex < this.periodData.length - 1) {
+				this.activePeriodIndex += 1;
+				this.activePeriod = this.periodData[this.activePeriodIndex];
+				this._chainActions("period");
+				this._setStateClasses();
+			}
+			this._adjustPeriodContainer();
+		});
+
+		let timelinePrev = $(this.base).find(".timeline-container .btn-back");
+		let timelineNext = $(this.base).find(".timeline-container .btn-next");
+		timelinePrev.click(() => {
+			if (this.activeCardIndex > 0) {
+				this.activeCardIndex -= 1;
+				this.activeCard = this.cardData[this.activeCardIndex];
+				this._chainActions("timeline");
+				this._setStateClasses();
+			}
+			this._adjustCardContainer();
+			this._adjustPeriodContainer();
+		});
+		timelineNext.click(() => {
+			if (this.activeCardIndex < this.cardData.length - 1) {
+				this.activeCardIndex += 1;
+				this.activeCard = this.cardData[this.activeCardIndex];
+				this._chainActions("timeline");
+				this._setStateClasses();
+			}
+			this._adjustCardContainer();
+			this._adjustPeriodContainer();
+		});
+
+		for (let i = 0; i < this.timelineData.length; i++) {
+			$(this.timelineData[i]).click(() => {
+				this.activeCardIndex = this.cardData[i].index;
+				this.activeCard = this.cardData[this.activeCardIndex];
+				this._chainActions("timeline");
+				this._setStateClasses();
+				this._adjustCardContainer();
+				this._shiftTimeline();
+			});
+		}
+	}
+
+	_initialColor() {
+		for (let i = 0; i < this.periodData.length; i++) {
+			let p = this.periodData[i].period;
+			this.periodData[i].color = this.color[p];
+			let temp = this.periodData[i];
+			$(temp).css("border-color", temp.color);
+			$(temp).find(".year").css("color", temp.color);
+
+			let sbstyle = document.createElement("style");
+			document.head.appendChild(sbstyle);
+			sbstyle.sheet.insertRule(
+				"li." + p + ".active { background-color: " + this.color[p] + " !important } ",
+				0
+			);
+			sbstyle.sheet.insertRule(
+				"li." + p + "::before { background-color: " + this.color[p] + " } ",
+				0
+			);
+			sbstyle.sheet.insertRule(
+				"li." + p + "::after { background-color: " + this.color[p] + " } ",
+				0
+			);
+		}
+		for (let i = 0; i < this.cardData.length; i++) {
+			let p = this.cardData[i].period;
+			this.cardData[i].color = this.color[p];
+			let temp = this.cardData[i];
+			$(temp).css("border-color", temp.color);
+			$(temp).find(".year").css("color", temp.color);
+		}
+	}
+
+	_adjustPeriodContainer() {
+		let activeH = $(this.activePeriod).outerHeight();
+		$(this.periodContainer).height(activeH);
+	}
+
+	_adjustCardContainer() {
+		let activeH = $(this.activeCard).outerHeight() + 24;
+		$(this.cardContainer).height(activeH);
+	}
+
+	_shiftTimeline() {
+		let timelineW = $(this.base).find(".timeline-container").outerWidth();
+		let timelinePadding = 210;
+		let activeNodeX = $(this.timelineData[this.activeCardIndex]).position().left;
+		let finalPos = -activeNodeX + timelinePadding;
+		$(this.timelineNodeContainer).css("left", finalPos);
+	}
+
+	_chainActions(state) {
+		switch (state) {
+			case "period":
+				if (this.activePeriod.period != this.activeCard.period) {
+					let ta = [];
+					for (let i = 0; i < this.cardData.length; i++) {
+						let temp = this.cardData[i];
+						if (this.activePeriod.period === temp.period) ta.push(temp);
+					}
+					this.activeCard = ta[0];
+					this.activeCardIndex = ta[0].index;
+				}
+				break;
+			case "timeline":
+				if (this.activeCard.period != this.activePeriod.period) {
+					let ta;
+					for (let i = 0; i < this.periodData.length; i++) {
+						let temp = this.periodData[i];
+						if (this.activeCard.period === temp.period) ta = temp;
+					}
+					this.activePeriod = ta;
+					this.activePeriodIndex = ta.index;
+				}
+				break;
+		}
+		this._shiftTimeline();
+		this._adjustCardContainer();
+	}
+}
+
+// ## document load ##
+$(document).ready(function () {
+	let colorcode = {
+		period1: "#fec541",
+		period2: "#36d484",
+	};
+	let timeline = new PRESTimeline($("#this-timeline"), colorcode);
+});
+</script>
+</head>
+<body>
+<div class="body-wrap">
+<!-- # component starts -->
+  <div class="pres-timeline" id="this-timeline">
+<!-- ###   -->
+<!--   <div class="periods-section"> -->
+    <div class="periods-container">
+      <section class="period-single" period="period1">
+        <h4 class="year">1일차</h4>
+        <h2 class="title">역사와 자연을 품은 경주 여행</h2>
+        <p>경주 역사 탐방</p>
+      </section>
+      <section class="period-single" period="period2">
+        <h4 class="year">2일차</h4>
+        <h2 class="title">역사와 자연을 품은 경주 여행</h2>
+        <p>경주의 자연과 문화</p>
+      </section>
+      <div class="btn-back"></div>
+      <div class="btn-next"></div>
+    </div>
+<!--   </div> -->
+<!-- ### -->
+<!--   <div class="timeline-section"> -->
+    <div class="timeline-container">
+      <!--     # timeline graphic place holder - fill with js -->
+      <div class="timeline"></div>
+  
+      <div class="btn-back"><svg width="30" height="30" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg"><path fill="none" d="M0 0h30v30H0z"/><path fill="#D8D8D8" fill-rule="evenodd" d="M11.828 15l7.89-7.89-2.83-2.828L6.283 14.89l.11.11-.11.11L16.89 25.72l2.828-2.83"/></svg></div>
+      <div class="btn-next"><svg width="30" height="30" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg"><path fill="none" d="M0 0h30v30H0z"/><path fill="#D8D8D8" fill-rule="evenodd" d="M18.172 14.718l-7.89-7.89L13.112 4l10.606 10.607-.11.11.11.11-10.608 10.61-2.828-2.83 7.89-7.89"/></svg></div>
+    </div>
+<!--   </div> -->
+<!-- ### -->
+<!--   <div class="cards-section"> -->
+    <div class="cards-container">
+      <section class="card-single active" period="period1">
+        <h4 class="year">예상 소요시간: 1시간 30분</h4>
+        <h2 class="title">불국사</h2>
+        <div class="content">
+		  <img src="/project_poster_img/경주/불국사.webp" alt="경주 불국사" />
+          <p>경주의 대표적인 사찰인 불국사는 유네스코 세계문화유산으로, 뛰어난 건축미와 자연 경관을 자랑합니다. 석가탑과 다보탑을 비롯한 불교 건축물들이 고즈넉하게 자리 잡고 있어 마음의 평화를 찾을 수 있는 곳입니다. 사찰을 둘러보며 탑과 부처의 섬세한 조각을 감상하고, 주변의 아름다운 정원을 산책해 보세요. 불국사는 경주의 역사적인 유산과 전통을 깊이 느낄 수 있는 명소입니다.</p>
+        </div>
+      </section>
+      <section class="card-single" period="period1">
+        <h4 class="year">예상 소요시간: 1시간</h4>
+        <h2 class="title">석굴암</h2>
+        <div class="content">
+		  <img src="/project_poster_img/경주/석굴암.webp" alt="경주 석굴암" />
+		  <p>석굴암은 불국사와 함께 유네스코 세계문화유산에 등재된 사찰로, 산 속의 고요한 동굴 안에 위치해 있습니다. 이곳은 석굴 안에 있는 아미타불상으로 유명하며, 그 섬세하고 정교한 조각은 불교 예술의 정수라 할 수 있습니다. 석굴암을 방문하면 깊은 산속의 평화로운 분위기와 함께 고대 불교 예술을 직접 체험할 수 있습니다.</p>
+        </div>
+      </section>
+      <section class="card-single" period="period1">
+        <h4 class="year">예상 소요시간: 1시간</h4>
+        <h2 class="title">동궁과 월지</h2>
+        <div class="content">
+		  <img src="/project_poster_img/경주/동궁과월지.webp" alt="경주 동궁과월지" />
+		  <p>경주 동궁과 월지는 신라 왕족의 별궁이자 아름다운 정원이 있는 곳입니다. 월지(안압지)에는 물이 고여 있으며, 밤에는 조명이 켜져 환상적인 분위기를 자아냅니다. 고대 신라의 왕족들이 여기서 여유로운 시간을 보냈을 법한 풍경을 상상하며, 호수 주변을 산책하며 고요함을 느낄 수 있습니다. 전통적인 아름다움과 고즈넉한 분위기가 가득한 장소입니다.</p>
+        </div>
+      </section>
+      <section class="card-single" period="period2">
+        <h4 class="year">예상 소요시간: 1시간 30분</h4>
+        <h2 class="title">경주국립박물관</h2>
+        <div class="content">
+		  <p>경주국립박물관은 신라의 역사와 문화를 한눈에 볼 수 있는 박물관으로, 다양한 유물들이 전시되어 있습니다. 신라의 왕실 유물부터 everyday items까지, 경주의 과거를 알아볼 수 있는 기회입니다. 박물관을 돌아보며 신라의 문화와 역사를 배워보세요. 특별전시나 기획전이 있을 때 방문하면 더욱 풍성한 경험을 할 수 있습니다.</p>
+        </div>
+      </section>
+      <section class="card-single" period="period2">
+        <h4 class="year">예상 소요시간: 30분</h4>
+        <h2 class="title">첨성대</h2>
+        <div class="content">
+		  <p>첨성대는 동양에서 가장 오래된 천문대이자, 고대 한국의 과학 기술을 보여주는 대표적인 유산입니다. 신라시대의 과학 기술을 엿볼 수 있는 이곳은, 하늘을 관측하는 과학적인 건축물로, 그 자체로 경주의 역사를 대변합니다. 첨성대 주변을 둘러보며 신라의 천문학에 대해 배워보세요.</p>
+        </div>
+      </section>
+      <section class="card-single" period="period2">
+        <h4 class="year">예상 소요시간: 1시간</h4>
+        <h2 class="title">대릉원</h2>
+        <div class="content">
+          	<img src="/project_poster_img/경주/대릉원.png" alt="경주 대릉원" />
+			<p>대릉원은 신라 왕과 왕비들의 능이 있는 고분 군으로, 경주의 대표적인 고분 유적지입니다. 고분들 중에서도 유명한 천마총과 황룡사의 왕궁을 볼 수 있습니다. 고대 신라 왕국의 역사를 알아보며 왕족들의 묘지를 탐방하는 재미도 느낄 수 있습니다. 대릉원은 경주의 역사를 이해하는 중요한 장소입니다.</p>
+        </div>
+      </section>
+      <section class="card-single" period="period2">
+        <h4 class="year">예상 소요시간: 1시간</h4>
+        <h2 class="title">보문호</h2>
+        <div class="content">
+		  <p>보문호는 경주에서 가장 큰 호수로, 호수 주변의 산책로와 공원에서 여유롭게 시간을 보낼 수 있는 곳입니다. 특히 일몰 시간이 되면 아름다운 풍경을 감상할 수 있습니다. 자전거를 타고 호수를 둘러보거나, 호숫가에서 산책하며 경주의 자연을 만끽해 보세요.</p>
+        </div>
+      </section>
+    </div>
+<!--   </div> -->
+<!-- ###   -->
+  </div>
+<!-- # component ends -->
+</div>
+</body>
+</html>

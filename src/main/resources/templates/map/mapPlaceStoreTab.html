@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript">
+var personId=/*[[${session.personId}]]*/null;
+document.addEventListener("DOMContentLoaded", function () {
+    fetch("mapPlaceStoreTab?id="+personId)
+        .then(response => response.text())
+        .then(html => {
+            document.getElementById("storeListBody").innerHTML = html;
+        })
+        .catch(error => {
+        	alert("Err:"+err.message);
+        });
+});
+</script>
+<style type="text/css">
+.container{
+	margin:0 auto;
+}
+.card-body {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 30vh); /* 전체 화면 높이에서 헤더(56px) 제외 */
+    overflow: hidden; /* 전체 높이에 맞추기 */
+    padding-left: 15px;
+    padding-bottom: 20px;
+}
+.tab-content {
+    flex-grow: 1; /* 부모 요소 높이만큼 확장 */
+    overflow-y: auto; /* 목록이 많으면 스크롤 */
+    padding-left: 0; /* 기본 padding 제거 */
+    margin: 0; /* 기본 margin 제거 */
+}
+</style>
+</head>
+<body>
+<div class="container" id="storeListBody">
+	<div style="margin-left: 15px; margin-top: 10px;">
+		<h5>내 찜 목록</h5>
+		<p>[[${storeList.size()}]]개 찜 장소</p>
+	</div>
+	<br>
+	<hr>
+	<!-- ** 찜 목록 ** -->
+	<th:block th:if="${storeList.size()==0}">
+		<p class="card-text">찜한 장소가 없습니다.</p>
+	</th:block>
+	<div class="card-body">
+		<div  class="tab-content" >
+		<th:block th:if="${storeList.size()!=0}">
+			<th:block th:each="store:${storeList}">
+				<div class="store1" style="paddng:15px;">
+					<div class="storeList" style="display: flex;">
+						<div style="margin: 5px;">
+							<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" class="bi bi-geo-alt" viewBox="0 0 16 16" style="color:#FF9000;">
+							  <path d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A32 32 0 0 1 8 14.58a32 32 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10"/>
+							  <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4m0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
+							</svg>
+						</div>
+						<div class="storePlaceInfo" style="margin:5px;">
+							 <div>
+						        <font size="4" th:text="${store.getPlace().place_name}">place_name</font>
+						    </div>
+						    <div>
+						        <font size="2" th:text="${store.getPlace().category_group_name}" style="color: gray;">category_group_name</font>
+						    </div>
+						</div>    
+					</div>
+					<hr>
+				</div>
+			</th:block>
+		</th:block>
+		</div>
+		</div>
+</div>
+</body>
+</html>

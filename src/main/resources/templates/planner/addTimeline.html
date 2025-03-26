@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>addTimeline</title>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" />
+<script type="text/javascript">
+	//Thymeleaf에서 값 가져오기
+	let start_date = `[[${startDate}]]`;
+	let end_date = `[[${endDate}]]`;
+	let plan_name = `[[${plan_name}]]`;
+	
+	// 값이 없으면 기본값 설정 (오늘 날짜)
+	if (!startDate || startDate === "null") {
+	    startDate = moment().format("YYYY-MM-DD");
+	}
+	if (!endDate || endDate === "null") {
+	    endDate = moment().add(1, "days").format("YYYY-MM-DD");
+	}
+	
+	window.onload = function() {
+	    if (window.opener) {
+	        let addButton = window.opener.document.getElementById("addbtn");
+	        if (addButton) {
+	            addButton.readOnly = true; // 부모 창의 버튼을 읽기 전용으로 설정
+	         	
+	        }
+	    }
+	    console.log(window.opener.location.href);
+	    
+	};
+	function addTL(){
+		var frm = document.form1;
+		if(!frm.datetime.value) {
+			alert("날짜와 시간을 입력하세요");
+			return false;
+		}
+		var title = document.querySelector('input[name="title_input"]')
+		if(!title.value){
+			alert("장소명을 입력하세요");
+			return false;
+		}
+		sendData();
+	}
+	
+	function sendData() {
+		
+		let id = document.getElementById("personId").value;
+        let datetime = document.getElementById("datepicker").value;
+        let title = document.getElementById("title-input").value;
+        let memo = document.getElementById("memo-input").value;
+
+     	let values = {id, plan_name, title, memo, datetime, start_date, end_date};
+
+        // 부모 창에 데이터 전달 (POST 방식)
+        if (values) {
+            window.opener.postMessage(values, window.location.origin);  
+            window.close(); // 팝업창 닫기
+        }
+    }
+</script>
+<style type="text/css">
+.container .well {
+	border: 2px solid #ff9000;
+	background-color: white;
+	font-family: "Roboto",sans-serif;
+}
+.button {text-align: center;}
+.btn {
+	background-color: #FF9000;
+	color: white;
+	font-family: "Roboto",sans-serif;
+}
+.btn:hover { background-color: #DF7600; color: #FF9000; }
+</style>
+</head>
+<body>
+<div th:replace="~{layouts/header}"></div>
+
+<div class="container">
+	<form action="#" name="form1">
+		<input id="personId" type="hidden" th:value="${personId}" name="personId">
+		<!-- 시간 -->
+		<div class="container well">
+			<div class="row">
+				<div class="col-md-2">
+					<h4>날짜-시간</h4>
+				</div>
+				<div class="col-md-6">
+					<div class="form-control-wrapper">
+						<input id="datepicker" type="datetime-local" step="120" name="datetime"
+						 class="form-control floating-label" th:attr="min=${startDate}, max=${endDate}"/>						
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- 장소 -->
+		<div class="container well">
+			<div class="row">
+				<div class="col-md-2">
+					<h4>장소</h4>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-6">
+					<div class="form-control-wrapper">
+					<input type="text" id="title-input" name="title_input" class="form-control floating-label">
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- 메모 -->
+		<div class="container well">
+			<div class="row">
+				<div class="col-md-2">
+					<h4>메모</h4>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-6">
+					<div class="form-control-wrapper">
+						<textarea name="memo" id="memo-input" rows="10" class="form-control floating-label"></textarea>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="button"><input class="btn" type="button" value="추가" onclick="addTL()"></div>		
+	</form>
+</div>
+</body>
+
+
+<div th:replace="~{layouts/footer}"></div>
+</html>
