@@ -5,15 +5,34 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>교통편 정보</title>
 <style type="text/css">
+html, body {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+header {
+    flex-shrink: 0; /* header 크기 유지 */
+}
+
+
+footer {
+    flex-shrink: 0; /* footer 크기 유지 */
+}
+
+
 body .train-container {
 	font-family: Arial, sans-serif;
 	text-align: center;
 	padding: 20px;
+	flex: 1; /* 메인 콘텐츠가 늘어날 수 있도록 설정 */
 }
+
 
 h2 {
 	color: #333;
-	font-weight: bold;
+	font-weight: bold !important;
 }
 
 .transbutton {
@@ -261,7 +280,7 @@ tr:nth-child(even) {
                 htmlContent += `
                         </tbody>
                     </table>
-                    <!-- 기차 예매 링크 추가 -->
+                    <!-- 기차 예매 링크 -->
                     <div style="margin-top: 20px;">
                         <a href="https://www.korail.com" target="_blank" style="color: #FF9000; font-size: 16px; font-weight: bold;">기차 예매하기</a>
                     </div>

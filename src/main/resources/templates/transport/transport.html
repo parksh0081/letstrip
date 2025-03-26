@@ -6,7 +6,7 @@
 <title>교통편 정보</title>
 <style type="text/css">
 body .transport-container {
-	margin-top: 20px;
+	padding: 20px;
 	font-family: Roboto, sans-serif;
     /* background-color: #f4f4f9; */
     text-align: center;
@@ -14,7 +14,7 @@ body .transport-container {
 
 h2 {
     color: #333;
-    font-weight: bold;
+    font-weight: bold !important;
 }
 
 .transbutton {
@@ -65,9 +65,15 @@ input {
     font-weight: bold;
 }
 
-/* button:hover {
-    background-color: #FF9000;
-} */
+.search:hover {
+    background-color: #FF7F00;
+} 
+
+h5 {
+	margin: 10px 0;
+	font-weight: bold !important;
+	color: #606060 !important;
+}
 
 .table-container {
     display: flex;
@@ -78,7 +84,7 @@ input {
 
 .transport-table {
     width: 100%;
-    max-width: 500px; /* 테이블 크기 조절 */
+    max-width: 450px; /* 테이블 크기 조절 */
     border-collapse: collapse;
     border: 2px solid #333; /* 테두리 확실하게 적용 */
     background-color: #fff;
@@ -100,9 +106,7 @@ input {
 </style>
 </head>
 <body>
-<div class="header-container">
-    <div th:replace="~{layouts/header}"></div>
-</div>
+<div th:replace="~{layouts/header}"></div>
     <div class="transport-container">
         <h2>Drive Schedule</h2>
         <div style="margin-bottom: 10px;">
@@ -126,7 +130,6 @@ input {
             <!-- 결과가 여기에 출력됩니다 -->
         </div>
     </div>
-    <!--<script src="/js/app.js"></script>  자바스크립트 연결 -->
     <script type="text/javascript">
     document.getElementById('transport-form').addEventListener('submit', function(event) {
         event.preventDefault(); // 기본 폼 제출 방지
@@ -154,7 +157,7 @@ input {
                  	// 결과 출력
                     const resultContainer = document.getElementById('transport-result');
                     resultContainer.innerHTML = `
-                        <h3>🚗 자차 경로 정보</h3>
+                        <h5>🚗 자차 경로 조회</h5>
                         <table class="transport-table">
                                 <tr>
                                     <th>출발지</th>
@@ -193,7 +196,7 @@ input {
     });
 
     </script>
-
+<div th:replace="~{layouts/footer}"></div>
 </body>
 </html>
 

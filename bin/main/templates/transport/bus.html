@@ -12,10 +12,9 @@ body .bus-container {
     padding: 20px;
 }
 
-
 h2 {
     color: #333;
-    font-weight: bold;
+    font-weight: bold !important;
 }
 
 .transbutton {
@@ -66,20 +65,28 @@ input {
     font-weight: bold;
 }
 
-button:hover {
-    background-color: #D45836;
-}
+.search:hover {
+    background-color: #FF7F00;
+} 
 
 #busResults {
     margin-top: 20px;
 }
 
+h5 {
+	margin: 10px 0;
+	font-weight: bold !important;
+	color: #606060 !important;
+}
+
 table {
-    width: 80%;
+    width: 800px;
     margin: 0 auto;
-    border-collapse: collapse;
+    border-collapse: separate;
     background: white;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 5px; 
+    overflow: hidden; 
 }
 
 th, td {
@@ -121,7 +128,7 @@ tr:nth-child(even) {
 		    </div>
 		
 		    <div>
-		    	<label for="date">날짜</label>
+		    	<label for="departDate">날짜</label>
 		    	<input type="text" id="departDate" name="departDate" required><br><br>
 		    </div>
 		    
@@ -130,29 +137,29 @@ tr:nth-child(even) {
 		
 		<div id="busResults"></div>
 	</div>
-    
+<div th:replace="~{layouts/footer}"></div>    
 
-    <script>
-        let terminalData = [];  // 터미널 정보 저장용 배열
-
-        // 페이지가 로드될 때, 터미널 정보를 불러옵니다.
-        window.onload = function() {
-            // 페이지 번호를 1부터 10까지 반복하면서 데이터를 가져옵니다.
-            for (let page = 1; page <= 10; page++) {
-                fetch(`http://apis.data.go.kr/1613000/SuburbsBusInfoService/getSuberbsBusTrminlList?serviceKey=tlkOqKpio2H5dPSq3SuOrEHcD7PHT%2Fhb4lVbsChKjDrhLni30AszV8AHZzfmoyzS51OtdYVwt%2F4qZzROZoIY4w%3D%3D&pageNo=${page}&numOfRows=100&_type=json`)
-                    .then(response => response.json())
-                    .then(data => {
-                        // 새로 받아온 데이터를 기존 데이터에 추가
-                        terminalData = terminalData.concat(data.response.body.items.item);
-
-                        // 시외버스 터미널 정보를 cityName별로 그룹화하여 datalist에 넣기
-                        groupByCityName(terminalData);
-                    })
-                    .catch(error => {
-                        console.error('Error fetching data:', error);
-                    });
-            }
-        };
+    <script type="text/javascript">
+		 let terminalData = [];  // 터미널 정보 저장용 배열
+		
+		 // 페이지가 로드될 때, 터미널 정보를 불러옵니다.
+		 window.onload = function() {
+		     // 페이지 번호를 1부터 10까지 반복하면서 데이터를 가져옵니다.
+		     for (let page = 1; page <= 10; page++) {
+		         fetch(`/suburbsBusList?page=${page}`)  // 백엔드에서 각 페이지별로 요청
+		             .then(response => response.json())
+		             .then(data => {
+		                 // 새로 받아온 데이터를 기존 데이터에 추가
+		                 terminalData = terminalData.concat(data.response.body.items.item);
+		
+		                 // 시외버스 터미널 정보를 cityName별로 그룹화하여 datalist에 넣기
+		                 groupByCityName(terminalData);
+		             })
+		             .catch(error => {
+		                 console.error('Error fetching data:', error);
+		             });
+		     }
+		 };
 
         // 시외버스 터미널 정보를 cityName별로 그룹화하여 datalist에 넣기
         function groupByCityName(items) {
@@ -193,13 +200,13 @@ tr:nth-child(even) {
         document.getElementById("busForm").addEventListener("submit", function(event) {
             event.preventDefault();  // 기본 폼 제출 방지
 
-            const departureName = document.getElementById("departure").value;
-            const arrivalName = document.getElementById("arrival").value;
-            const departDate = document.getElementById("departDate").value;
+            let departureName = document.getElementById("departure").value;
+            let arrivalName = document.getElementById("arrival").value;
+            let departDate = document.getElementById("departDate").value;
 
             // 선택된 출발지와 도착지의 terminalId 찾기
-            const departureTerminal = findTerminalId(departureName);
-            const arrivalTerminal = findTerminalId(arrivalName);
+            let departureTerminal = findTerminalId(departureName);
+            let arrivalTerminal = findTerminalId(arrivalName);
             
 
             console.log("출발 터미널 ID:", departureTerminal);
@@ -211,19 +218,22 @@ tr:nth-child(even) {
                 return;
             }
             
-            fetch(`http://apis.data.go.kr/1613000/SuburbsBusInfoService/getStrtpntAlocFndSuberbsBusInfo?serviceKey=tlkOqKpio2H5dPSq3SuOrEHcD7PHT%2Fhb4lVbsChKjDrhLni30AszV8AHZzfmoyzS51OtdYVwt%2F4qZzROZoIY4w%3D%3D&pageNo=1&numOfRows=10&_type=json&depTerminalId=${departureTerminal}&arrTerminalId=${arrivalTerminal}&depPlandTime=${departDate}`)
-            .then(response => response.text())  // JSON이 아니라 text로 받아서 확인
-            .then(data => {
-                console.log("API Response:", data);  // 콘솔에 응답 데이터 출력
+         	// 날짜를 YYYY-MM-DD → YYYYMMDD 형식으로 변환
+            departDate = departDate.replace(/-/g, '');
 
-                try {
-                    const jsonData = JSON.parse(data);
-                    displayBusSchedule(jsonData);
-                } catch (error) {
-                    console.error("JSON Parsing Error: 응답이 JSON이 아닙니다.", error);
-                }
-            })
-            .catch(error => console.error('Error fetching data:', error));
+            fetch(`/suburbsBusSchedule?departure=${departureTerminal}&arrival=${arrivalTerminal}&departDate=${departDate}`)
+                .then(response => response.text())  // JSON이 아니라 text로 받아서 확인
+                .then(data => {
+                    console.log("API Response:", data);  // 콘솔에 응답 데이터 출력
+
+                    try {
+                        const jsonData = JSON.parse(data);
+                        displayBusSchedule(jsonData);
+                    } catch (error) {
+                        console.error("JSON Parsing Error: 응답이 JSON이 아닙니다.", error);
+                    }
+                })
+                .catch(error => console.error('Error fetching data:', error));
         });
 
         // 터미널명에 해당하는 terminalId를 찾는 함수
@@ -238,35 +248,59 @@ tr:nth-child(even) {
             
             if (data && data.response.body.items && data.response.body.items.item.length > 0) {
                 let htmlContent = `
-                    <h3>🚌 시외버스 경로 조회</h3>
+                    <h5>🚌 시외버스 경로 조회</h5>
                     <table>
                         <thead>
                             <tr>
                                 <th>버스 번호</th>
+                                <th>날짜</th>
                                 <th>출발 시간</th>
                                 <th>도착 시간</th>
                                 <th>요금 (일반)</th>
-                                <th>요금 (우등)</th>
+                                <th>좌석</th>
                             </tr>
                         </thead>
                         <tbody>
                 `;
 
                 data.response.body.items.item.forEach(item => {
-                    htmlContent += `
-                        <tr>
-                            <td>${item.routeId}</td>
-                            <td>${item.depPlandTime}</td>
-                            <td>${item.arrPlandTime}</td>
-                            <td>${item.charge || 'N/A'}원</td>
-                            <td>${item.specialCharge || 'N/A'}</td>
-                        </tr>
-                    `;
-                });
+			        // depPlandTime, arrPlandTime이 존재하는지 확인
+			        if (item.depPlandTime && item.arrPlandTime) {
+			            let depPlandTimeStr = item.depPlandTime.toString();
+			            let arrPlandTimeStr = item.arrPlandTime.toString();
+			
+			            // 날짜와 시간을 분리 (YYYYMMDDHHMM 형식)
+			            let date = depPlandTimeStr.substring(0, 8);  // 20230401 (날짜)
+			            let departureTime = depPlandTimeStr.substring(8, 12); // 1150 (출발시간)
+			            let arrivalTime = arrPlandTimeStr.substring(8, 12); // 1431 (도착시간)
+			
+			         	// 날짜 형식 변경 (YYYY-MM-DD)
+			            let formattedDate = date.substring(0, 4) + "-" + date.substring(4, 6) + "-" + date.substring(6, 8);
+
+			            // 시간을 HH:mm 형식으로 변환
+			            let formatteddepartureTime = departureTime.substring(0, 2) + ":" + departureTime.substring(2, 4); // 11:50
+			            let formattedarrivalTime = arrivalTime.substring(0, 2) + ":" + arrivalTime.substring(2, 4); // 14:31
+			
+			            htmlContent += `
+			                <tr>
+			                    <td>${item.routeId}</td>
+			                    <td>${formattedDate}</td>
+			                    <td>${formatteddepartureTime}</td>
+			                    <td>${formattedarrivalTime}</td>
+			                    <td>${item.charge || 'N/A'}원</td>
+			                    <td>${item.gradeNm || 'N/A'}</td>
+			                </tr>
+			            `;
+			        }
+			    });
 
                 htmlContent += `
                         </tbody>
                     </table>
+                    <!-- 버스 예매 링크 추가 -->
+                    <div style="margin-top: 20px;">
+                        <a href="https://txbus.t-money.co.kr" target="_blank" style="color: #FF9000; font-size: 16px; font-weight: bold;">버스 예매하기</a>
+                    </div>
                 `;
 
                 resultsDiv.innerHTML = htmlContent;
@@ -276,5 +310,6 @@ tr:nth-child(even) {
         }
 
     </script>
+<div th:replace="~{layouts/footer}"></div>
 </body>
 </html>
