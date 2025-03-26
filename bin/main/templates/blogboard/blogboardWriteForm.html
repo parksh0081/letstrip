@@ -1,57 +1,52 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>블로그 작성</title>
-	<script type="text/javascript" src="/js/blogboardScript.js"></script>
-    <!-- jQuery (필수) -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<meta charset="UTF-8">
+<title>블로그 작성</title>
+<script type="text/javascript" src="/js/blogboardScript.js"></script>
+<!-- jQuery (필수) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    <!-- Summernote CSS & JS (필수 파일만 포함) -->
-    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
+<!-- Summernote CSS & JS (필수 파일만 포함) -->
+<link
+	href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css"
+	rel="stylesheet">
+<script
+	src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
 
-    <style>
-        /* 전체 컨테이너 */
-        .blog-container {
-            width: 70%;
-            max-width: 1000px;
-            margin: auto;
-            padding-top: 20px;
-        }
+<style>
+/* 전체 컨테이너 */
+.blog-container {
+	width: 70%;
+	max-width: 900px;
+	margin: auto;
+	padding-top: 20px;
+}
 
-        /* 툴바를 화면 전체 폭으로 확장 
-        .toolbar-container {
-            width: 100%;
-            background: #f8f9fa;
-            padding: 10px 0;
-            text-align: center;
-        }*/
+/* 제목 스타일 */
+#blogsubject {
+	width: 100%;
+	font-size: 24px;
+	border: none;
+	border-bottom: 2px solid #ccc;
+	padding: 10px;
+	outline: none;
+	display: block;
+	margin: 20px auto;
+}
 
-        /* 제목 스타일 */
-        #blogsubject {
-            width: 100%;
-            font-size: 24px;
-            border: none;
-            border-bottom: 2px solid #ccc;
-            padding: 10px;
-            outline: none;
-            display: block;
-            margin: 20px auto;
-        }
+/* Summernote 에디터 스타일 */
+#blogcontent {
+	width: 100%;
+	min-height: 700px; /* 높이를 700px로 늘림 */
+}
 
-        /* Summernote 에디터 스타일 */
-        #blogcontent {
-            width: 100%;
-            min-height: 700px; /* 높이를 700px로 늘림 */
-        }
-
-        /* 버튼 정렬 */
-        .btn-container {
-            text-align: right;
-            margin-top: 15px;
-        }
-    </style>
+/* 버튼 정렬 */
+.btn-container {
+	text-align: right;
+	margin-top: 15px;
+}
+</style>
 </head>
 
 <body>
@@ -136,9 +131,6 @@
                     }
                 });
             }
-
-            // 툴바를 별도 컨테이너에 추가
-            //$('.note-toolbar').appendTo('#summernote-toolbar');
             
          	// "다시작성" 버튼 클릭 시 Summernote 내용 초기화
 	            $('#resetBtn').click(function() {
@@ -151,7 +143,6 @@
         });
     </script>
     
-    <div th:replace="~{layouts/footer}"></div>
+<div th:replace="~{layouts/footer}"></div>
 </body>
-<script src="/static/js/blogboardScript.js"></script>
 </html>
