@@ -1,0 +1,165 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>블로그 작성</title>
+	<script type="text/javascript" src="/js/blogboardScript.js"></script>
+    <!-- jQuery (필수) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Summernote CSS & JS (필수 파일만 포함) -->
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
+
+    <style>
+        /* 전체 컨테이너 */
+        .blog-container {
+            width: 70%;
+            max-width: 1000px;
+            margin: auto;
+            padding-top: 20px;
+        }
+
+        /* 툴바를 화면 전체 폭으로 확장 
+        .toolbar-container {
+            width: 100%;
+            background: #f8f9fa;
+            padding: 10px 0;
+            text-align: center;
+        }*/
+
+        /* 제목 스타일 */
+        #blogsubject {
+            width: 100%;
+            font-size: 24px;
+            border: none;
+            border-bottom: 2px solid #ccc;
+            padding: 10px;
+            outline: none;
+            display: block;
+            margin: 20px auto;
+        }
+
+        /* Summernote 에디터 스타일 */
+        #blogcontent {
+            width: 100%;
+            min-height: 700px; /* 높이를 700px로 늘림 */
+        }
+
+        /* 버튼 정렬 */
+        .btn-container {
+            text-align: right;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+
+<body>
+<div th:replace="~{layouts/header}"></div>
+    <!-- 툴바 컨테이너 -->
+    <div class="toolbar-container">
+        <div id="summernote-toolbar"></div>
+    </div>
+
+    <div class="blog-container">
+        <form action="/blogboardModify" method="post" enctype="multipart/form-data" name="form1">
+        	<!-- 버튼 -->
+            <div class="btn-container">
+                <input type="button" value="발행" onclick="inputCheck()">
+                <input type="reset" value="다시작성" id="resetBtn">
+            </div>
+            
+            <!-- 제목 입력 -->
+            <input type="text" id="blogsubject" name="blogsubject" th:value="${blogboard.blogsubject}">
+            
+            <!-- 대표사진을 저장할 hidden input 
+    		<input type="hidden" id="blogimage1" name="blogimage1"> -->
+            
+            
+			<!-- 대표사진을 저장할 hidden input -->
+			<input type="hidden" id="blogimage1" name="blogimage1" th:value="${blogboard.blogimage1}">
+			           
+            <!-- 내용 입력 (Summernote) -->
+            <textarea id="blogcontent" name="blogcontent">[[${blogboard.blogcontent}]]</textarea>
+            
+            <!-- 게시글 seq와 pg 전달용 hidden input -->
+            <input type="hidden" name="seq" th:value="${seq}">
+            <input type="hidden" name="pg" th:value="${pg}">
+            
+        </form>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            $('#blogcontent').summernote({
+                height: 600, // 높이 조정 (700px)
+                placeholder: "여기에 내용을 입력하세요...",
+                toolbar: [
+                    ['style', ['bold', 'italic', 'underline', 'clear']],
+                    ['font', ['strikethrough', 'superscript', 'subscript']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['insert', ['link', 'picture']],
+                    ['view', ['fullscreen', 'codeview']]
+                ],
+                
+                callbacks: {
+                    onInit: function () {
+                        // 에디터 로드 시 기본 폰트 크기와 줄간격 설정
+                        $('.note-editable').css({
+                            'line-height': '1.2'    // 줄간격
+                        });
+                    },
+	                onImageUpload: function(files) {
+	                    uploadImage(files[0]);  // 첫 번째 파일만 업로드
+	                }
+                }
+            });
+            
+            // 이미지 업로드 함수
+            function uploadImage(file) {
+                let formData = new FormData();
+                formData.append("img", file);
+
+                $.ajax({
+                    url: "/blogboard/uploadImage",
+                    type: "POST",
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function(response) {
+                        // Summernote에 이미지 삽입
+                        $('#blogcontent').summernote('insertImage', response.url);
+                        
+                     	// 디버깅용 로그 추가
+                        console.log("Uploaded Image URL:", response.url);
+                        console.log("Current blogimage1 value:", $('#blogimage1').val());
+                        
+                        // 첫 번째 이미지라면 대표사진으로 설정
+                        if (!$('#blogimage1').val()) {
+                            $('#blogimage1').val(response.fileName);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("이미지 업로드 실패:", error);
+                    }
+                });
+            }
+
+            // 툴바를 별도 컨테이너에 추가
+            //$('.note-toolbar').appendTo('#summernote-toolbar');
+            
+         	// "다시작성" 버튼 클릭 시 Summernote 내용 초기화
+	            $('#resetBtn').click(function() {
+	                $('#blogcontent').summernote('reset');  // Summernote 내용 초기화
+	                $('#blogimage1').val('');
+	                $('.note-editable').css({
+	                    'line-height': '1.2'    // 초기화 시 줄간격
+	                });
+	            });
+        });
+    </script>
+    
+    <div th:replace="~{layouts/footer}"></div>
+</body>
+</html>
