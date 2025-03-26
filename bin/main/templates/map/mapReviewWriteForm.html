@@ -9,9 +9,9 @@
 .main{
 	margin:0 auto;
 	justify-content: center; 
-/* 	display: flex; 
-	justify-content: center; 
-	align-items: center; */
+	display: flex; 
+/* 	justify-content: center; 
+	align-items: center;  */
 }
 /* component */
 .star-rating {
@@ -48,13 +48,20 @@
 	border-radius: 30px;
 	margin-left: 40px;
 }
+
+button{
+	width: 75px;
+	height: 20px;
+	margin-top:10px;
+	
+}
 </style>
 
 </head>
 <body>
-
+<h2 style="text-align: center;">[[${place.place_name}]]</h2>	
 <div class="main">
-	<h2 style="text-align: center;">[[${place.place_name}]]</h2>			
+			
 	<!-- <h4 style="text-align: center;">[[${session.personId}]]</h4> -->
 			 
 	<form action="mapReviewWrite" method="post" name="form1" enctype="multipart/form-data">
@@ -91,9 +98,16 @@
 		<th:block thLif="!mapR	eviewCheck()"> 버튼 비활성화
 			<button type="button" class="btn btn-primary" disabled>제출</button>	
 		</th:block> -->
-		<button type="button" class="btn btn-primary" onclick="reviewCheck()">제출</button>	
+		<button type="button" class="btn btn-primary btn-sm"  onclick="reviewCheck()"
+				style="--bs-btn-padding-y: .3rem; --bs-btn-padding-x: 2rem; --bs-btn-font-size: .9rem; background-color:#FF9000; border: #FF9000;">
+				제출 
+		</button>
+	<!-- 	<button type="button" class="btn btn-primary" onclick="reviewCheck()">제출</button>	 -->
 		
-		<button type="reset" class="btn btn-primary">취소</button>				
+		<button type="button" class="btn btn-primary btn-sm" 
+				style="--bs-btn-padding-y: .3rem; --bs-btn-padding-x: 2rem; --bs-btn-font-size: .9rem; background-color:#FF9000; border: #FF9000;">
+				취소 
+		</button>				
 	</form>
 	</div>
 

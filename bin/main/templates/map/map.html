@@ -57,7 +57,17 @@ body{
 <script type="text/javascript" 
 src="//dapi.kakao.com/v2/maps/sdk.js?appkey=7240ead65b51f6c7acea5872e47c05fe&libraries=services"></script>
 <script th:inline="javascript">
-
+// copy link
+function clipboardcopy() {
+    // Clipboard API 사용하여 클립보드에 텍스트 복사하기
+    navigator.clipboard.writeText(location.href) // 현재 URL을 클립보드에 복사
+        .then(function() {
+            alert('링크가 복사되었습니다'); // 복사 성공 시 메시지
+        })
+        .catch(function(err) {
+            alert('링크 복사에 실패했습니다: ' + err); // 복사 실패 시 에러 메시지
+        });
+}
 /// load - list 
 
 function loadView(place){
