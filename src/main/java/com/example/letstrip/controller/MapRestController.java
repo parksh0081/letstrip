@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -187,6 +188,19 @@ public class MapRestController {
 		        response.put("liked", false); // 사용자가 좋아요 안눌렀음
 		    }
 			return ResponseEntity.ok(response);
+		}
+		
+		// review like list
+		@GetMapping("/map/getUserLikes")
+		public ResponseEntity<Map<String, Object>>getUserLikes(@RequestParam("id") String id){
+			List<Reviewlike>list=reviewlikeService.selectListById(id);
+			 // seq 값만 리스트로 변환
+		    List<Integer> likeSeqList = list.stream().map(Reviewlike::getLike_seq) // Reviewlike 객체에서 seq 값만 추출
+		                                   .collect(Collectors.toList());
+
+		    Map<String, Object> response = new HashMap<>();
+		    response.put("list", likeSeqList); // 수정된 리스트 저장
+		    return ResponseEntity.ok(response);
 		}
 		
 		
