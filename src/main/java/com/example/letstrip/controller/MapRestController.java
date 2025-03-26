@@ -35,7 +35,9 @@ import com.example.letstrip.service.PlaceService;
 import com.example.letstrip.service.ReviewlikeService;
 import com.example.letstrip.service.StoreService;
 
+import jakarta.persistence.EntityManager;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
 
 
 @RestController
@@ -56,6 +58,9 @@ public class MapRestController {
 	
 	@Autowired
 	StoreService storeService;
+	
+	@Autowired
+	private EntityManager entityManager;
 
     MapRestController(LetstripApplication letstripApplication, ReviewlikeRepository reviewlikeRepository) {
         this.letstripApplication = letstripApplication;
@@ -148,6 +153,7 @@ public class MapRestController {
 		}
 		
 		// review like
+		@Transactional
 		@GetMapping("/map/reviewLike") 
 		public ResponseEntity<Map<String, Object>> reviewLike(Model model,HttpServletRequest request) {
 			Map<String, Object> response=new HashMap<>();
@@ -155,24 +161,27 @@ public class MapRestController {
 			int seq=Integer.parseInt(request.getParameter("seq")); // 리뷰 글 번호 
 			String id=request.getParameter("id");
 			Review review=mapReviewService.selectReviewBySeq(seq); // get react
+			System.out.println("R:"+review.getReact());
 			ReviewlikeDTO reviewlikeDTO=new ReviewlikeDTO();
 			reviewlikeDTO.setReview_seq(seq);
 			reviewlikeDTO.setPerson_id(id);
 			reviewlikeDTO.setReview(review);
 			Reviewlike checkReviewlike=reviewlikeService.selectReviewlike(id, seq);
 			if(checkReviewlike==null) {  	// 좋아요 안눌러있었으면 좋아요 허용 
-				mapReviewService.updateReact(seq); // react update
+				
 				reviewlikeService.insertReviewlike(reviewlikeDTO);
+				mapReviewService.updateReact(seq); // react update +1
 				response.put("result", "좋아요 완료");
 			}else {
-				mapReviewService.updateReactMinus(seq);
+				
 				reviewlikeService.deleteReviewlike(id, seq);
+				mapReviewService.updateReactMinus(seq); 	// -1
 				response.put("result", "좋아요 취소");
 			}
 			review=mapReviewService.selectReviewBySeq(seq); // get react
-			
+			entityManager.refresh(review);
 			response.put("react", review.getReact());
-				
+			System.out.println("react: "+review.getReact());
 
 			return ResponseEntity.ok(response);
 		}
@@ -209,11 +218,14 @@ public class MapRestController {
 		public ResponseEntity<Map<String, Object>> mapPlaceStore(@RequestBody StoreDTO dto) {
 			// 찜 저장 
 			Store store=storeService.selectCheck(dto.getId(),dto.getPlaceid());
-					
+			String result="";		
 			if(store==null) { // 저장된게 없으면 저장  
 				storeService.insert(dto);
+				result="찜 완료";
+				
 			}else { // 저장된게 있으면 삭제 
 				storeService.delete(dto.getId(), dto.getPlaceid());
+				result="찜 실패";
 			}
 			
 			// 최신 storeList 가져오기
@@ -221,6 +233,7 @@ public class MapRestController {
 
 	        Map<String, Object> response = new HashMap<>();
 	        response.put("success", true);
+	        response.put("result", result);
 	        response.put("storeList", updatedStoreList); // JSON으로 리스트 반환
 
 	        return ResponseEntity.ok(response);

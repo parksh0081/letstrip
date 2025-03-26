@@ -3,6 +3,7 @@ package com.example.letstrip.dto;
 import com.example.letstrip.entity.Review;
 import com.example.letstrip.entity.Reviewlike;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data

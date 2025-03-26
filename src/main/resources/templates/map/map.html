@@ -62,7 +62,7 @@ src="//dapi.kakao.com/v2/maps/sdk.js?appkey=7240ead65b51f6c7acea5872e47c05fe&lib
 
 function loadView(place){
 	var personId=/*[[${session.personId}]]*/null;
-	updateLikeButtons(personId);
+	//updateLikeButtons(personId);
 	var id=place.id;
 	 fetch("/map/mapPlaceViewJson" ,{
 		 method: 'POST',
@@ -185,8 +185,7 @@ function reviewLike(seq, personId){
 		          return;
 		      }
 		      // 배경색 변경
-              likeButton.style.backgroundColor = data.result === "좋아요 완료" ? "#FF9000" : "gray";
-
+              //likeButton.style.backgroundColor = data.result === "좋아요 완료" ? "#FF9000" : "gray";
               // 버튼 내용 변경
               likeButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6" width="22" height="22" style="padding-right: 3px;">
                   <path stroke-linecap="round" stroke-linejoin="round"
