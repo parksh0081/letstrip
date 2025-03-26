@@ -74,15 +74,6 @@ public class BlogcommentRestController {
         return new ResponseEntity<>(savedDTO, HttpStatus.CREATED);  // 댓글 저장 후 응답 반환
     }
     
-//    @PostMapping
-//    public ResponseEntity<?> saveComment(@RequestBody BlogcommentDTO dto) {
-//        Person person = personService.getPerson(dto.getCommentwriter());
-//        Blogboard blogboard = blogboardService.blogboardView(dto.getBlogseq());
-//
-//        blogcommentService.saveComment(dto, person, blogboard);
-//        return ResponseEntity.ok("댓글이 등록되었습니다.");
-//    }
-
     
     @DeleteMapping("/{commentseq}")
     public ResponseEntity<Void> deleteComment(@PathVariable("commentseq") int commentseq) {
