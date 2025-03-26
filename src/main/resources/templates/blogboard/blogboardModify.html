@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>	
+
+<script type="text/javascript" th:inline="javascript">
+	window.onload = function(){		// 백색화면 문제
+		setTimeout(function() {
+			var result = /*[[${result}]]*/ false;
+			// 각 값을 별도의 변수로 할당
+            var seq = /*[[${seq}]]*/ 1;
+            var pg = /*[[${pg}]]*/ 1;
+			//console.log("result = " + result);
+			//alert("result = " + result);
+			if(result != null) {
+				alert("수정 성공");
+				location.href = "blogboardView?seq=" + seq + "&pg=" + pg;
+			} else {
+				alert("수정 실패");
+				history.back();
+			}
+		}, 100);
+	}
+</script>
+	
+</body>
+</html>
