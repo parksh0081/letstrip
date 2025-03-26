@@ -196,6 +196,18 @@ public class BlogboardController {
 		// 세션에서 로그인한 사용자 ID 가져오기
 	    String personId = (String) session.getAttribute("personId");
 	    dto.setBlogid(personId);  // 세션 값을 dto에 설정
+	    
+	    // 기존 내용에서 이미지를 추출해서 이미지 경로 처리 (기존 이미지 유지)
+	    String existingContent = dto.getBlogcontent();
+	    String existingImage = extractFirstImage(existingContent);
+	    
+
+	    if ((dto.getBlogimage1() == null || dto.getBlogimage1().isEmpty()) && existingImage != null) {
+	        dto.setBlogimage1(existingImage);
+	    } else if (dto.getBlogimage1() != null && !dto.getBlogimage1().isEmpty()) {
+	        // 새 이미지가 있는 경우, 기존 이미지 대신 사용
+	        existingImage = dto.getBlogimage1();
+	    }
 	 
 		System.out.println(dto.toString()); // db 
 		boolean result = service.blogboardModify(dto);
