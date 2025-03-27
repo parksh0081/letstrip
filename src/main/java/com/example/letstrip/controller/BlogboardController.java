@@ -62,7 +62,7 @@ public class BlogboardController {
 	            uploadFile.transferTo(file);
 
 	            // 응답 데이터 설정
-	            response.put("url", "/storage/" + newFileName);  // 웹에서 접근할 URL
+	            response.put("url", "/blogboard/" + newFileName);  // 웹에서 접근할 URL
 	            response.put("fileName", newFileName);  // 대표사진 저장용 파일명
 	        } catch (IOException e) {
 	            e.printStackTrace();
@@ -70,7 +70,6 @@ public class BlogboardController {
 	    }
 	    return response;
 	}
-
 	
 	@PostMapping("/blogboardWrite")
 	public String blogboardWrite(BlogboardDTO dto, Model model, HttpSession session) {

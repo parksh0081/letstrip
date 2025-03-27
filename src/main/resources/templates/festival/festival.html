@@ -224,6 +224,11 @@ button[type="submit"], button[type="reset"]:hover {
     color: #ccc;
     cursor: not-allowed;
 }
+
+#festivalImage {
+	width: 300px;
+	height: 400px;
+}
 </style>
 </head>
 <body>
@@ -375,7 +380,7 @@ window.onload = function() {
         <ul>
             <li th:each="festival : ${festivalPage.content}">
                 <div class="fes-image">
-                    <img th:src="@{${festival.image1}}" alt="Festival Image">
+                    <img th:src="@{${festival.image1}}" id="festivalImage" alt="Festival Image">
                 </div>
                 <div class="fes-info">
                     <div class="title" th:text="${festival.name}"></div>

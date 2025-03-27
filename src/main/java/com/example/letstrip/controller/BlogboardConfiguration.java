@@ -14,6 +14,6 @@ public class BlogboardConfiguration implements WebMvcConfigurer {
 
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
-		registry.addResourceHandler("/storage/**").addResourceLocations("file:///" + uploadpath + "/");
+		registry.addResourceHandler("/blogboard/**").addResourceLocations("file:///" + uploadpath + "/");
 	}
 }
