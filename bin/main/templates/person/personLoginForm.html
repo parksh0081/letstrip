@@ -3,13 +3,32 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+<style type="text/css">
+html, body {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+header {
+    flex-shrink: 0; /* header 크기 유지 */
+}
+
+
+footer {
+    flex-shrink: 0; /* footer 크기 유지 */
+}
+
+</style>
 <script type="text/javascript" src="/js/personScript.js"></script>
 </head>
 <body>
 <div th:replace="~{layouts/header}"></div>
   <div class="container" style="width: 400px; margin-bottom: 100px; margin-top: 100px;">
 	<form action="personLogin" method="post" name="form1">
-	    <img class="mb-4" src="/docs/5.3/assets/brand/bootstrap-logo.svg" alt="로고" width="72" height="57">
+<!-- 	    <img class="mb-4" src="/docs/5.3/assets/brand/bootstrap-logo.svg" alt="로고" width="72" height="57"> -->
+		<img src="/logo/logo.png" alt="로고" width="70px" height="65px">
 	    <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
 	
 	    <div class="form-floating" style="margin-top: 50px;">

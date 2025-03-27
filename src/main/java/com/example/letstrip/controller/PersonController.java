@@ -104,5 +104,13 @@ public class PersonController {
 		// 2. 데이터 공유
 		// 3. view 파일명 리턴
 		return "/person/personPage";
-	}	
+	}
+	
+	// 고객센터
+	@GetMapping("/csPage")
+	public String csPage(HttpServletRequest request, Model model) {
+		
+		
+		return "/person/csPage";
+	}
 }

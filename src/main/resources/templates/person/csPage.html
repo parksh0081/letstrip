@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<style type="text/css">
+#container-cs {
+	padding: 20px;
+	align-content: center;
+}
+#Title {
+	text-align: center;
+	display: block;
+	margin-bottom: 40px;
+	font-size: 2em;
+	font-weight: bold;
+}
+#cs_form-container {
+	margin: auto;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	
+}
+.row{
+	width: 100%;
+	justify-content: center;
+}
+#csTitle{
+	width: 800px;
+	margin: 10px;
+}
+#csMessage{
+	align-content: center;
+	width: 800px;
+	margin: 10px;
+	resize: none;
+}
+#btn-cs {
+	width: 100px;
+	margin: 20px 0px;
+	border: 1px solid #ff9000;
+}
+#cs-pw{
+	width: 200px;
+	margin: 20px;
+}
+
+.csList {
+	width: 800px;
+	border: 1px solid gray;
+	border-radius: 5px;
+	margin: auto;
+}
+</style>
+</head>
+<body>
+<div th:replace="~{layouts/header}"></div>
+
+<div id="container-cs">
+	<p class="col" id="Title">고객센터</p>
+	<!-- input cs -->
+	<form name="form1" action="">
+	<div id="cs_form-container">
+		<div class="row">
+			<input type="text" class="form-control" id="csTitle" placeholder="Title" name="csTitle">
+		</div>
+		<div class="row">
+			<textarea rows="3" class="form-control" id="csMessage" placeholder="Content" name="csMessage"></textarea>
+		</div>
+		<div class="row">
+			<input type="password" class="form-control" id="cs-pw" placeholder="password" maxlength="4">
+			<input type="button" onclick="" class="btn" value="문의" id="btn-cs">
+		</div>
+	</div>
+	</form>
+	<!-- list cs -->
+	<script type="text/javascript">
+			
+	</script>
+	<div class="csList">
+		<table class="table">
+			
+		</table>
+	</div>
+</div>
+<div th:replace="~{layouts/footer}"></div>
+</body>
+</html>

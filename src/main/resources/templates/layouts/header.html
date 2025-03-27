@@ -6,9 +6,9 @@
 <!-- header -->
 <nav class="navbar bg-body-tertiary">
     <div class="container-fluid">
-        <!-- 로고 -->
+        <img src="/logo/logo.png" width="30px" height="30px">
         <a class="navbar-brand fw-bold" href="/index" style="color: #FF9000; size: 45px;">
-            LET'S TRIP
+            &nbsp;LET'S TRIP
         </a>
 
         <!-- 검색창과 삼선 버튼을 오른쪽 정렬 -->
@@ -57,7 +57,7 @@
                     
                     <!-- 로그인 후 -->
                 	<li class="nav-item"><a th:if="${session.personId != null}" class="nav-link active" aria-current="page" href="/psersonLogout">로그아웃</a></li>
-                    <li class="nav-item"><a th:if="${session.personId != null}" class="nav-link" href="/personPage">마이페이지</a></li>
+                    <li class="nav-item"><a th:if="${session.personId != null}" class="nav-link" href="/personModifyForm">회원정보수정</a></li>
 
                     <!-- 고객센터 -->
                     <li class="nav-item"><a class="nav-link" href="#">고객센터</a></li>
@@ -66,3 +66,4 @@
         </div>
     </div>
 </nav>
+</header>
